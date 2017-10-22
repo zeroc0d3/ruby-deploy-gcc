@@ -1,0 +1,5 @@
+#! /bin/sh
+
+PATH_PWD=`pwd` 
+cd $PATH_PWD
+gcc -o rb_deploy rb_deploy.c
