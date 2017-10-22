@@ -21,6 +21,25 @@ char DATE_TIME[100];
 char SNAP_FOLDER[100];
 char STR_FOLDER[512];
 
+char* SHARED_FOLDERS[] = {
+    "log", 
+    "tmp/pids", 
+    "tmp/cache", 
+    "tmp/sockets", 
+    "vendor/bundle",
+    "public/uploads", 
+    "public/system", 
+    "public/assets"
+};
+
+char* SHARED_FILES[] = {
+    "config/application.yml",
+    "config/database.yml",
+    "config/mongoid.yml",
+    "config/secrets.yml",
+    "config/sidekiq.yml"
+};
+
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
@@ -30,6 +49,7 @@ char ENV[64] = "development";       // Selected Environment (development / produ
 char APP_ROOT[512];                 // Root Path
 char APP_CURRENT[64] = "current";   // Current Folder
 char APP_RELEASE[64] = "release";   // Release Folder
+char APP_SHARED[64]  = "shared";    // Shared Folder
 char CONFIG_UNICORN[512];           // Unicorn Config
 char CONFIG_FAYE[512];              // Faye Config
 char PID_UNICORN[512];              // Path PID Unicorn
@@ -81,7 +101,17 @@ void get_time()
 
 void get_folder()
 {
-    sprintf(SNAP_FOLDER, "%d\n", (int)time(NULL));
+    char buff[100];
+    int buff_unix;
+    time_t now = time(0);
+    buff_unix  = (int)time(NULL);
+    strftime(buff, 100, "%Y%m%d%H%M", localtime(&now));
+
+    // Unix Timestamp
+    // sprintf(SNAP_FOLDER, "%d", buff_unix);
+
+    // Full Timestamp
+    sprintf(SNAP_FOLDER, "%s_%d", buff, buff_unix);
 }
 
 void logo()
@@ -363,11 +393,7 @@ void change_branch()
     char STR_SERVICE[300]     = "Changing Branch...";
     char STR_COMMAND[1024];
 
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-    sprintf(STR_COMMAND, "cd %s", STR_FOLDER);
-    run_fcmd(STR_COMMAND);
-
-    sprintf(STR_COMMAND, "git checkout %s", REPO_BRANCH);
+    sprintf(STR_COMMAND, "cd %s && git checkout %s", STR_FOLDER, REPO_BRANCH);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -392,6 +418,30 @@ void install_package()
     char STR_COMMAND[1024];
 
     sprintf(STR_COMMAND, "%s install", PATH_BUNDLE);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void initialize_shared()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Initialize Shared Folder";
+    char STR_SERVICE[300]     = "Initializing Shared Folder...";
+    char STR_COMMAND[1024];
+
+    sprintf(STR_COMMAND, "mkdir -p %s/%s", APP_ROOT, APP_SHARED);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void initialize_current()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Initialize Current Folder";
+    char STR_SERVICE[300]     = "Initializing Current Folder...";
+    char STR_COMMAND[1024];
+
+    sprintf(STR_COMMAND, "mkdir -p %s/%s", APP_ROOT, APP_CURRENT);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -428,6 +478,8 @@ void deploy()
     change_branch();
     install_bundle();
     install_package();
+    initialize_shared();
+    initialize_current();
     footer();
 }
 
@@ -441,8 +493,7 @@ int main(int argc, char **argv) {
         menu();        
         return (EXIT_SUCCESS);
     }
-    
-    
+        
     if (strcmp(argv[1], "-r") == 0) {
         nginx_restart();
     } else if (strcmp(argv[1], "-o") == 0) {
