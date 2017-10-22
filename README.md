@@ -1,6 +1,8 @@
 # ruby-deploy-gcc
 Ruby Deploy build with GCC
 
+![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy2.png)
+
 ## Configuration
 * Clone this repo
 * Add `rb_deploy.c` and `make-rb_deploy` to your root path of Ruby or Rails project
