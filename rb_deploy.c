@@ -255,16 +255,31 @@ void run_cmd(char STR_SERVICE[300],
              char STR_COMMAND[1024])
 {
     get_time();
-    printf("\n\033[22;34m[ %s ] ### %s...       \033[0m\n\n", DATE_TIME, STR_DESCRIPTION);
+    printf("\n\033[22;34m[ %s ] ##### %s...       \033[0m\n", DATE_TIME, STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
     ret = system(cmdRun);
     if (!ret) {
-        printf("\n\033[22;32m[  DONE  ] \033[0m");
-        printf("\033[22;32m %s...       \033[0m\n", STR_SERVICE);
+        get_time();
+        printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
+        printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
     } else {
-        printf("\n\033[22;31m[ FAILED ] \033[0m");
-        printf("\033[22;32m %s...       \033[0m\n", STR_SERVICE);
+        get_time();
+        printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
+        printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
     }
+}
+
+void run_kill(char STR_SERVICE[300],
+             char STR_DESCRIPTION[300],
+             char STR_COMMAND[1024])
+{
+    get_time();
+    printf("\n\033[22;34m[ %s ] ##### %s...       \033[0m\n", DATE_TIME, STR_DESCRIPTION);
+    sprintf(cmdRun, "%s", STR_COMMAND);
+    system(cmdRun);
+    get_time();
+    printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
+    printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
 }
 
 /* --------------------------------------- 
@@ -297,7 +312,7 @@ void nginx_reload()
 /* --------------------------------------- 
         MONGODB 
    --------------------------------------- */
-void mongodb_start()
+void kill_mongodb()
 {
     char STR_DESCRIPTION[300] = "Start MongoDB Service";
     char STR_SERVICE[300]     = "MongoDB Start...";
@@ -306,19 +321,19 @@ void mongodb_start()
     sleep(1);
 }
 
-void mongodb_stop()
+void run_mongodb()
 {
     char STR_DESCRIPTION[300] = "Stop MongoDB Service";
     char STR_SERVICE[300]     = "MongoDB Stop...";
     char STR_COMMAND[1024]    = "sudo /etc/init.d/mongodb stop";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
 void restart_mongodb_process()
 {
-    mongodb_stop();
-    mongodb_start();
+    kill_mongodb();
+    run_mongodb();
 }
 
 void restart_mongodb()
@@ -328,10 +343,26 @@ void restart_mongodb()
     footer();
 }
 
+void stop_mongodb()
+{
+    header();
+    kill_mongodb();
+    footer();
+}
+
 /* --------------------------------------- 
         REDIS 
    --------------------------------------- */
-void redis_start()
+void kill_redis()
+{
+    char STR_DESCRIPTION[300] = "Stop Redis Service";
+    char STR_SERVICE[300]     = "Redis Stop...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i redis-server | awk {'print $2'} | sudo xargs kill -9";
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_redis()
 {
     char STR_DESCRIPTION[300] = "Start Redis Service (Daemonize)";
     char STR_SERVICE[300]     = "Redis Start...";
@@ -340,25 +371,23 @@ void redis_start()
     sleep(1);
 }
 
-void redis_stop()
-{
-    char STR_DESCRIPTION[300] = "Stop Redis Service";
-    char STR_SERVICE[300]     = "Redis Stop...";
-    char STR_COMMAND[1024]    = "ps aux | grep -i redis-server | awk {'print $2'} | sudo xargs kill -9";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
-    sleep(1);
-}
-
 void restart_redis_process()
 {
-    redis_stop();
-    redis_start();
+    kill_redis();
+    run_redis();
 }
 
 void restart_redis()
 {
     header();
     restart_redis_process();
+    footer();
+}
+
+void stop_redis()
+{
+    header();
+    kill_redis();
     footer();
 }
 
@@ -400,7 +429,7 @@ void kill_unicorn()
     char STR_DESCRIPTION[300] = "Stop Unicorn Service";
     char STR_SERVICE[300]     = "Unicorn Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i unicorn | awk {'print $2'} | sudo xargs kill -9";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
@@ -428,6 +457,13 @@ void restart_unicorn()
     footer();
 }
 
+void stop_unicorn()
+{
+    header();
+    kill_unicorn();
+    footer();
+}
+
 /* --------------------------------------- 
         Faye
    --------------------------------------- */
@@ -437,7 +473,7 @@ void kill_faye()
     char STR_DESCRIPTION[300] = "Stop Faye Service";
     char STR_SERVICE[300]     = "Faye Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i faye | awk {'print $2'} | sudo xargs kill -9";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
@@ -465,6 +501,13 @@ void restart_faye()
     footer();
 }
 
+void stop_faye()
+{
+    header();
+    kill_faye();
+    footer();
+}
+
 /* --------------------------------------- 
         Pushr
    --------------------------------------- */
@@ -473,7 +516,7 @@ void kill_pushr()
     char STR_DESCRIPTION[300] = "Stop Pushr Service";
     char STR_SERVICE[300]     = "Pushr Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i pushr | awk {'print $2'} | sudo xargs kill -9";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
@@ -499,6 +542,13 @@ void restart_pushr()
     footer();
 }
 
+void stop_pushr()
+{
+    header();
+    kill_pushr();
+    footer();
+}
+
 /* --------------------------------------- 
         Sidekiq
    --------------------------------------- */
@@ -507,7 +557,7 @@ void kill_sidekiq()
     char STR_DESCRIPTION[300] = "Stop Sidekiq Service";
     char STR_SERVICE[300]     = "Sidekiq Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i sidekiq | awk {'print $2'} | sudo xargs kill -9";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
@@ -533,6 +583,13 @@ void restart_sidekiq()
     footer();
 }
 
+void stop_sidekiq()
+{
+    header();
+    kill_sidekiq();
+    footer();
+}
+
 /* --------------------------------------- 
     Deploy Process: 
         1) Clone Repository to Unix DateTime Release Folder
@@ -551,7 +608,7 @@ void restart_sidekiq()
         14) Service Unicorn Stop
         15) Service Unicorn Start
         16) FINISH
-    
+
         Note: On Failed 
         Remove Unix DateTime Release Folder
    --------------------------------------- */
@@ -681,15 +738,19 @@ int main(int argc, char **argv) {
         return (EXIT_SUCCESS);
     }
 
+    // NGINX
     if (strcmp(argv[1], "-nr") == 0) {
         nginx_restart();
     } else if (strcmp(argv[1], "-no") == 0) {
         nginx_reload();
+
+    // Assets
     } else if (strcmp(argv[1], "-ap") == 0) {
         asset_precompile();
     } else if (strcmp(argv[1], "-ac") == 0) {
         asset_rollback(); 
 
+    // Restart Services
     } else if (strcmp(argv[1], "-ru") == 0) {
         restart_unicorn();
     } else if (strcmp(argv[1], "-rf") == 0) {
@@ -703,21 +764,25 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "-rs") == 0) {
         restart_redis();
 
+    // Stop Services
     } else if (strcmp(argv[1], "-df") == 0) {
-        kill_faye();
+        stop_faye();
     } else if (strcmp(argv[1], "-dp") == 0) {
-        kill_pushr();
+        stop_pushr();
     } else if (strcmp(argv[1], "-dm") == 0) {
-        mongodb_stop();
+        stop_mongodb();
     } else if (strcmp(argv[1], "-dq") == 0) {
-        kill_sidekiq();
+        stop_sidekiq();
     } else if (strcmp(argv[1], "-ds") == 0) {
-        redis_stop();
+        stop_redis();
 
+    // Server
     } else if (strcmp(argv[1], "-up") == 0) {
         server_up(); 
     } else if (strcmp(argv[1], "-down") == 0) {
         server_down();
+
+    // Deploy 
     } else if ( (strcmp(argv[1], "-deploy") == 0) || (strcmp(argv[1], "-dep") == 0) ) {
         deploy();
     } else {
