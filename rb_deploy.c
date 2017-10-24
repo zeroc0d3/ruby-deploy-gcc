@@ -698,6 +698,8 @@ void server_up()
     header();
     restart_unicorn_process();
     restart_faye_process();
+    restart_pushr_process();
+    restart_sidekiq_process();
     footer();
 }
 
@@ -709,6 +711,8 @@ void server_down()
     header();
     kill_unicorn();
     kill_faye();
+    kill_pushr();
+    kill_sidekiq();
     footer();
 }
 
