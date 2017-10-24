@@ -526,6 +526,7 @@ void git_clone()
     char STR_SERVICE[300]     = "Cloning Process...";
     char STR_COMMAND[1024];
     get_folder();
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     sprintf(STR_COMMAND, "cd %s; git clone %s %s", APP_ROOT, REPO_NAME, STR_FOLDER);
     //printf("%s, %s, %s", STR_FOLDER, SNAP_FOLDER, REPO_BRANCHR_COMMAND);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -539,7 +540,6 @@ void change_branch()
     char STR_COMMAND[1024];
     // Goto App Path Release
     // Checkout Branch
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     sprintf(STR_COMMAND, "cd %s; git checkout %s", STR_FOLDER, REPO_BRANCH);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
