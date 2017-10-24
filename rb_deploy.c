@@ -44,16 +44,28 @@ char* SHARED_FILES[] = {
         CONFIGURATION 
    ======================================= */
 
-int NUM_RELEASE = 5;
+int NUM_RELEASE = 10;               // Maximum Number of Release Folder 
 char ENV[64] = "development";       // Selected Environment (development / production)
 char APP_ROOT[512];                 // Root Path
 char APP_CURRENT[64] = "current";   // Current Folder
 char APP_RELEASE[64] = "release";   // Release Folder
 char APP_SHARED[64]  = "shared";    // Shared Folder
+
+// GENERAL CONFIGURATION //
+// Config
 char CONFIG_UNICORN[512];           // Unicorn Config
 char CONFIG_FAYE[512];              // Faye Config
+char CONFIG_PUSHR[512];             // Pushr Config
+char CONFIG_SIDEKIQ[512];           // Sidekiq Config
+// PID
 char PID_UNICORN[512];              // Path PID Unicorn
 char PID_FAYE[512];                 // Path PID Faye
+char PID_PUSHR[512];                // Path PID Pushr
+char PID_SIDEKIQ[512];               // Path PID Sidekiq
+// Log
+char LOG_PUSHR[512];                // Path Log Pushr
+char LOG_SIDEKIQ[512];              // Path Log Sidekiq
+// Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 char PATH_RAKE[512];                // Path of Rake Binary
 char PATH_RACKUP[512];              // Path of Rackup Binary
@@ -63,24 +75,38 @@ char PATH_BUNDLE[512];              // Path of Bundle Binary
 char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
 char REPO_BRANCH[64] = "master";
 
+// DEVELOPMENT CONFIGURATION //
 // Development Environment
 char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                            // Development Root Path
 char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";  // Development Unicorn Config
 char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                    // Development Faye Config
+char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";// Development Pushr Config
+char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";         // Development Sidekiq Config
+
 char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";       // Development Path PID Unicorn
 char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";          // Development Path PID Faye
+char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";           // Development Path PID Pushr
+char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";         // Development Path PID Sidekiq
+
 char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
 char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
 char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
 char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                     // Development Path of Gem Binary
 char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Development Path of Bundle Binary
 
+// PRODUCTION CONFIGURATION //
 // Production Environment
 char PROD_APP_ROOT[512]       = "/home/zeroc0d3/deploy";                               // Production Root Path
 char PROD_CONFIG_UNICORN[512] = "/home/zeroc0d3/deploy/config/unicorn/production.rb";  // Production Unicorn Config
 char PROD_CONFIG_FAYE[512]    = "/home/zeroc0d3/deploy/faye.ru";                       // Production Faye Config
+char PROD_CONFIG_PUSHR[512]   = "/home/zeroc0d3/deploy/config/pushr-production.yaml";  // Production Pushr Config
+char PROD_CONFIG_SIDEKIQ[512] = "/home/zeroc0d3/deploy/config/sidekiq.yml";            // Production Sidekiq Config
+
 char PROD_PID_UNICORN[512]    = "/home/zeroc0d3/deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
 char PROD_PID_FAYE[512]       = "/home/zeroc0d3/deploy/tmp/pids/faye.pid";             // Production Path PID Faye
+char PROD_PID_PUSHR[512]      = "/home/zeroc0d3/deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
+char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+
 char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
 char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
 char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Production Path of Rackup Binary
@@ -116,14 +142,14 @@ void get_folder()
 
 void logo()
 {
-    // printf("\033[22;31m--------------------------------------------------------------------------\033[0m\n");
+    // printf("\033[22;32m==========================================================================\033[0m\n");
     // printf("\033[22;31m  __________                  _________ _______       .___________        \033[0m\n");
     // printf("\033[22;31m  \____    /___________  ____ \_   ___ \\   _  \    __| _/\_____  \  LAB  \033[0m\n");
     // printf("\033[22;31m    /     // __ \_  __ \/  _ \/    \  \//  /_\  \  / __ |   _(__  <       \033[0m\n");
     // printf("\033[22;31m   /     /\  ___/|  | \(  <_> )     \___\  \_/   \/ /_/ |  /       \      \033[0m\n");
     // printf("\033[22;31m  /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /      \033[0m\n");
     // printf("\033[22;31m          \/   \/                     \/       \/      \/        \/       \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m==========================================================================\033[0m\n");
     printf("\033[22;34m  ZeroC0D3 Ruby Deploy                                                    \033[0m\n");
     printf("\033[22;34m  (c) 2017 ZeroC0D3 Team                                                  \033[0m\n");
 }
@@ -132,14 +158,14 @@ void header()
 {
     system("clear");
     logo();
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m==========================================================================\033[0m\n");
     get_time();
     printf("\033[22;31m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
     printf("\033[22;31m# Start at: %s  \033[0m\n", DATE_TIME);
 }
 
 void footer() {
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m==========================================================================\033[0m\n");
     get_time();
     printf("\033[22;31m# Finish at: %s  \033[0m\n", DATE_TIME);
     printf("\033[22;31m# END PROCESS.....                  \033[0m\n\n");
@@ -149,17 +175,27 @@ void menu()
 {
     system("clear");
     logo();
+    printf("\033[22;32m==========================================================================\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -nr            --> Restart NGINX                          \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -no            --> Reload NGINX                           \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -r             --> Restart NGINX                           \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -o             --> Reload NGINX                            \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -a             --> Assets Precompile                       \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -c             --> Assets Clobber (Rollback)               \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -n             --> Restart Unicorn                         \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -f             --> Restart Faye                            \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -up            --> Server Up                               \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -down          --> Server Down                             \033[0m\n");
-    printf("\033[22;34m # ./rb_deploy -deploy / -dep --> Running Deploy                          \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n\n");
+    printf("\033[22;34m  # ./rb_deploy -ap            --> Assets Precompile                      \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ac            --> Assets Clobber (Rollback)              \033[0m\n");
+    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
+    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
+    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -up            --> Server Up                              \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -down          --> Server Down                            \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -deploy / -dep --> Running Deploy                         \033[0m\n");
+    printf("\033[22;32m==========================================================================\033[0m\n\n");
 }
 
 /* --------------------------------------- 
@@ -172,8 +208,12 @@ void select_env()
         sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
         sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
         sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
+        sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
+        sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
         sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
+        sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
+        sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
         sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
         sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
@@ -185,8 +225,12 @@ void select_env()
         sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
         sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
         sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
+        sprintf(CONFIG_PUSHR, "%s", PROD_CONFIG_PUSHR);
+        sprintf(CONFIG_SIDEKIQ, "%s", PROD_CONFIG_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
         sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
+        sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
+        sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
         sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
         sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
@@ -249,6 +293,40 @@ void nginx_reload()
 }
 
 /* --------------------------------------- 
+        MONGODB 
+   --------------------------------------- */
+void mongodb_start()
+{
+    char STR_DESCRIPTION[300] = "Start MongoDB Service";
+    char STR_SERVICE[300]     = "MongoDB Start...";
+    char STR_COMMAND[1024]    = "sudo /etc/init.d/mongodb start";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void mongodb_stop()
+{
+    char STR_DESCRIPTION[300] = "Stop MongoDB Service";
+    char STR_SERVICE[300]     = "MongoDB Stop...";
+    char STR_COMMAND[1024]    = "sudo /etc/init.d/mongodb stop";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void restart_mongodb_process()
+{
+    mongodb_stop();
+    mongodb_start();
+}
+
+void restart_mongodb()
+{
+    header();
+    restart_mongodb_process();
+    footer();
+}
+
+/* --------------------------------------- 
         Assets
    --------------------------------------- */
 void asset_precompile()
@@ -257,7 +335,7 @@ void asset_precompile()
     char STR_DESCRIPTION[300] = "Precompile Assets";
     char STR_SERVICE[300]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "%s assets:precompile RAILS_ENV=%s --trace", PATH_RAKE, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_RAKE, ENV);
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -270,7 +348,7 @@ void asset_rollback()
     char STR_DESCRIPTION[300] = "Rollback Assets";
     char STR_SERVICE[300]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "%s assets:clobber RAILS_ENV=%s --trace", PATH_RAKE, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_RAKE, ENV);
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -296,7 +374,7 @@ void run_unicorn()
     char STR_DESCRIPTION[300] = "Run Unicorn Service";
     char STR_SERVICE[300]     = "Unicorn Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s && %s -D -c %s -E %s", APP_ROOT, PATH_UNICORN, CONFIG_UNICORN, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s -D -c %s -E %s", APP_ROOT, PATH_UNICORN, CONFIG_UNICORN, ENV);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -333,7 +411,7 @@ void run_faye()
     char STR_DESCRIPTION[300] = "Run Faye Service";
     char STR_SERVICE[300]     = "Faye Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s && RAILS_ENV=%s %s %s -E %s -o 0.0.0.0 -D -P %s", APP_ROOT, ENV, PATH_RACKUP, CONFIG_FAYE, ENV, PID_FAYE);
+    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s %s -E %s -o 0.0.0.0 -D -P %s", APP_ROOT, ENV, PATH_RACKUP, CONFIG_FAYE, ENV, PID_FAYE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -348,6 +426,74 @@ void restart_faye()
 {
     header();
     restart_faye_process();
+    footer();
+}
+
+/* --------------------------------------- 
+        Pushr
+   --------------------------------------- */
+void kill_pushr()
+{
+    char STR_DESCRIPTION[300] = "Stop Pushr Service";
+    char STR_SERVICE[300]     = "Pushr Terminated...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i pushr | awk {'print $2'} | sudo xargs kill -9";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_pushr()
+{
+    char STR_DESCRIPTION[256] = "Run Pushr Service";
+    char STR_SERVICE[256]     = "Pushr Running...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s exec pushr -c %s -p %s >> %s", APP_ROOT, ENV, PATH_BUNDLE, CONFIG_PUSHR, PID_PUSHR, LOG_PUSHR);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+}
+
+void restart_pushr_process()
+{
+    kill_pushr();
+    run_pushr();
+}
+
+void restart_pushr()
+{
+    header();
+    restart_pushr_process();
+    footer();
+}
+
+/* --------------------------------------- 
+        Sidekiq
+   --------------------------------------- */
+void kill_sidekiq()
+{
+    char STR_DESCRIPTION[300] = "Stop Sidekiq Service";
+    char STR_SERVICE[300]     = "Sidekiq Terminated...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i sidekiq | awk {'print $2'} | sudo xargs kill -9";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_sidekiq()
+{
+    char STR_DESCRIPTION[256] = "Run Sidekiq Service";
+    char STR_SERVICE[256]     = "Sidekiq Running...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, LOG_SIDEKIQ);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+}
+
+void restart_sidekiq_process()
+{
+    kill_sidekiq();
+    run_sidekiq();
+}
+
+void restart_sidekiq()
+{
+    header();
+    restart_sidekiq_process();
     footer();
 }
 
@@ -380,8 +526,7 @@ void git_clone()
     char STR_SERVICE[300]     = "Cloning Process...";
     char STR_COMMAND[1024];
     get_folder();
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-    sprintf(STR_COMMAND, "git clone %s %s", REPO_NAME, STR_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; git clone %s %s", APP_ROOT, REPO_NAME, STR_FOLDER);
     //printf("%s, %s, %s", STR_FOLDER, SNAP_FOLDER, REPO_BRANCHR_COMMAND);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
@@ -392,8 +537,10 @@ void change_branch()
     char STR_DESCRIPTION[300] = "Setup Branch";
     char STR_SERVICE[300]     = "Changing Branch...";
     char STR_COMMAND[1024];
-
-    sprintf(STR_COMMAND, "cd %s && git checkout %s", STR_FOLDER, REPO_BRANCH);
+    // Goto App Path Release
+    // Checkout Branch
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; git checkout %s", STR_FOLDER, REPO_BRANCH);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -404,8 +551,9 @@ void install_bundle()
     char STR_DESCRIPTION[300] = "Install Bundle";
     char STR_SERVICE[300]     = "Running: `gem install bundle`...";
     char STR_COMMAND[1024];
-
-    sprintf(STR_COMMAND, "%s install bundle", PATH_GEM);
+    // Goto App Path Release
+    // Run: gem install bundle
+    sprintf(STR_COMMAND, "cd %s; %s install bundle", STR_FOLDER, PATH_GEM);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -416,8 +564,9 @@ void install_package()
     char STR_DESCRIPTION[300] = "Install Ruby Package";
     char STR_SERVICE[300]     = "Running: `bundle install`...";
     char STR_COMMAND[1024];
-
-    sprintf(STR_COMMAND, "%s install", PATH_BUNDLE);
+    // Goto App Path Release
+    // Run: bundle install
+    sprintf(STR_COMMAND, "cd %s; %s install", STR_FOLDER, PATH_BUNDLE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -428,8 +577,9 @@ void initialize_shared()
     char STR_DESCRIPTION[300] = "Initialize Shared Folder";
     char STR_SERVICE[300]     = "Initializing Shared Folder...";
     char STR_COMMAND[1024];
-
-    sprintf(STR_COMMAND, "mkdir -p %s/%s", APP_ROOT, APP_SHARED);
+    // Goto Root App
+    // Create Shared Folder
+    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_SHARED);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -440,8 +590,9 @@ void initialize_current()
     char STR_DESCRIPTION[300] = "Initialize Current Folder";
     char STR_SERVICE[300]     = "Initializing Current Folder...";
     char STR_COMMAND[1024];
-
-    sprintf(STR_COMMAND, "mkdir -p %s/%s", APP_ROOT, APP_CURRENT);
+    // Goto Root App
+    // Create Current Folder
+    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_CURRENT);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -494,18 +645,30 @@ int main(int argc, char **argv) {
         return (EXIT_SUCCESS);
     }
         
-    if (strcmp(argv[1], "-r") == 0) {
+    if (strcmp(argv[1], "-nr") == 0) {
         nginx_restart();
-    } else if (strcmp(argv[1], "-o") == 0) {
+    } else if (strcmp(argv[1], "-no") == 0) {
         nginx_reload();
-    } else if (strcmp(argv[1], "-a") == 0) {
+    } else if (strcmp(argv[1], "-ap") == 0) {
         asset_precompile();
-    } else if (strcmp(argv[1], "-c") == 0) {
+    } else if (strcmp(argv[1], "-ac") == 0) {
         asset_rollback(); 
-    } else if (strcmp(argv[1], "-n") == 0) {
+    } else if (strcmp(argv[1], "-ru") == 0) {
         restart_unicorn();
-    } else if (strcmp(argv[1], "-f") == 0) {
+    } else if (strcmp(argv[1], "-rf") == 0) {
         restart_faye();
+    } else if (strcmp(argv[1], "-rp") == 0) {
+        restart_pushr();
+    } else if (strcmp(argv[1], "-rm") == 0) {
+        restart_mongodb();
+    } else if (strcmp(argv[1], "-rq") == 0) {
+        restart_sidekiq();
+    } else if (strcmp(argv[1], "-df") == 0) {
+        kill_faye();
+    } else if (strcmp(argv[1], "-dp") == 0) {
+        kill_pushr();
+    } else if (strcmp(argv[1], "-dq") == 0) {
+        kill_sidekiq();
     } else if (strcmp(argv[1], "-up") == 0) {
         server_up(); 
     } else if (strcmp(argv[1], "-down") == 0) {
