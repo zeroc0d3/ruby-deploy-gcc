@@ -187,10 +187,12 @@ void menu()
     printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -up            --> Server Up                              \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -down          --> Server Down                            \033[0m\n");
@@ -323,6 +325,40 @@ void restart_mongodb()
 {
     header();
     restart_mongodb_process();
+    footer();
+}
+
+/* --------------------------------------- 
+        REDIS 
+   --------------------------------------- */
+void redis_start()
+{
+    char STR_DESCRIPTION[300] = "Start Redis Service (Daemonize)";
+    char STR_SERVICE[300]     = "Redis Start...";
+    char STR_COMMAND[1024]    = "redis-server --daemonize yes";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void redis_stop()
+{
+    char STR_DESCRIPTION[300] = "Stop Redis Service";
+    char STR_SERVICE[300]     = "Redis Stop...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i redis-server | awk {'print $2'} | sudo xargs kill -9";
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void restart_redis_process()
+{
+    redis_stop();
+    redis_start();
+}
+
+void restart_redis()
+{
+    header();
+    restart_redis_process();
     footer();
 }
 
@@ -641,10 +677,10 @@ void deploy()
 int main(int argc, char **argv) {
 
     if ((argc != 2)) {
-        menu();        
+        menu();
         return (EXIT_SUCCESS);
     }
-        
+
     if (strcmp(argv[1], "-nr") == 0) {
         nginx_restart();
     } else if (strcmp(argv[1], "-no") == 0) {
@@ -653,6 +689,7 @@ int main(int argc, char **argv) {
         asset_precompile();
     } else if (strcmp(argv[1], "-ac") == 0) {
         asset_rollback(); 
+
     } else if (strcmp(argv[1], "-ru") == 0) {
         restart_unicorn();
     } else if (strcmp(argv[1], "-rf") == 0) {
@@ -663,12 +700,20 @@ int main(int argc, char **argv) {
         restart_mongodb();
     } else if (strcmp(argv[1], "-rq") == 0) {
         restart_sidekiq();
+    } else if (strcmp(argv[1], "-rs") == 0) {
+        restart_redis();
+
     } else if (strcmp(argv[1], "-df") == 0) {
         kill_faye();
     } else if (strcmp(argv[1], "-dp") == 0) {
         kill_pushr();
+    } else if (strcmp(argv[1], "-dm") == 0) {
+        mongodb_stop();
     } else if (strcmp(argv[1], "-dq") == 0) {
         kill_sidekiq();
+    } else if (strcmp(argv[1], "-ds") == 0) {
+        redis_stop();
+
     } else if (strcmp(argv[1], "-up") == 0) {
         server_up(); 
     } else if (strcmp(argv[1], "-down") == 0) {

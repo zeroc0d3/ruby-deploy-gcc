@@ -3,6 +3,55 @@ Ruby Deploy build with GCC
 
 ![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy2.png)
 
+```
+==========================================================================
+  ZeroC0D3 Ruby Deploy                                                    
+  (c) 2017 ZeroC0D3 Team                                                  
+==========================================================================
+  # ./rb_deploy -nr            --> Restart NGINX                          
+  # ./rb_deploy -no            --> Reload NGINX                           
+--------------------------------------------------------------------------
+  # ./rb_deploy -ap            --> Assets Precompile                      
+  # ./rb_deploy -ac            --> Assets Clobber (Rollback)              
+--------------------------------------------------------------------------
+  # ./rb_deploy -ru            --> Restart Unicorn                        
+  # ./rb_deploy -rf            --> Restart Faye                           
+  # ./rb_deploy -rp            --> Restart Pushr                          
+  # ./rb_deploy -rm            --> Restart MongoDB                        
+  # ./rb_deploy -rq            --> Restart Sidekiq                        
+  # ./rb_deploy -rs            --> Restart Redis                          
+--------------------------------------------------------------------------
+  # ./rb_deploy -df            --> Stop Faye                              
+  # ./rb_deploy -dp            --> Stop Pushr                             
+  # ./rb_deploy -dq            --> Stop Sidekiq                           
+  # ./rb_deploy -ds            --> Stop Redis                             
+--------------------------------------------------------------------------
+  # ./rb_deploy -up            --> Server Up                              
+  # ./rb_deploy -down          --> Server Down                            
+  # ./rb_deploy -deploy / -dep --> Running Deploy                         
+==========================================================================
+```
+## Deploy Process
+* Clone Repository to Unix DateTime Release Folder
+* Checkout Branch
+* Remove Shared Folders
+* Remove Shared Files
+* Create Symlink Shared Folders
+* Create Symlink Shared Files
+* Install Bundle  (gem install bundle)
+* Install Package (bundle install)
+* Compile Assets 
+* Install NPM [optional]
+* Migrate Database
+* Seed Database
+* Create Symlink Release -> Current
+* Service Unicorn Stop
+* Service Unicorn Start
+* FINISH
+    
+### **Note** 
+On Failed, Remove Unix DateTime Release Folder
+
 ## Configuration
 * Clone this repo
 * Add `rb_deploy.c` and `make-rb_deploy` to your root path of Ruby or Rails project
@@ -24,11 +73,16 @@ Ruby Deploy build with GCC
 * Setup Your Binary Path
   Hint: `which [binary]` (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
   ```
+  // Development Environment
   char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                            // Development Root Path
   char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";  // Development Unicorn Config
   char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                    // Development Faye Config
+  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";// Development Pushr Config
+  char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";         // Development Sidekiq Config
   char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";       // Development Path PID Unicorn
   char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";          // Development Path PID Faye
+  char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";           // Development Path PID Pushr
+  char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";         // Development Path PID Sidekiq
   char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
   char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
   char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
@@ -39,8 +93,12 @@ Ruby Deploy build with GCC
   char PROD_APP_ROOT[512]       = "/home/zeroc0d3/deploy";                               // Production Root Path
   char PROD_CONFIG_UNICORN[512] = "/home/zeroc0d3/deploy/config/unicorn/production.rb";  // Production Unicorn Config
   char PROD_CONFIG_FAYE[512]    = "/home/zeroc0d3/deploy/faye.ru";                       // Production Faye Config
+  char PROD_CONFIG_PUSHR[512]   = "/home/zeroc0d3/deploy/config/pushr-production.yaml";  // Production Pushr Config
+  char PROD_CONFIG_SIDEKIQ[512] = "/home/zeroc0d3/deploy/config/sidekiq.yml";            // Production Sidekiq Config
   char PROD_PID_UNICORN[512]    = "/home/zeroc0d3/deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
   char PROD_PID_FAYE[512]       = "/home/zeroc0d3/deploy/tmp/pids/faye.pid";             // Production Path PID Faye
+  char PROD_PID_PUSHR[512]      = "/home/zeroc0d3/deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
+  char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
   char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
   char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
   char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Production Path of Rackup Binary
@@ -54,4 +112,19 @@ Ruby Deploy build with GCC
 
 ## Run
 * Running 
-  `./rb_deploy` [options]
+  `./rb_deploy [options]`
+
+## Road Map
+- [X] Nginx `[restart|reload]`
+- [X] Assets Precompile
+- [X] Assets Clobber (Cleanup Compiled)
+- [X] MongoDB `[restart|stop]`
+- [X] Unicorn `[restart|stop]`
+- [X] Faye `[restart|stop]`
+- [X] Pushr `[restart|stop]`
+- [X] Sidekiq `[restart|stop]`
+- [X] Redis `[restart|stop]`
+- [ ] Deploy
+
+## License
+[**MIT License**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/LICENSE)
