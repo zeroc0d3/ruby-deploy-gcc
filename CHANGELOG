@@ -1,3 +1,10 @@
+version 1.2.3
+-------------------
+- Fixing sidekiq service command
+- Fixing symlink 'current' folder from latest repository
+- Add symlink folders (on progress) 
+- Add symlink files (on progress) 
+
 version 1.2.2
 -------------------
 Add dummy test in 'test' folder

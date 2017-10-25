@@ -50,6 +50,8 @@ char APP_ROOT[512];                 // Root Path
 char APP_CURRENT[64] = "current";   // Current Folder
 char APP_RELEASE[64] = "release";   // Release Folder
 char APP_SHARED[64]  = "shared";    // Shared Folder
+char CURRENT_FOLDER[1024];          // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];           // SHARED_FOLDER  = APP_ROOT/APP_SHARED
 
 // GENERAL CONFIGURATION //
 // Config
@@ -583,7 +585,8 @@ void run_sidekiq()
     char STR_DESCRIPTION[256] = "Run Sidekiq Service";
     char STR_SERVICE[256]     = "Sidekiq Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, LOG_SIDEKIQ);
+    // sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, LOG_SIDEKIQ);
+    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq --queue default --index 0 --pidfile %s --environment %s --logfile %s --concurrency 10 --daemon", APP_ROOT, PATH_BUNDLE, PID_SIDEKIQ, ENV, LOG_SIDEKIQ);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
 
@@ -681,15 +684,34 @@ void install_package()
     sleep(1);
 }
 
-void initialize_shared()
+void initialize_shared_folder()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Initialize Shared Folder";
-    char STR_SERVICE[300]     = "Initializing Shared Folder...";
+    char STR_DESCRIPTION[300] = "Initialize Shared Folders";
+    char STR_SERVICE[300]     = "Initializing Shared Folders...";
     char STR_COMMAND[1024];
+    char LOOP_FOLDER_SHARED[1024];
+    char LOOP_PATH_FOLDER_SHARED[1024];
     // Goto Root App
-    // Create Shared Folder
-    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_SHARED);
+    // Looping Create Shared Folders
+    sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FOLDER_SHARED, LOOP_PATH_FOLDER_SHARED);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void initialize_shared_files()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Initialize Shared Files";
+    char STR_SERVICE[300]     = "Initializing Shared Files...";
+    char STR_COMMAND[1024];
+    char LOOP_FILE_SHARED[1024];
+    char LOOP_PATH_FILE_SHARED[1024];
+    // Goto Root App
+    // Looping Create Shared Files
+    sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FILE_SHARED, LOOP_PATH_FILE_SHARED);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -701,8 +723,9 @@ void initialize_current()
     char STR_SERVICE[300]     = "Initializing Current Folder...";
     char STR_COMMAND[1024];
     // Goto Root App
-    // Create Current Folder
-    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_CURRENT);
+    // Symlink Current Folder From Latest Release
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+    sprintf(STR_COMMAND, "cd %s; rm -f %s; ln -s %s %s", APP_ROOT, CURRENT_FOLDER, STR_FOLDER, CURRENT_FOLDER);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -745,7 +768,8 @@ void deploy()
     change_branch();
     install_bundle();
     install_package();
-    initialize_shared();
+    //initialize_shared_folder();
+    //initialize_shared_files();
     initialize_current();
     footer();
 }
