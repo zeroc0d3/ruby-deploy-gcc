@@ -1,23 +1,23 @@
+version 1.2.2
+-------------------
+Add dummy test in 'test' folder
+
 version 1.2.1
 -------------------
 Add mongod for server_up & server_down services
-
 
 version 1.2
 -------------------
 - Add log files
 - Fixing mongodb service run & stop
 
-
 version 1.1
 -------------------
 Update snapshot deploy process
 
-
 version 1.0
 -------------------
 Fixing message & respond services
-
 
 version 0.9
 -------------------

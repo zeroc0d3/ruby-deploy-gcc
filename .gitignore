@@ -1,0 +1,6 @@
+.vscode
+current/**
+release/**
+shared/**
+rb_deploy
+test/dummy
