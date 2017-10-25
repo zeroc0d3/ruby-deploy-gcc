@@ -133,6 +133,15 @@ On Failed Deploy:
 * Running 
   `./rb_deploy [options]`
 
+## Setup For All Users
+* Uncomment
+```
+# sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+# sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
+```
+* Running 
+  `rb_deploy [options]`
+
 ## Road Map
 - [X] Nginx `[restart|reload]`
 - [X] Assets Precompile

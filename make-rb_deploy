@@ -3,3 +3,7 @@
 PATH_PWD=`pwd` 
 cd $PATH_PWD
 gcc -o rb_deploy rb_deploy.c
+
+### Setup for All Users ###
+# sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+# sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy

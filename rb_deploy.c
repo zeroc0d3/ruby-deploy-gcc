@@ -255,17 +255,17 @@ void run_cmd(char STR_SERVICE[300],
              char STR_COMMAND[1024])
 {
     get_time();
-    printf("\n\033[22;34m[ %s ] ##### %s...       \033[0m\n", DATE_TIME, STR_DESCRIPTION);
+    printf("\n\033[22;34m[ %s ] ##### %s     \033[0m\n", DATE_TIME, STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
     ret = system(cmdRun);
     if (!ret) {
         get_time();
         printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-        printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
+        printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     } else {
         get_time();
         printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
-        printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
+        printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     }
 }
 
@@ -274,12 +274,12 @@ void run_kill(char STR_SERVICE[300],
              char STR_COMMAND[1024])
 {
     get_time();
-    printf("\n\033[22;34m[ %s ] ##### %s...       \033[0m\n", DATE_TIME, STR_DESCRIPTION);
+    printf("\n\033[22;34m[ %s ] ##### %s     \033[0m\n", DATE_TIME, STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
     system(cmdRun);
     get_time();
     printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-    printf("\033[22;32m %s...            \033[0m\n", STR_SERVICE);
+    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
 }
 
 /* --------------------------------------- 
