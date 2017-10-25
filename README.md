@@ -1,7 +1,7 @@
 # ruby-deploy-gcc
 Ruby Deploy build with GCC
 
-![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy2.png)
+![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
 
 ```
 ==========================================================================
