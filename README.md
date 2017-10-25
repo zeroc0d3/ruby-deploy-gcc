@@ -31,6 +31,22 @@ Ruby Deploy build with GCC
   # ./rb_deploy -deploy / -dep --> Running Deploy                         
 ==========================================================================
 ```
+
+## Folder Structure
+After successfully deploy, your application would be look's like:
+```
+.
+├── current -> release/201710250642_1508888522
+├── make-rb_deploy
+├── rb_deploy
+├── rb_deploy.c
+├── release
+│   ├── 201710241803_1508842994
+│   ├── 201710241906_1508846808
+│   └── 201710250642_1508888522
+├── shared
+```
+
 ## Deploy Process
 * Clone Repository to Unix DateTime Release Folder
 * Checkout Branch
@@ -47,10 +63,13 @@ Ruby Deploy build with GCC
 * Create Symlink Release -> Current
 * Service Unicorn Stop
 * Service Unicorn Start
-* FINISH
+* **FINISH**
     
-### **Note** 
-On Failed, Remove Unix DateTime Release Folder
+### Deploy Rollback 
+On Failed Deploy:
+* Remove Unix DateTime Release Folder
+* Migration Rollback
+* Do not run service "server_up"
 
 ## Configuration
 * Clone this repo
