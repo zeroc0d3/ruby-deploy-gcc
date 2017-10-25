@@ -717,6 +717,7 @@ void server_up()
     restart_faye_process();
     restart_pushr_process();
     restart_sidekiq_process();
+    restart_mongodb_process();
     footer();
 }
 
@@ -730,6 +731,7 @@ void server_down()
     kill_faye();
     kill_pushr();
     kill_sidekiq();
+    kill_mongodb();
     footer();
 }
 
