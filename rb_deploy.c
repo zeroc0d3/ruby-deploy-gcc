@@ -21,37 +21,20 @@ char DATE_TIME[100];
 char SNAP_FOLDER[100];
 char STR_FOLDER[512];
 
-char* SHARED_FOLDERS[] = {
-    "log", 
-    "tmp/pids", 
-    "tmp/cache", 
-    "tmp/sockets", 
-    "vendor/bundle",
-    "public/uploads", 
-    "public/system", 
-    "public/assets"
-};
-
-char* SHARED_FILES[] = {
-    "config/application.yml",
-    "config/database.yml",
-    "config/mongoid.yml",
-    "config/secrets.yml",
-    "config/sidekiq.yml"
-};
-
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
+char VERSION[16] = "1.2.4";               // Version 
+int NUM_RELEASE  = 10;                    // Maximum Number of Release Folder 
+char ENV[64]     = "development";         // Selected Environment (development / production)
 
-int NUM_RELEASE = 10;               // Maximum Number of Release Folder 
-char ENV[64] = "development";       // Selected Environment (development / production)
-char APP_ROOT[512];                 // Root Path
-char APP_CURRENT[64] = "current";   // Current Folder
-char APP_RELEASE[64] = "release";   // Release Folder
-char APP_SHARED[64]  = "shared";    // Shared Folder
-char CURRENT_FOLDER[1024];          // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
-char SHARED_FOLDER[1024];           // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char APP_ROOT[512];                       // Root Path
+char APP_CURRENT[64] = "current";         // Current Folder
+char APP_RELEASE[64] = "release";         // Release Folder
+char APP_SHARED[64]  = "shared";          // Shared Folder
+char CURRENT_FOLDER[1024];                // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];                 // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char PREINSTALL[64]  = "preinstall.sh";   // Preinstallation Script Before Server-Up
 
 // GENERAL CONFIGURATION //
 // Config
@@ -124,6 +107,24 @@ char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";           
 char PROD_PATH_GEM[512]       = "/home/zeroc0d3/.rbenv/shims/gem";                     // Production Path of Gem Binary
 char PROD_PATH_BUNDLE[512]    = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Production Path of Bundle Binary
 
+char *SHARED_FOLDERS[] = {
+    "log",
+    "tmp/pids",
+    "tmp/cache",
+    "tmp/sockets",
+    "vendor/bundle",
+    "public/uploads",
+    "public/system",
+    "public/assets"};
+
+char *SHARED_FILES[] = {
+    "config/application.yml",
+    "config/database.yml",
+    "config/mongoid.yml",
+    "config/secrets.yml",
+    "config/sidekiq.yml"};
+
+
 /* ======================================= 
         SUB MAIN PROGRAM
    ======================================= */
@@ -161,7 +162,7 @@ void logo()
     // printf("\033[22;31m  /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /      \033[0m\n");
     // printf("\033[22;31m          \/   \/                     \/       \/      \/        \/       \033[0m\n");
     printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;34m  ZeroC0D3 Ruby Deploy                                                    \033[0m\n");
+    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s                                          \033[0m\n", VERSION);
     printf("\033[22;34m  (c) 2017 ZeroC0D3 Team                                                  \033[0m\n");
 }
 
@@ -731,6 +732,24 @@ void initialize_current()
 }
 
 /* --------------------------------------- 
+        Preinstall Script
+   --------------------------------------- */
+void run_preinstall()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Preinstallation";
+    char STR_SERVICE[300]     = "Running Preinstall Configuration...";
+    char STR_COMMAND[1024];
+    // Goto Root App
+    // Symlink preinstall script to 'release' folder
+    // Running Preinstallation in the newest 'release' folder
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+    sprintf(STR_COMMAND, "cd %s; ln -s %s/%s %s; sudo /bin/sh %s", CURRENT_FOLDER, APP_ROOT, PREINSTALL, PREINSTALL, PREINSTALL);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+/* --------------------------------------- 
         Restart Server
    --------------------------------------- */
 void server_up()
@@ -771,6 +790,7 @@ void deploy()
     //initialize_shared_folder();
     //initialize_shared_files();
     initialize_current();
+    run_preinstall();
     footer();
 }
 

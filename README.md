@@ -133,14 +133,14 @@ On Failed Deploy:
 
 ## Make Binary
 * Build your binary deploy
-  `./make-rb-deploy`
+  `./make-rb_deploy`
 
 ## Run
 * Running 
   `./rb_deploy [options]`
 
 ## Setup For All Users
-* Uncomment
+* Uncomment line in file `make-rb_deploy`
   ```
   # sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
   # sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
