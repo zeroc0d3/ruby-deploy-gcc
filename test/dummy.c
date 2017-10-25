@@ -21,35 +21,20 @@ char DATE_TIME[100];
 char SNAP_FOLDER[100];
 char STR_FOLDER[512];
 
-char* SHARED_FOLDERS[] = {
-    "log", 
-    "tmp/pids", 
-    "tmp/cache", 
-    "tmp/sockets", 
-    "vendor/bundle",
-    "public/uploads", 
-    "public/system", 
-    "public/assets"
-};
-
-char* SHARED_FILES[] = {
-    "config/application.yml",
-    "config/database.yml",
-    "config/mongoid.yml",
-    "config/secrets.yml",
-    "config/sidekiq.yml"
-};
-
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
+char VERSION[16] = "1.2.4";               // Version 
+int NUM_RELEASE  = 10;                    // Maximum Number of Release Folder 
+char ENV[64]     = "development";         // Selected Environment (development / production)
 
-int NUM_RELEASE = 10;               // Maximum Number of Release Folder 
-char ENV[64] = "development";       // Selected Environment (development / production)
-char APP_ROOT[512];                 // Root Path
-char APP_CURRENT[64] = "current";   // Current Folder
-char APP_RELEASE[64] = "release";   // Release Folder
-char APP_SHARED[64]  = "shared";    // Shared Folder
+char APP_ROOT[512];                       // Root Path
+char APP_CURRENT[64] = "current";         // Current Folder
+char APP_RELEASE[64] = "release";         // Release Folder
+char APP_SHARED[64]  = "shared";          // Shared Folder
+char CURRENT_FOLDER[1024];                // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];                 // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char PREINSTALL[64]  = "preinstall-dummy.sh";   // Preinstallation Script Before Server-Up
 
 // GENERAL CONFIGURATION //
 // Config
@@ -122,6 +107,24 @@ char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";           
 char PROD_PATH_GEM[512]       = "/home/zeroc0d3/.rbenv/shims/gem";                     // Production Path of Gem Binary
 char PROD_PATH_BUNDLE[512]    = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Production Path of Bundle Binary
 
+char *SHARED_FOLDERS[] = {
+    "log",
+    "tmp/pids",
+    "tmp/cache",
+    "tmp/sockets",
+    "vendor/bundle",
+    "public/uploads",
+    "public/system",
+    "public/assets"};
+
+char *SHARED_FILES[] = {
+    "config/application.yml",
+    "config/database.yml",
+    "config/mongoid.yml",
+    "config/secrets.yml",
+    "config/sidekiq.yml"};
+
+
 /* ======================================= 
         SUB MAIN PROGRAM
    ======================================= */
@@ -159,7 +162,7 @@ void logo()
     // printf("\033[22;31m  /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /      \033[0m\n");
     // printf("\033[22;31m          \/   \/                     \/       \/      \/        \/       \033[0m\n");
     printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;34m  ZeroC0D3 Ruby Deploy                                                    \033[0m\n");
+    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s [DUMMY TEST]                             \033[0m\n", VERSION);
     printf("\033[22;34m  (c) 2017 ZeroC0D3 Team                                                  \033[0m\n");
 }
 
@@ -282,7 +285,6 @@ void run_cmd(char STR_SERVICE[300],
     //     printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
     //     printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     // }
-    // system(cmdRun);
     get_time();
     printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
     printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
@@ -587,7 +589,8 @@ void run_sidekiq()
     char STR_DESCRIPTION[256] = "Run Sidekiq Service";
     char STR_SERVICE[256]     = "Sidekiq Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, LOG_SIDEKIQ);
+    // sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, LOG_SIDEKIQ);
+    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq --queue default --index 0 --pidfile %s --environment %s --logfile %s --concurrency 10 --daemon", APP_ROOT, PATH_BUNDLE, PID_SIDEKIQ, ENV, LOG_SIDEKIQ);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
 
@@ -685,15 +688,34 @@ void install_package()
     sleep(1);
 }
 
-void initialize_shared()
+void initialize_shared_folder()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Initialize Shared Folder";
-    char STR_SERVICE[300]     = "Initializing Shared Folder...";
+    char STR_DESCRIPTION[300] = "Initialize Shared Folders";
+    char STR_SERVICE[300]     = "Initializing Shared Folders...";
     char STR_COMMAND[1024];
+    char LOOP_FOLDER_SHARED[1024];
+    char LOOP_PATH_FOLDER_SHARED[1024];
     // Goto Root App
-    // Create Shared Folder
-    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_SHARED);
+    // Looping Create Shared Folders
+    sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FOLDER_SHARED, LOOP_PATH_FOLDER_SHARED);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void initialize_shared_files()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Initialize Shared Files";
+    char STR_SERVICE[300]     = "Initializing Shared Files...";
+    char STR_COMMAND[1024];
+    char LOOP_FILE_SHARED[1024];
+    char LOOP_PATH_FILE_SHARED[1024];
+    // Goto Root App
+    // Looping Create Shared Files
+    sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FILE_SHARED, LOOP_PATH_FILE_SHARED);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -705,8 +727,26 @@ void initialize_current()
     char STR_SERVICE[300]     = "Initializing Current Folder...";
     char STR_COMMAND[1024];
     // Goto Root App
-    // Create Current Folder
-    sprintf(STR_COMMAND, "cd %s; mkdir -p %s/%s", APP_ROOT, APP_ROOT, APP_CURRENT);
+    // Symlink Current Folder From Latest Release
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+    sprintf(STR_COMMAND, "cd %s; rm -f %s; ln -s %s %s", APP_ROOT, CURRENT_FOLDER, STR_FOLDER, CURRENT_FOLDER);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+/* --------------------------------------- 
+        Preinstall Script
+   --------------------------------------- */
+void run_preinstall()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Preinstallation";
+    char STR_SERVICE[300]     = "Running Preinstall Configuration...";
+    char STR_COMMAND[1024];
+    // Goto Root App
+    // Symlink preinstall script to 'release' folder
+    // Running Preinstallation in the newest 'release' folder
+    sprintf(STR_COMMAND, "cd %s; ln -s %s %s/%s; sudo /bin/sh %s", APP_ROOT, PREINSTALL, STR_FOLDER, PREINSTALL, PREINSTALL);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -749,8 +789,10 @@ void deploy()
     change_branch();
     install_bundle();
     install_package();
-    initialize_shared();
+    //initialize_shared_folder();
+    //initialize_shared_files();
     initialize_current();
+    run_preinstall();
     footer();
 }
 
