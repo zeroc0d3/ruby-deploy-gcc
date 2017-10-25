@@ -44,7 +44,7 @@ After successfully deploy, your application would be look's like:
 │   ├── 201710241803_1508842994
 │   ├── 201710241906_1508846808
 │   └── 201710250642_1508888522
-├── shared
+└── shared
 ```
 
 ## Deploy Process
