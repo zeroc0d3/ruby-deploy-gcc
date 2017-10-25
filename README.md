@@ -135,12 +135,14 @@ On Failed Deploy:
 
 ## Setup For All Users
 * Uncomment
-```
-# sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
-# sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
-```
+  ```
+  # sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+  # sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
+  ```
 * Running 
-  `rb_deploy [options]`
+  ```
+  rb_deploy [options]
+  ```
 
 ## Road Map
 - [X] Nginx `[restart|reload]`

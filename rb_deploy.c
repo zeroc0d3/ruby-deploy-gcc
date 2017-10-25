@@ -65,6 +65,7 @@ char PID_SIDEKIQ[512];               // Path PID Sidekiq
 // Log
 char LOG_PUSHR[512];                // Path Log Pushr
 char LOG_SIDEKIQ[512];              // Path Log Sidekiq
+char LOG_MONGODB[521];              // Path Log MongoDB
 // Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 char PATH_RAKE[512];                // Path of Rake Binary
@@ -88,6 +89,10 @@ char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-b
 char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";           // Development Path PID Pushr
 char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";         // Development Path PID Sidekiq
 
+char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                // Development Path Log Pushr
+char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";              // Development Path Log Sidekiq
+char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                                            // Development Path Log MongoDB
+
 char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
 char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
 char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
@@ -106,6 +111,10 @@ char PROD_PID_UNICORN[512]    = "/home/zeroc0d3/deploy/tmp/pids/unicorn.pid";   
 char PROD_PID_FAYE[512]       = "/home/zeroc0d3/deploy/tmp/pids/faye.pid";             // Production Path PID Faye
 char PROD_PID_PUSHR[512]      = "/home/zeroc0d3/deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
 char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+
+char PROD_LOG_PUSHR[512]      = "/home/zeroc0d3/deploy/log/pushr.log";                 // Production Path Log Pushr
+char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";               // Production Path Log Sidekiq
+char PROD_LOG_MONGODB[521]    = "/var/log/mongodb.log";                                // Production Path Log MongoDB
 
 char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
 char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
@@ -216,6 +225,9 @@ void select_env()
         sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
         sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
+        sprintf(LOG_PUSHR, "%s", DEV_LOG_PUSHR);
+        sprintf(LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
+        sprintf(LOG_MONGODB, "%s", DEV_LOG_MONGODB);        
         sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
         sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
@@ -233,6 +245,9 @@ void select_env()
         sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
         sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
+        sprintf(LOG_PUSHR, "%s", PROD_LOG_PUSHR);
+        sprintf(LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
+        sprintf(LOG_MONGODB, "%s", PROD_LOG_MONGODB);
         sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
         sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
@@ -314,19 +329,21 @@ void nginx_reload()
    --------------------------------------- */
 void kill_mongodb()
 {
-    char STR_DESCRIPTION[300] = "Start MongoDB Service";
-    char STR_SERVICE[300]     = "MongoDB Start...";
-    char STR_COMMAND[1024]    = "sudo /etc/init.d/mongodb start";
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    char STR_DESCRIPTION[300] = "Stop MongoDB Service";
+    char STR_SERVICE[300]     = "MongoDB Stop...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i mongod | awk {'print $2'} | sudo xargs kill -9";
+    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
 void run_mongodb()
 {
-    char STR_DESCRIPTION[300] = "Stop MongoDB Service";
-    char STR_SERVICE[300]     = "MongoDB Stop...";
-    char STR_COMMAND[1024]    = "sudo /etc/init.d/mongodb stop";
-    run_kill(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    select_env();
+    char STR_DESCRIPTION[300] = "Start MongoDB Service";
+    char STR_SERVICE[300]     = "MongoDB Start...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "cd %s; sudo mongod --fork --logpath %s", APP_ROOT, LOG_MONGODB);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
 
