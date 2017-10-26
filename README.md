@@ -38,6 +38,7 @@ After successfully deploy, your application would be look's like:
 .
 ├── current -> release/201710250642_1508888522
 ├── make-rb_deploy
+├── preinstall.sh
 ├── rb_deploy
 ├── rb_deploy.c
 ├── release
@@ -73,7 +74,11 @@ On Failed Deploy:
 
 ## Configuration
 * Clone this repo
-* Add `rb_deploy.c` and `make-rb_deploy` to your root path of Ruby or Rails project
+* Add `rb_deploy.c`, `make-rb_deploy` and `preinstall.sh` to your root path of Ruby or Rails project
+* Setup Number of Release 
+  ```
+  int NUM_RELEASE  = 10; // Maximum Number of Release Folder 
+  ```
 * Setup Environment
   ```
   char ENV[64] = "production";   # for Production
@@ -90,46 +95,80 @@ On Failed Deploy:
   char PROD_APP_ROOT[512] = "/home/zeroc0d3/deploy";                                 // Production Root Path
   ```
 * Setup Your Binary Path
-  Hint: `which [binary]` (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
+  Hint: `which [binary]` 
+  (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
   ```
+  // DEVELOPMENT CONFIGURATION //
   // Development Environment
-  char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                            // Development Root Path
-  char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";  // Development Unicorn Config
-  char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                    // Development Faye Config
-  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";// Development Pushr Config
-  char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";         // Development Sidekiq Config
-  char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";       // Development Path PID Unicorn
-  char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";          // Development Path PID Faye
-  char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";           // Development Path PID Pushr
-  char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";         // Development Path PID Sidekiq
-  char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                // Development Path Log Pushr
-  char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";              // Development Path Log Sidekiq
-  char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                                            // Development Path Log MongoDB
+  char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                                // Development Root Path
+  char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";      // Development Unicorn Config
+  char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                        // Development Faye Config
+  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";  // Development Pushr Config
+  char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";             // Development Sidekiq Config
+
+  char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
+  char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";              // Development Path PID Faye
+  char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";             // Development Path PID Pushr
+  char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
+
+  char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                  // Development Path Log Pushr
+  char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";                // Development Path Log Sidekiq
+  char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                // Development Path Log MongoDB
+
   char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
+  // < Rails v5.0
   char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
+  // >= Rails v5.0
+  char DEV_PATH_RAILS[512]      = "/home/zeroc0d3/.rbenv/shims/rails";                   // Development Path of Rails Binary
   char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
   char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                     // Development Path of Gem Binary
   char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Development Path of Bundle Binary
 
+  // PRODUCTION CONFIGURATION //
   // Production Environment
   char PROD_APP_ROOT[512]       = "/home/zeroc0d3/deploy";                               // Production Root Path
   char PROD_CONFIG_UNICORN[512] = "/home/zeroc0d3/deploy/config/unicorn/production.rb";  // Production Unicorn Config
   char PROD_CONFIG_FAYE[512]    = "/home/zeroc0d3/deploy/faye.ru";                       // Production Faye Config
   char PROD_CONFIG_PUSHR[512]   = "/home/zeroc0d3/deploy/config/pushr-production.yaml";  // Production Pushr Config
   char PROD_CONFIG_SIDEKIQ[512] = "/home/zeroc0d3/deploy/config/sidekiq.yml";            // Production Sidekiq Config
+
   char PROD_PID_UNICORN[512]    = "/home/zeroc0d3/deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
   char PROD_PID_FAYE[512]       = "/home/zeroc0d3/deploy/tmp/pids/faye.pid";             // Production Path PID Faye
   char PROD_PID_PUSHR[512]      = "/home/zeroc0d3/deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
   char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+
   char PROD_LOG_PUSHR[512]      = "/home/zeroc0d3/deploy/log/pushr.log";                 // Production Path Log Pushr
   char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";               // Production Path Log Sidekiq
   char PROD_LOG_MONGODB[521]    = "/var/log/mongodb.log";                                // Production Path Log MongoDB
+
   char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
+  // < Rails v5.0
   char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
+  // >= Rails v5.0
+  char PROD_PATH_RAILS[512]     = "/home/zeroc0d3/.rbenv/shims/rails";                   // Production Path of Rails Binary
   char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Production Path of Rackup Binary
   char PROD_PATH_GEM[512]       = "/home/zeroc0d3/.rbenv/shims/gem";                     // Production Path of Gem Binary
   char PROD_PATH_BUNDLE[512]    = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Production Path of Bundle Binary
   ```   
+* Setup Shared Folders & Files
+  ```
+  char *SHARED_FOLDERS[] = {
+    "log",
+    "tmp/pids",
+    "tmp/cache",
+    "tmp/sockets",
+    "vendor/bundle",
+    "public/uploads",
+    "public/system",
+    "public/assets"};
+
+  char *SHARED_FILES[] = {
+    "config/application.yml",
+    "config/database.yml",
+    "config/mongoid.yml",
+    "config/secrets.yml",
+    "config/sidekiq.yml"};
+  ```
 
 ## Make Binary
 * Build your binary deploy

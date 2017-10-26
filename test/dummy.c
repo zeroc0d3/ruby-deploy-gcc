@@ -24,7 +24,7 @@ char STR_FOLDER[512];
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.4";               // Version 
+char VERSION[16] = "1.2.5";               // Version 
 int NUM_RELEASE  = 10;                    // Maximum Number of Release Folder 
 char ENV[64]     = "development";         // Selected Environment (development / production)
 
@@ -34,7 +34,7 @@ char APP_RELEASE[64] = "release";         // Release Folder
 char APP_SHARED[64]  = "shared";          // Shared Folder
 char CURRENT_FOLDER[1024];                // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
 char SHARED_FOLDER[1024];                 // SHARED_FOLDER  = APP_ROOT/APP_SHARED
-char PREINSTALL[64]  = "preinstall-dummy.sh";   // Preinstallation Script Before Server-Up
+char PREINSTALL[64]  = "preinstall.sh";   // Preinstallation Script Before Server-Up
 
 // GENERAL CONFIGURATION //
 // Config
@@ -54,6 +54,7 @@ char LOG_MONGODB[521];              // Path Log MongoDB
 // Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 char PATH_RAKE[512];                // Path of Rake Binary
+char PATH_RAILS[512];               // Path of Rails Binary
 char PATH_RACKUP[512];              // Path of Rackup Binary
 char PATH_GEM[512];                 // Path of Gem Binary
 char PATH_BUNDLE[512];              // Path of Bundle Binary
@@ -63,23 +64,26 @@ char REPO_BRANCH[64] = "master";
 
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
-char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                            // Development Root Path
-char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";  // Development Unicorn Config
-char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                    // Development Faye Config
-char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";// Development Pushr Config
-char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";         // Development Sidekiq Config
+char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                                // Development Root Path
+char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";      // Development Unicorn Config
+char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                        // Development Faye Config
+char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";  // Development Pushr Config
+char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";             // Development Sidekiq Config
 
-char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";       // Development Path PID Unicorn
-char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";          // Development Path PID Faye
-char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";           // Development Path PID Pushr
-char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";         // Development Path PID Sidekiq
+char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
+char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";              // Development Path PID Faye
+char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";             // Development Path PID Pushr
+char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
-char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                // Development Path Log Pushr
-char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";              // Development Path Log Sidekiq
-char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                                            // Development Path Log MongoDB
+char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                  // Development Path Log Pushr
+char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";                // Development Path Log Sidekiq
+char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                // Development Path Log MongoDB
 
 char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
+// < Rails v5.0
 char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
+// >= Rails v5.0
+char DEV_PATH_RAILS[512]      = "/home/zeroc0d3/.rbenv/shims/rails";                   // Development Path of Rails Binary
 char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
 char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                     // Development Path of Gem Binary
 char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Development Path of Bundle Binary
@@ -102,7 +106,10 @@ char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";        
 char PROD_LOG_MONGODB[521]    = "/var/log/mongodb.log";                                // Production Path Log MongoDB
 
 char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
+// < Rails v5.0
 char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
+// >= Rails v5.0
+char PROD_PATH_RAILS[512]     = "/home/zeroc0d3/.rbenv/shims/rails";                   // Production Path of Rails Binary
 char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Production Path of Rackup Binary
 char PROD_PATH_GEM[512]       = "/home/zeroc0d3/.rbenv/shims/gem";                     // Production Path of Gem Binary
 char PROD_PATH_BUNDLE[512]    = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Production Path of Bundle Binary
@@ -162,7 +169,7 @@ void logo()
     // printf("\033[22;31m  /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /      \033[0m\n");
     // printf("\033[22;31m          \/   \/                     \/       \/      \/        \/       \033[0m\n");
     printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s [DUMMY TEST]                             \033[0m\n", VERSION);
+    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s                                          \033[0m\n", VERSION);
     printf("\033[22;34m  (c) 2017 ZeroC0D3 Team                                                  \033[0m\n");
 }
 
@@ -233,6 +240,7 @@ void select_env()
         sprintf(LOG_MONGODB, "%s", DEV_LOG_MONGODB);        
         sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
+        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
         sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
         sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
         sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
@@ -253,6 +261,7 @@ void select_env()
         sprintf(LOG_MONGODB, "%s", PROD_LOG_MONGODB);
         sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
+        sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
         sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
         sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
         sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
@@ -735,18 +744,87 @@ void initialize_current()
 }
 
 /* --------------------------------------- 
+        Migration & Seed Data
+   --------------------------------------- */
+void run_migration()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Migration Database";
+    char STR_SERVICE[300]     = "Running Migration Database...";
+    char STR_COMMAND[1024];
+    int FORCE_MIGRATION =  1; // Force Migration on Production Environment
+    
+    // Goto Root App
+    // Running migration database in the newest 'release' folder
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+
+    // < Rails v5.0
+    sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_MIGRATION);
+    // >= Rails v5.0
+    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate STEP=%s RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_MIGRATION);
+
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_seed()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Seed Database";
+    char STR_SERVICE[300]     = "Running Seed Database...";
+    char STR_COMMAND[1024];
+    int FORCE_SEED = 1; // Force Seed on Production Environment
+
+    // Goto Root App
+    // Running seed database in the newest 'release' folder
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+
+    // < Rails v5.0
+    sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_SEED);
+    // >= Rails v5.0
+    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed STEP=%s RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_SEED);
+
+    // NOTE: Specific seed database class
+    // bundle exec rake db:seed SEED_FILES=[class_seed_name] RAILS_ENV=[environment]
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_migration_rollback()
+{
+    select_env();
+    char STR_DESCRIPTION[300] = "Migration Rollback";
+    char STR_SERVICE[300]     = "Running Rollback Migration...";
+    char STR_COMMAND[1024];
+    int ROLLBACK = 1;  // Number of Rollback Step
+
+    // Goto Root App
+    // Running rollback migration in the newest 'release' folder
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+
+    // < Rails v5.0 
+    sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ROLLBACK, ENV);
+    // >= Rails v5.0
+    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%s RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ROLLBACK, ENV);
+
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+/* --------------------------------------- 
         Preinstall Script
    --------------------------------------- */
 void run_preinstall()
 {
     select_env();
     char STR_DESCRIPTION[300] = "Preinstallation";
-    char STR_SERVICE[300]     = "Running Preinstall Configuration...";
+    char STR_SERVICE[300] = "Running Preinstall Configuration...";
     char STR_COMMAND[1024];
     // Goto Root App
     // Symlink preinstall script to 'release' folder
     // Running Preinstallation in the newest 'release' folder
-    sprintf(STR_COMMAND, "cd %s; ln -s %s %s/%s; sudo /bin/sh %s", APP_ROOT, PREINSTALL, STR_FOLDER, PREINSTALL, PREINSTALL);
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+    sprintf(STR_COMMAND, "cd %s; ln -s %s/%s %s; sudo /bin/sh %s", CURRENT_FOLDER, APP_ROOT, PREINSTALL, PREINSTALL, PREINSTALL);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -792,7 +870,18 @@ void deploy()
     //initialize_shared_folder();
     //initialize_shared_files();
     initialize_current();
+    run_migration();
+    run_seed();
     run_preinstall();
+
+    /* --------------------------------------- 
+            Server Up
+       --------------------------------------- */
+    // restart_unicorn_process();
+    // restart_faye_process();
+    // restart_pushr_process();
+    // restart_sidekiq_process();
+    // restart_mongodb_process();
     footer();
 }
 
