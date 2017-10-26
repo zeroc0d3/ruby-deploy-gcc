@@ -1,3 +1,8 @@
+version 1.2.5
+-------------------
+- Add migration & seed database
+- Add migration rollback (on failed)
+
 version 1.2.4
 -------------------
 - Add preinstall script
