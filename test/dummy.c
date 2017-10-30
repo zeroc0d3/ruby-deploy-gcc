@@ -58,7 +58,7 @@ char PATH_BUNDLE[512];              // Path of Bundle Binary
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
 char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
 char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
-char SYS_LOG_NGINX_ERROR[512] = "/var/log/nginx/error.log";          // Path Log NGINX Error
+char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
 char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
 char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
 char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
