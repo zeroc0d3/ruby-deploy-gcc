@@ -119,6 +119,16 @@ On Failed Deploy:
   Hint: `which [binary]` 
   (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
   ```
+  // Log
+  char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
+  char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
+  char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
+  char SYS_LOG_NGINX_ERROR[512] = "/var/log/nginx/error.log";          // Path Log NGINX Error
+  char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
+  char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
+  char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
+  char SYS_LOG_REDIS[521]        = "/var/log/redis/redis-server.log";  // Path Log Redis
+
   // DEVELOPMENT CONFIGURATION //
   // Development Environment
   char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                                // Development Root Path
@@ -134,7 +144,7 @@ On Failed Deploy:
 
   char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                  // Development Path Log Pushr
   char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";                // Development Path Log Sidekiq
-  char DEV_LOG_MONGODB[521]     = "/var/log/mongodb.log";                                // Development Path Log MongoDB
+  char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/unicorn.log";                // Development Path Log Unicorn
 
   char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
   // < Rails v5.0
@@ -160,7 +170,7 @@ On Failed Deploy:
 
   char PROD_LOG_PUSHR[512]      = "/home/zeroc0d3/deploy/log/pushr.log";                 // Production Path Log Pushr
   char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";               // Production Path Log Sidekiq
-  char PROD_LOG_MONGODB[521]    = "/var/log/mongodb.log";                                // Production Path Log MongoDB
+  char PROD_LOG_UNICORN[512]    = "/home/zeroc0d3/deploy/log/unicorn.log";               // Production Path Log Unicorn
 
   char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
   // < Rails v5.0
