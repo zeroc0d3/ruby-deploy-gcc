@@ -1,6 +1,9 @@
 .vscode
+current
 current/**
+release
 release/**
+shared
 shared/**
 rb_deploy
 test/dummy
