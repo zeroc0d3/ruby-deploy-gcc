@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.6                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.7                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### NGINX SERVICES ###                                                  
@@ -100,6 +100,10 @@ On Failed Deploy:
   ```
   int NUM_RELEASE  = 10; // Maximum Number of Release Folder 
   ```
+* Setup Number of Line Log
+  ```
+  int NUM_LOG_VIEW = 50; // Maximum Line Number Viewing Log 
+  ```
 * Setup Environment
   ```
   char ENV[64] = "production";   # for Production
@@ -131,20 +135,20 @@ On Failed Deploy:
 
   // DEVELOPMENT CONFIGURATION //
   // Development Environment
-  char DEV_APP_ROOT[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";                                // Development Root Path
-  char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/unicorn/staging.rb";      // Development Unicorn Config
-  char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/faye.ru";                        // Development Faye Config
-  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/pushr-development.yaml";  // Development Pushr Config
-  char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/config/sidekiq.yml";             // Development Sidekiq Config
+  char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
+  char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/staging.rb";      // Development Unicorn Config
+  char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/faye.ru";                        // Development Faye Config
+  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-development.yaml";  // Development Pushr Config
+  char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/sidekiq.yml";             // Development Sidekiq Config
 
-  char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
-  char DEV_PID_FAYE[512]        = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/faye.pid";              // Development Path PID Faye
-  char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/pushr.pid";             // Development Path PID Pushr
-  char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
+  char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
+  char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/faye.pid";              // Development Path PID Faye
+  char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
+  char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
-  char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                  // Development Path Log Pushr
-  char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";                // Development Path Log Sidekiq
-  char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/unicorn.log";                // Development Path Log Unicorn
+  char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
+  char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
+  char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
 
   char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
   // < Rails v5.0
@@ -157,29 +161,29 @@ On Failed Deploy:
 
   // PRODUCTION CONFIGURATION //
   // Production Environment
-  char PROD_APP_ROOT[512]       = "/home/zeroc0d3/deploy";                               // Production Root Path
-  char PROD_CONFIG_UNICORN[512] = "/home/zeroc0d3/deploy/config/unicorn/production.rb";  // Production Unicorn Config
-  char PROD_CONFIG_FAYE[512]    = "/home/zeroc0d3/deploy/faye.ru";                       // Production Faye Config
-  char PROD_CONFIG_PUSHR[512]   = "/home/zeroc0d3/deploy/config/pushr-production.yaml";  // Production Pushr Config
-  char PROD_CONFIG_SIDEKIQ[512] = "/home/zeroc0d3/deploy/config/sidekiq.yml";            // Production Sidekiq Config
+  char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                               // Production Root Path
+  char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/config/unicorn/production.rb";  // Production Unicorn Config
+  char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/faye.ru";                       // Production Faye Config
+  char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/config/pushr-production.yaml";  // Production Pushr Config
+  char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/config/sidekiq.yml";            // Production Sidekiq Config
 
-  char PROD_PID_UNICORN[512]    = "/home/zeroc0d3/deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
-  char PROD_PID_FAYE[512]       = "/home/zeroc0d3/deploy/tmp/pids/faye.pid";             // Production Path PID Faye
-  char PROD_PID_PUSHR[512]      = "/home/zeroc0d3/deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
-  char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+  char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
+  char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/tmp/pids/faye.pid";             // Production Path PID Faye
+  char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
+  char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
 
-  char PROD_LOG_PUSHR[512]      = "/home/zeroc0d3/deploy/log/pushr.log";                 // Production Path Log Pushr
-  char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";               // Production Path Log Sidekiq
-  char PROD_LOG_UNICORN[512]    = "/home/zeroc0d3/deploy/log/unicorn.log";               // Production Path Log Unicorn
+  char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/log/pushr.log";                 // Production Path Log Pushr
+  char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/log/sidekiq.log";               // Production Path Log Sidekiq
+  char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/log/unicorn.log";               // Production Path Log Unicorn
 
-  char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
+  char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          // Production Path of Unicorn Binary
   // < Rails v5.0
-  char PROD_PATH_RAKE[512]      = "/home/zeroc0d3/.rbenv/shims/rake";                    // Production Path of Rake Binary
+  char PROD_PATH_RAKE[512]      = "/home/deploy/.rbenv/shims/rake";             // Production Path of Rake Binary
   // >= Rails v5.0
-  char PROD_PATH_RAILS[512]     = "/home/zeroc0d3/.rbenv/shims/rails";                   // Production Path of Rails Binary
-  char PROD_PATH_RACKUP[512]    = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Production Path of Rackup Binary
-  char PROD_PATH_GEM[512]       = "/home/zeroc0d3/.rbenv/shims/gem";                     // Production Path of Gem Binary
-  char PROD_PATH_BUNDLE[512]    = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Production Path of Bundle Binary
+  char PROD_PATH_RAILS[512]     = "/home/deploy/.rbenv/shims/rails";            // Production Path of Rails Binary
+  char PROD_PATH_RACKUP[512]    = "/home/deploy/.rbenv/shims/rackup";           // Production Path of Rackup Binary
+  char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
+  char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
   ```   
 * Setup Shared Folders & Files
   ```
