@@ -57,7 +57,8 @@ char PATH_BUNDLE[512];              // Path of Bundle Binary
 // Log
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
 char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
-char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
+char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
+char SYS_LOG_NGINX_ERROR[512] = "/var/log/nginx/error.log";          // Path Log NGINX Error
 char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
 char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
 char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
@@ -82,6 +83,7 @@ char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-b
 
 char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/pushr.log";                  // Development Path Log Pushr
 char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/sidekiq.log";                // Development Path Log Sidekiq
+char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary/log/unicorn.log";                // Development Path Log Unicorn
 
 char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
 // < Rails v5.0
@@ -107,6 +109,7 @@ char PROD_PID_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/tmp/pids/sidekiq.pid";   
 
 char PROD_LOG_PUSHR[512]      = "/home/zeroc0d3/deploy/log/pushr.log";                 // Production Path Log Pushr
 char PROD_LOG_SIDEKIQ[512]    = "/home/zeroc0d3/deploy/log/sidekiq.log";               // Production Path Log Sidekiq
+char PROD_LOG_UNICORN[512]    = "/home/zeroc0d3/deploy/log/unicorn.log";               // Production Path Log Unicorn
 
 char PROD_PATH_UNICORN[512]   = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Production Path of Unicorn Binary
 // < Rails v5.0
@@ -231,6 +234,7 @@ void menu()
     printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### SERVER ###                                                          \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -258,6 +262,7 @@ void select_env()
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
         sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
+        sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
         sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
         sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
@@ -278,6 +283,7 @@ void select_env()
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
         sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
+        sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
         sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
         sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
         sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
@@ -722,6 +728,17 @@ void log_sidekiq()
     footer();
 }
 
+void log_unicorn()
+{
+    char STR_DESCRIPTION[256] = "View Unicorn Log";
+    char STR_SERVICE[256]     = "Viewing Unicorn Log...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_UNICORN);
+    header();
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    footer();
+}
+
 /* --------------------------------------- 
     Deploy Process: 
         1) Clone Repository to Unix DateTime Release Folder
@@ -1048,6 +1065,8 @@ int main(int argc, char **argv) {
         log_pusher();
     } else if (strcmp(argv[1], "-l-sidekiq") == 0){
         log_sidekiq();
+    } else if (strcmp(argv[1], "-l-unicorn") == 0){
+        log_unicorn();    
 
     // Server
     } else if (strcmp(argv[1], "-up") == 0) {

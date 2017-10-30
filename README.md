@@ -43,6 +43,7 @@ Ruby Deploy build with GCC
   # ./rb_deploy -l-redis       --> View Redis Log                         
   # ./rb_deploy -l-pushr       --> View Pushr Log                         
   # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       
+  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       
 --------------------------------------------------------------------------
   ### SERVER ###                                                          
 --------------------------------------------------------------------------
