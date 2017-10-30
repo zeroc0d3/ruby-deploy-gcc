@@ -653,7 +653,7 @@ void stop_sidekiq()
    --------------------------------------- */
 void log_nginx_error()
 {
-    char STR_DESCRIPTION[256] = "View NGINX Error Log";
+    char STR_DESCRIPTION[256] = "View NGINX Error Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_NGINX_ERROR);
@@ -664,7 +664,7 @@ void log_nginx_error()
 
 void log_nginx_access()
 {
-    char STR_DESCRIPTION[256] = "View NGINX Access Log";
+    char STR_DESCRIPTION[256] = "View NGINX Access Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_NGINX_ACCESS);
@@ -675,7 +675,7 @@ void log_nginx_access()
 
 void log_mongodb()
 {
-    char STR_DESCRIPTION[256] = "View MongoDB Log";
+    char STR_DESCRIPTION[256] = "View MongoDB Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing MongoDB Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_MONGODB);
@@ -686,7 +686,7 @@ void log_mongodb()
 
 void log_memcached()
 {
-    char STR_DESCRIPTION[256] = "View Memcached Log";
+    char STR_DESCRIPTION[256] = "View Memcached Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Memcached Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_MEMCACHED);
@@ -697,7 +697,7 @@ void log_memcached()
 
 void log_redis()
 {
-    char STR_DESCRIPTION[256] = "View Redis Log";
+    char STR_DESCRIPTION[256] = "View Redis Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Redis Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_REDIS);
@@ -708,7 +708,7 @@ void log_redis()
 
 void log_pusher()
 {
-    char STR_DESCRIPTION[256] = "View Pushr Log";
+    char STR_DESCRIPTION[256] = "View Pushr Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Pushr Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_PUSHR);
@@ -719,7 +719,7 @@ void log_pusher()
 
 void log_sidekiq()
 {
-    char STR_DESCRIPTION[256] = "View Sidekiq Log";
+    char STR_DESCRIPTION[256] = "View Sidekiq Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Sidekiq Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_SIDEKIQ);
@@ -730,7 +730,7 @@ void log_sidekiq()
 
 void log_unicorn()
 {
-    char STR_DESCRIPTION[256] = "View Unicorn Log";
+    char STR_DESCRIPTION[256] = "View Unicorn Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Unicorn Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f %s", SYS_LOG_UNICORN);
