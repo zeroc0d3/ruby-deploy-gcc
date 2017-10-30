@@ -46,7 +46,7 @@ char CONFIG_SIDEKIQ[512];           // Sidekiq Config
 char PID_UNICORN[512];              // Path PID Unicorn
 char PID_FAYE[512];                 // Path PID Faye
 char PID_PUSHR[512];                // Path PID Pushr
-char PID_SIDEKIQ[512];               // Path PID Sidekiq
+char PID_SIDEKIQ[512];              // Path PID Sidekiq
 // Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 char PATH_RAKE[512];                // Path of Rake Binary
@@ -653,6 +653,7 @@ void stop_sidekiq()
    --------------------------------------- */
 void log_nginx_error()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View NGINX Error Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
@@ -664,6 +665,7 @@ void log_nginx_error()
 
 void log_nginx_access()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View NGINX Access Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
@@ -675,6 +677,7 @@ void log_nginx_access()
 
 void log_mongodb()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View MongoDB Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing MongoDB Log...";
     char STR_COMMAND[1024];
@@ -686,6 +689,7 @@ void log_mongodb()
 
 void log_memcached()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View Memcached Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Memcached Log...";
     char STR_COMMAND[1024];
@@ -697,6 +701,7 @@ void log_memcached()
 
 void log_redis()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View Redis Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Redis Log...";
     char STR_COMMAND[1024];
@@ -708,6 +713,7 @@ void log_redis()
 
 void log_pusher()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View Pushr Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Pushr Log...";
     char STR_COMMAND[1024];
@@ -719,6 +725,7 @@ void log_pusher()
 
 void log_sidekiq()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View Sidekiq Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Sidekiq Log...";
     char STR_COMMAND[1024];
@@ -730,6 +737,7 @@ void log_sidekiq()
 
 void log_unicorn()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "View Unicorn Log (Ctrl+C to Exit)";
     char STR_SERVICE[256]     = "Viewing Unicorn Log...";
     char STR_COMMAND[1024];
