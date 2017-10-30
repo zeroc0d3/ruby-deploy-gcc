@@ -5,14 +5,20 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy                                                    
+  ZeroC0D3 Ruby Deploy :: ver-1.2.6                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
+  ### NGINX SERVICES ###                                                  
+--------------------------------------------------------------------------
   # ./rb_deploy -nr            --> Restart NGINX                          
   # ./rb_deploy -no            --> Reload NGINX                           
 --------------------------------------------------------------------------
+  ### ASSETS SERVICES ###                                                 
+--------------------------------------------------------------------------
   # ./rb_deploy -ap            --> Assets Precompile                      
   # ./rb_deploy -ac            --> Assets Clobber (Rollback)              
+--------------------------------------------------------------------------
+  ### RESTART SERVICES ###                                                
 --------------------------------------------------------------------------
   # ./rb_deploy -ru            --> Restart Unicorn                        
   # ./rb_deploy -rf            --> Restart Faye                           
@@ -21,10 +27,24 @@ Ruby Deploy build with GCC
   # ./rb_deploy -rq            --> Restart Sidekiq                        
   # ./rb_deploy -rs            --> Restart Redis                          
 --------------------------------------------------------------------------
+  ### STOP SERVICES ###                                                   
+--------------------------------------------------------------------------
   # ./rb_deploy -df            --> Stop Faye                              
   # ./rb_deploy -dp            --> Stop Pushr                             
   # ./rb_deploy -dq            --> Stop Sidekiq                           
   # ./rb_deploy -ds            --> Stop Redis                             
+--------------------------------------------------------------------------
+  ### VIEW LOGS ###                                                       
+--------------------------------------------------------------------------
+  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   
+  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  
+  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       
+  # ./rb_deploy -l-memcached   --> View Memcached Log                     
+  # ./rb_deploy -l-redis       --> View Redis Log                         
+  # ./rb_deploy -l-pushr       --> View Pushr Log                         
+  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       
+--------------------------------------------------------------------------
+  ### SERVER ###                                                          
 --------------------------------------------------------------------------
   # ./rb_deploy -up            --> Server Up                              
   # ./rb_deploy -down          --> Server Down                            
