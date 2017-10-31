@@ -461,7 +461,7 @@ void asset_precompile()
     char STR_DESCRIPTION[300] = "Precompile Assets";
     char STR_SERVICE[300]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_RAKE, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -474,7 +474,7 @@ void asset_rollback()
     char STR_DESCRIPTION[300] = "Rollback Assets";
     char STR_SERVICE[300]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_RAKE, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -500,7 +500,7 @@ void run_unicorn()
     char STR_DESCRIPTION[300] = "Run Unicorn Service";
     char STR_SERVICE[300]     = "Unicorn Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s -D -c %s -E %s", APP_ROOT, PATH_UNICORN, CONFIG_UNICORN, ENV);
+    sprintf(STR_COMMAND, "cd %s; %s exec %s -D -c %s -E %s", APP_ROOT, PATH_BUNDLE, PATH_UNICORN, CONFIG_UNICORN, ENV);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
