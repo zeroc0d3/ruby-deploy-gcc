@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.7                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.8                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### NGINX SERVICES ###                                                  
@@ -29,6 +29,7 @@ Ruby Deploy build with GCC
 --------------------------------------------------------------------------
   ### STOP SERVICES ###                                                   
 --------------------------------------------------------------------------
+  # ./rb_deploy -du            --> Stop Unicorn                              
   # ./rb_deploy -df            --> Stop Faye                              
   # ./rb_deploy -dp            --> Stop Pushr                             
   # ./rb_deploy -dq            --> Stop Sidekiq                           
@@ -47,6 +48,7 @@ Ruby Deploy build with GCC
 --------------------------------------------------------------------------
   ### SERVER ###                                                          
 --------------------------------------------------------------------------
+  # ./rb_deploy -key           --> Generate Secret Token                              
   # ./rb_deploy -up            --> Server Up                              
   # ./rb_deploy -down          --> Server Down                            
   # ./rb_deploy -deploy / -dep --> Running Deploy                         
