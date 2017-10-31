@@ -24,18 +24,19 @@ char STR_FOLDER[512];
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.8";               // Version 
-int NUM_RELEASE  = 10;                    // Maximum Number of Release Folder 
-char ENV[64]     = "development";         // Selected Environment (development / production)
-int NUM_LOG_VIEW = 50;                    // Maximum Line Number Viewing Log 
+char VERSION[16]  = "1.2.10";              // Version 
+int NUM_RELEASE   = 10;                    // Maximum Number of Release Folder 
+char ENV[64]      = "development";         // Selected Environment (development / production)
+int NUM_LOG_VIEW  = 50;                    // Maximum Line Number Viewing Log 
+int RAILS_VERSION = 5;                     // Rails Version (default: 5)
 
-char APP_ROOT[512];                       // Root Path
-char APP_CURRENT[64] = "current";         // Current Folder
-char APP_RELEASE[64] = "release";         // Release Folder
-char APP_SHARED[64]  = "shared";          // Shared Folder
-char CURRENT_FOLDER[1024];                // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
-char SHARED_FOLDER[1024];                 // SHARED_FOLDER  = APP_ROOT/APP_SHARED
-char PREINSTALL[64]  = "preinstall.sh";   // Preinstallation Script Before Server-Up
+char APP_ROOT[512];                        // Root Path
+char APP_CURRENT[64] = "current";          // Current Folder
+char APP_RELEASE[64] = "release";          // Release Folder
+char APP_SHARED[64]  = "shared";           // Shared Folder
+char CURRENT_FOLDER[1024];                 // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];                  // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Server-Up
 
 // GENERAL CONFIGURATION //
 // Config
@@ -72,7 +73,7 @@ char REPO_BRANCH[64] = "master";
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
 char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
-char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/staging.rb";      // Development Unicorn Config
+char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/development.rb";  // Development Unicorn Config
 char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/faye.ru";                        // Development Faye Config
 char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-development.yaml";  // Development Pushr Config
 char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/sidekiq.yml";             // Development Sidekiq Config
@@ -203,41 +204,41 @@ void menu()
     printf("\033[22;32m==========================================================================\033[0m\n");
     printf("\033[22;32m  ### NGINX SERVICES ###                                                  \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -nr            --> Restart NGINX                          \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -no            --> Reload NGINX                           \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -nr            --> Restart NGINX                          \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### ASSETS SERVICES ###                                                 \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ap            --> Assets Precompile                      \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -ac            --> Assets Clobber (Rollback)              \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ap            --> Assets Precompile                      \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-memcached   --> View Memcached Log                     \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### SERVER ###                                                          \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -253,29 +254,8 @@ void menu()
    --------------------------------------- */
 void select_env()
 {
-    int environment = strcmp(ENV, "development");
+    int environment = strcmp(ENV, "production");
     if (environment == 0) {
-        sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
-        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
-        sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
-        sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
-        sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
-        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
-        sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
-        sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
-        sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
-        sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
-        sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
-        sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
-        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
-        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
-        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
-        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
-        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
-        sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
-    }
-    else
-    {
         sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
         sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
         sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
@@ -294,6 +274,27 @@ void select_env()
         sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
         sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
         sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
+    }
+    else
+    {
+        sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
+        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
+        sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
+        sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
+        sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
+        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
+        sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
+        sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
+        sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
+        sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
+        sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
+        sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
+        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
+        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
+        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
+        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
+        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
+        sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
     }
 }
 
@@ -323,9 +324,14 @@ void run_cmd(char STR_SERVICE[300],
         printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
         printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     }
-    // get_time();
-    // printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-    // printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    /* --------------------------------- *
+     *          For Test Only            *
+     * --------------------------------- */
+    /*
+    get_time();
+    printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
+    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    */
 }
 
 void run_single(char STR_SERVICE[300],
@@ -461,7 +467,11 @@ void asset_precompile()
     char STR_DESCRIPTION[300] = "Precompile Assets";
     char STR_SERVICE[300]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+    if (RAILS_VERSION >= 5) {
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
+    } else {
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+    }
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -474,7 +484,11 @@ void asset_rollback()
     char STR_DESCRIPTION[300] = "Rollback Assets";
     char STR_SERVICE[300]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+    if (RAILS_VERSION >= 5) {
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
+    } else {
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+    }
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -760,7 +774,11 @@ void generate_secret_token()
     char STR_DESCRIPTION[256] = "Generate Secret Token";
     char STR_SERVICE[256]     = "Secret Token Generated...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "%s secret", PATH_RAKE);
+    if (RAILS_VERSION >= 5) {
+        sprintf(STR_COMMAND, "%s secret", PATH_RAILS);
+    } else {
+        sprintf(STR_COMMAND, "%s secret", PATH_RAKE);
+    }
     header();
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     footer();
@@ -901,11 +919,13 @@ void run_migration()
     // Running migration database in the newest 'release' folder
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
 
-    // < Rails v5.0
-    sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_MIGRATION);
-    // >= Rails v5.0
-    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate STEP=%s RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_MIGRATION);
-
+    if (RAILS_VERSION >= 5) { 
+        // >= Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_MIGRATION);
+    } else {
+        // < Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_MIGRATION);
+    }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -922,11 +942,13 @@ void run_seed()
     // Running seed database in the newest 'release' folder
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
 
-    // < Rails v5.0
-    sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_SEED);
-    // >= Rails v5.0
-    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed STEP=%s RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_SEED);
-
+    if (RAILS_VERSION >= 5) {
+        // >= Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_SEED);
+    } else {
+        // < Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_SEED);
+    }
     // NOTE: Specific seed database class
     // bundle exec rake db:seed SEED_FILES=[class_seed_name] RAILS_ENV=[environment]
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -945,11 +967,13 @@ void run_migration_rollback()
     // Running rollback migration in the newest 'release' folder
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
 
-    // < Rails v5.0 
-    sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ROLLBACK, ENV);
-    // >= Rails v5.0
-    // sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%s RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ROLLBACK, ENV);
-
+    if (RAILS_VERSION >= 5) {
+        // >= Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ROLLBACK, ENV);
+    } else {
+        // < Rails v5.0
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ROLLBACK, ENV);
+    }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1046,14 +1070,12 @@ int main(int argc, char **argv) {
         nginx_reload();
 
     // Assets
-    } else if (strcmp(argv[1], "-ap") == 0) {
-        asset_precompile();
     } else if (strcmp(argv[1], "-ac") == 0) {
         asset_rollback(); 
+    } else if (strcmp(argv[1], "-ap") == 0) {
+        asset_precompile();
 
     // Restart Services
-    } else if (strcmp(argv[1], "-ru") == 0) {
-        restart_unicorn();
     } else if (strcmp(argv[1], "-rf") == 0) {
         restart_faye();
     } else if (strcmp(argv[1], "-rp") == 0) {
@@ -1064,10 +1086,10 @@ int main(int argc, char **argv) {
         restart_sidekiq();
     } else if (strcmp(argv[1], "-rs") == 0) {
         restart_redis();
+    } else if (strcmp(argv[1], "-ru") == 0) {
+        restart_unicorn();
 
     // Stop Services
-    } else if (strcmp(argv[1], "-du") == 0) {
-        stop_unicorn();
     } else if (strcmp(argv[1], "-df") == 0) {
         stop_faye();
     } else if (strcmp(argv[1], "-dp") == 0) {
@@ -1078,16 +1100,14 @@ int main(int argc, char **argv) {
         stop_sidekiq();
     } else if (strcmp(argv[1], "-ds") == 0) {
         stop_redis();
+    } else if (strcmp(argv[1], "-du") == 0) {
+        stop_unicorn();
 
     // View Log
-    } else if (strcmp(argv[1], "-le-nginx") == 0) {
-        log_nginx_error();
-    } else if (strcmp(argv[1], "-la-nginx") == 0) {
-        log_nginx_access();
-    } else if (strcmp(argv[1], "-l-mongodb") == 0) {
-        log_mongodb();
     } else if (strcmp(argv[1], "-l-memcached") == 0) {
         log_memcached();
+    } else if (strcmp(argv[1], "-l-mongodb") == 0) {
+        log_mongodb();
     } else if (strcmp(argv[1], "-l-redis") == 0) {
         log_redis();    
     } else if (strcmp(argv[1], "-l-pushr") == 0) {
@@ -1096,7 +1116,11 @@ int main(int argc, char **argv) {
         log_sidekiq();
     } else if (strcmp(argv[1], "-l-unicorn") == 0){
         log_unicorn();    
-
+    } else if (strcmp(argv[1], "-la-nginx") == 0) {
+        log_nginx_access();
+    } else if (strcmp(argv[1], "-le-nginx") == 0) {
+        log_nginx_error();
+    
     // Server
     } else if (strcmp(argv[1], "-key") == 0) {
         generate_secret_token(); 

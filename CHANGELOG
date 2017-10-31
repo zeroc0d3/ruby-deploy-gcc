@@ -1,3 +1,10 @@
+version 1.2.10
+====================
+- Change environment default for production
+- Add selection running command for different Rails (RAILS_VERSION)
+  Rails >= 5, using "bundle exec rails"
+  Rails < 5, using "bundle exec rake" 
+
 version 1.2.9
 ====================
 Running `bundle exec` for
