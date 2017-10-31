@@ -24,7 +24,7 @@ char STR_FOLDER[512];
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.7";               // Version 
+char VERSION[16] = "1.2.8";               // Version 
 int NUM_RELEASE  = 10;                    // Maximum Number of Release Folder 
 char ENV[64]     = "development";         // Selected Environment (development / production)
 int NUM_LOG_VIEW = 50;                    // Maximum Line Number Viewing Log 
@@ -222,6 +222,7 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
@@ -240,6 +241,7 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### SERVER ###                                                          \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -key           --> Generate Secret Token                  \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -up            --> Server Up                              \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -down          --> Server Down                            \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -deploy / -dep --> Running Deploy                         \033[0m\n");
@@ -750,6 +752,21 @@ void log_unicorn()
 }
 
 /* --------------------------------------- 
+        Generate Secret Token
+   --------------------------------------- */
+void generate_secret_token()
+{
+    select_env();
+    char STR_DESCRIPTION[256] = "Generate Secret Token";
+    char STR_SERVICE[256]     = "Secret Token Generated...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "%s secret", PATH_RAKE);
+    header();
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    footer();
+}
+
+/* --------------------------------------- 
     Deploy Process: 
         1) Clone Repository to Unix DateTime Release Folder
         2) Checkout Branch
@@ -1049,6 +1066,8 @@ int main(int argc, char **argv) {
         restart_redis();
 
     // Stop Services
+    } else if (strcmp(argv[1], "-du") == 0) {
+        stop_unicorn();
     } else if (strcmp(argv[1], "-df") == 0) {
         stop_faye();
     } else if (strcmp(argv[1], "-dp") == 0) {
@@ -1079,6 +1098,8 @@ int main(int argc, char **argv) {
         log_unicorn();    
 
     // Server
+    } else if (strcmp(argv[1], "-key") == 0) {
+        generate_secret_token(); 
     } else if (strcmp(argv[1], "-up") == 0) {
         server_up(); 
     } else if (strcmp(argv[1], "-down") == 0) {

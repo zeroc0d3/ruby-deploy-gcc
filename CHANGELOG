@@ -1,3 +1,8 @@
+version 1.2.8
+====================
+- Add feature generate secret token ("-key" option)
+- Add feature stop unicorn
+
 version 1.2.7
 ====================
 - Add limit number of viewing logs features
