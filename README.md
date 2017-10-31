@@ -5,50 +5,50 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.9                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.10                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### NGINX SERVICES ###                                                  
 --------------------------------------------------------------------------
-  # ./rb_deploy -nr            --> Restart NGINX                          
   # ./rb_deploy -no            --> Reload NGINX                           
+  # ./rb_deploy -nr            --> Restart NGINX                          
 --------------------------------------------------------------------------
   ### ASSETS SERVICES ###                                                 
 --------------------------------------------------------------------------
-  # ./rb_deploy -ap            --> Assets Precompile                      
   # ./rb_deploy -ac            --> Assets Clobber (Rollback)              
+  # ./rb_deploy -ap            --> Assets Precompile                      
 --------------------------------------------------------------------------
   ### RESTART SERVICES ###                                                
 --------------------------------------------------------------------------
-  # ./rb_deploy -ru            --> Restart Unicorn                        
   # ./rb_deploy -rf            --> Restart Faye                           
-  # ./rb_deploy -rp            --> Restart Pushr                          
   # ./rb_deploy -rm            --> Restart MongoDB                        
+  # ./rb_deploy -rp            --> Restart Pushr                          
   # ./rb_deploy -rq            --> Restart Sidekiq                        
   # ./rb_deploy -rs            --> Restart Redis                          
+  # ./rb_deploy -ru            --> Restart Unicorn                        
 --------------------------------------------------------------------------
   ### STOP SERVICES ###                                                   
 --------------------------------------------------------------------------
-  # ./rb_deploy -du            --> Stop Unicorn                              
   # ./rb_deploy -df            --> Stop Faye                              
   # ./rb_deploy -dp            --> Stop Pushr                             
   # ./rb_deploy -dq            --> Stop Sidekiq                           
   # ./rb_deploy -ds            --> Stop Redis                             
+  # ./rb_deploy -du            --> Stop Unicorn                           
 --------------------------------------------------------------------------
   ### VIEW LOGS ###                                                       
 --------------------------------------------------------------------------
-  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   
-  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  
-  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       
   # ./rb_deploy -l-memcached   --> View Memcached Log                     
-  # ./rb_deploy -l-redis       --> View Redis Log                         
+  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       
   # ./rb_deploy -l-pushr       --> View Pushr Log                         
+  # ./rb_deploy -l-redis       --> View Redis Log                         
   # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       
   # ./rb_deploy -l-unicorn     --> View Unicorn Log                       
+  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  
+  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   
 --------------------------------------------------------------------------
   ### SERVER ###                                                          
 --------------------------------------------------------------------------
-  # ./rb_deploy -key           --> Generate Secret Token                              
+  # ./rb_deploy -key           --> Generate Secret Token                  
   # ./rb_deploy -up            --> Server Up                              
   # ./rb_deploy -down          --> Server Down                            
   # ./rb_deploy -deploy / -dep --> Running Deploy                         
@@ -105,6 +105,10 @@ On Failed Deploy:
 * Setup Number of Line Log
   ```
   int NUM_LOG_VIEW = 50; // Maximum Line Number Viewing Log 
+  ```
+* Setup Rails Version
+  ```
+  int RAILS_VERSION = 5; // Rails Version (default: 5)
   ```
 * Setup Environment
   ```
