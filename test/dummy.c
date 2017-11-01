@@ -24,9 +24,9 @@ char STR_FOLDER[512];
 /* ======================================= 
         CONFIGURATION 
    ======================================= */
-char VERSION[16]  = "1.2.10";              // Version 
+char VERSION[16]  = "1.2.11";              // Version 
 int NUM_RELEASE   = 10;                    // Maximum Number of Release Folder 
-char ENV[64]      = "development";         // Selected Environment (development / production)
+char ENV[64]      = "staging";             // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;                    // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                     // Rails Version (default: 5)
 
@@ -57,6 +57,7 @@ char PATH_RACKUP[512];              // Path of Rackup Binary
 char PATH_GEM[512];                 // Path of Gem Binary
 char PATH_BUNDLE[512];              // Path of Bundle Binary
 // Log
+char SYS_LOG_ENV[512];                                               // Path Log Environment
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
 char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
 char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
@@ -73,9 +74,9 @@ char REPO_BRANCH[64] = "master";
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
 char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
-char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/development.rb";  // Development Unicorn Config
+char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/staging.rb";      // Development Unicorn Config
 char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/faye.ru";                        // Development Faye Config
-char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-development.yaml";  // Development Pushr Config
+char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-staging.yaml";      // Development Pushr Config
 char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/sidekiq.yml";             // Development Sidekiq Config
 
 char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
@@ -83,6 +84,7 @@ char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/faye.pi
 char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
 char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
+char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Environment
 char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
 char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
 char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
@@ -109,6 +111,7 @@ char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/tmp/pids/faye.pid";     
 char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
 char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
 
+char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/log/production.log";            // Production Path Log Environment
 char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/log/pushr.log";                 // Production Path Log Pushr
 char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/log/sidekiq.log";               // Production Path Log Sidekiq
 char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/log/unicorn.log";               // Production Path Log Unicorn
@@ -231,6 +234,7 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-env         --> View Environment's Log                 \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-memcached   --> View Memcached Log                     \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
@@ -265,6 +269,7 @@ void select_env()
         sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
         sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
+        sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
@@ -286,6 +291,7 @@ void select_env()
         sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
         sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
+        sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
@@ -339,7 +345,7 @@ void run_single(char STR_SERVICE[300],
     get_time();
     printf("\n\033[22;34m[ %s ] ##### %s     \033[0m\n", DATE_TIME, STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
-//  system(cmdRun);
+    // system(cmdRun);
     get_time();
     printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
     printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
@@ -667,6 +673,18 @@ void stop_sidekiq()
 /* --------------------------------------- 
         View Log
    --------------------------------------- */
+void log_env()
+{
+    select_env();
+    char STR_DESCRIPTION[256] = "View Environment Log (Ctrl+C to Exit)";
+    char STR_SERVICE[256]     = "Viewing Environment Log...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_ENV);
+    header();
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    footer();
+}
+
 void log_nginx_error()
 {
     select_env();
@@ -1102,6 +1120,8 @@ int main(int argc, char **argv) {
         stop_unicorn();
 
     // View Log
+    } else if (strcmp(argv[1], "-l-env") == 0) {
+        log_env();
     } else if (strcmp(argv[1], "-l-memcached") == 0) {
         log_memcached();
     } else if (strcmp(argv[1], "-l-mongodb") == 0) {

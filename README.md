@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.10                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.11                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### NGINX SERVICES ###                                                  
@@ -37,6 +37,7 @@ Ruby Deploy build with GCC
 --------------------------------------------------------------------------
   ### VIEW LOGS ###                                                       
 --------------------------------------------------------------------------
+  # ./rb_deploy -l-env         --> View Environment's Log                   
   # ./rb_deploy -l-memcached   --> View Memcached Log                     
   # ./rb_deploy -l-mongodb     --> View MongoDB Log                       
   # ./rb_deploy -l-pushr       --> View Pushr Log                         
@@ -113,7 +114,7 @@ On Failed Deploy:
 * Setup Environment
   ```
   char ENV[64] = "production";   # for Production
-  char ENV[64] = "development";  # for Development
+  char ENV[64] = "staging";      # for Development
   ```
 * Setup Repository & Branch
   ```
@@ -130,6 +131,7 @@ On Failed Deploy:
   (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
   ```
   // Log
+  char SYS_LOG_ENV[512];                                               // Path Log Environment
   char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
   char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
   char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
@@ -144,7 +146,7 @@ On Failed Deploy:
   char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
   char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/staging.rb";      // Development Unicorn Config
   char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/faye.ru";                        // Development Faye Config
-  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-development.yaml";  // Development Pushr Config
+  char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-staging.yaml";      // Development Pushr Config
   char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/sidekiq.yml";             // Development Sidekiq Config
 
   char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
@@ -152,6 +154,7 @@ On Failed Deploy:
   char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
   char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
+  char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Environment
   char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
   char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
   char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
@@ -178,6 +181,7 @@ On Failed Deploy:
   char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
   char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
 
+  char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/log/production.log";            // Production Path Log Environment
   char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/log/pushr.log";                 // Production Path Log Pushr
   char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/log/sidekiq.log";               // Production Path Log Sidekiq
   char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/log/unicorn.log";               // Production Path Log Unicorn

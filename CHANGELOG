@@ -1,3 +1,9 @@
+version 1.2.11
+====================
+Add feature show environment logs:
+- log/production.log  (production log)
+- log/staging.log     (development log)
+
 version 1.2.10
 ====================
 - Change environment default for production
