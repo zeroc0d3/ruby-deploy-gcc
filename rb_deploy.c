@@ -84,7 +84,7 @@ char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/faye.pi
 char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
 char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
-char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Environment
+char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/staging.log";                // Development Path Log Environment
 char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
 char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
 char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
