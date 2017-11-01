@@ -8,6 +8,12 @@ Ruby Deploy build with GCC
   ZeroC0D3 Ruby Deploy :: ver-1.2.11                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
+  ### ENVIRONMENT DEPLOY ###                                              
+--------------------------------------------------------------------------
+  # ENVIRONMENT   : staging                                         
+  # PATH ROOT     : /home/zeroc0d3/zeroc0d3-deploy                                         
+  # RAILS VERSION : 5                                         
+--------------------------------------------------------------------------
   ### NGINX SERVICES ###                                                  
 --------------------------------------------------------------------------
   # ./rb_deploy -no            --> Reload NGINX                           

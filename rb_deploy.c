@@ -169,6 +169,58 @@ void get_folder()
     sprintf(SNAP_FOLDER, "%s_%d", buff, buff_unix);
 }
 
+/* --------------------------------------- 
+        Select Environment
+   --------------------------------------- */
+void select_env()
+{
+    int environment = strcmp(ENV, "production");
+    if (environment == 0)
+    {
+        sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
+        sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
+        sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
+        sprintf(CONFIG_PUSHR, "%s", PROD_CONFIG_PUSHR);
+        sprintf(CONFIG_SIDEKIQ, "%s", PROD_CONFIG_SIDEKIQ);
+        sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
+        sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
+        sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
+        sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
+        sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
+        sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
+        sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
+        sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
+        sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
+        sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
+        sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
+        sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
+        sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
+        sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
+    }
+    else
+    {
+        sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
+        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
+        sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
+        sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
+        sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
+        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
+        sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
+        sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
+        sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
+        sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
+        sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
+        sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
+        sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
+        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
+        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
+        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
+        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
+        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
+        sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
+    }
+}
+
 void logo()
 {
     // printf("\033[22;32m==========================================================================\033[0m\n");
@@ -202,9 +254,16 @@ void footer() {
 
 void menu()
 {
+    select_env();
     system("clear");
     logo();
     printf("\033[22;32m==========================================================================\033[0m\n");
+    printf("\033[22;32m  ### ENVIRONMENT DEPLOY ###                                              \033[0m\n");
+    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ENVIRONMENT   : \033[22;32m%s                                         \033[0m\n", ENV);
+    printf("\033[22;34m  # PATH ROOT     : \033[22;32m%s                                         \033[0m\n", APP_ROOT);
+    printf("\033[22;34m  # RAILS VERSION : \033[22;32m%d                                         \033[0m\n", RAILS_VERSION);
+    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### NGINX SERVICES ###                                                  \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -no            --> Reload NGINX                           \033[0m\n");
@@ -251,57 +310,6 @@ void menu()
     printf("\033[22;34m  # ./rb_deploy -down          --> Server Down                            \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -deploy / -dep --> Running Deploy                         \033[0m\n");
     printf("\033[22;32m==========================================================================\033[0m\n\n");
-}
-
-/* --------------------------------------- 
-        Select Environment
-   --------------------------------------- */
-void select_env()
-{
-    int environment = strcmp(ENV, "production");
-    if (environment == 0) {
-        sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
-        sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
-        sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
-        sprintf(CONFIG_PUSHR, "%s", PROD_CONFIG_PUSHR);
-        sprintf(CONFIG_SIDEKIQ, "%s", PROD_CONFIG_SIDEKIQ);
-        sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
-        sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
-        sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
-        sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
-        sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
-        sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
-        sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
-        sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
-        sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
-        sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
-        sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
-        sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
-        sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
-        sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
-    }
-    else
-    {
-        sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
-        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
-        sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
-        sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
-        sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
-        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
-        sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
-        sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
-        sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
-        sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
-        sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
-        sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
-        sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
-        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
-        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
-        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
-        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
-        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
-        sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
-    }
 }
 
 /* --------------------------------------- 
