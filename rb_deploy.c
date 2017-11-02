@@ -20,15 +20,18 @@ char cmdRun[2048];
 char DATE_TIME[100];
 char SNAP_FOLDER[100];
 char STR_FOLDER[512];
+int IS_ERROR_DEPLOY = 0;  // Error Deployment Status   (0 = no error, 1 = still error)
+int IS_ROLLBACK = 0;      // Rollback Status           (0 = no rollback migration, 1 = rollback on failed deploy) 
 
 /* ======================================= 
-        CONFIGURATION 
-   ======================================= */
-char VERSION[16]  = "1.2.11";              // Version 
+CONFIGURATION 
+======================================= */
+char VERSION[16]  = "1.2.12";              // Version 
 int NUM_RELEASE   = 10;                    // Maximum Number of Release Folder 
 char ENV[64]      = "staging";             // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;                    // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                     // Rails Version (default: 5)
+int ENABLE_MIGRATION = 0;                  // Force Enable Migration (0 = disable/default, 1 = enable)
 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
@@ -331,10 +334,12 @@ void run_cmd(char STR_SERVICE[300],
     ret = system(cmdRun);
     if (!ret) {
         get_time();
+        IS_ERROR_DEPLOY = 0; 
         printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
         printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     } else {
         get_time();
+        IS_ERROR_DEPLOY = 1;
         printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
         printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
     }
@@ -1029,8 +1034,12 @@ void server_up()
 {
     header();
     restart_unicorn_process();
-    restart_faye_process();
-    restart_pushr_process();
+    // Production Environment
+    if (strcmp(ENV, "production") == 0)
+    {
+        restart_faye_process();
+        restart_pushr_process();
+    }    
     restart_sidekiq_process();
     restart_mongodb_process();
     footer();
@@ -1043,8 +1052,12 @@ void server_down()
 {
     header();
     kill_unicorn();
-    kill_faye();
-    kill_pushr();
+    // Production Environment
+    if (strcmp(ENV, "production") == 0)
+    {
+        kill_faye();
+        kill_pushr();
+    }
     kill_sidekiq();
     kill_mongodb();
     footer();
@@ -1053,6 +1066,14 @@ void server_down()
 /* --------------------------------------- 
         Deploy
    --------------------------------------- */
+void deploy_rollback()
+{
+    if (IS_ROLLBACK != 0)
+    {
+        run_migration_rollback();
+    }
+}
+
 void deploy()
 {
     header();
@@ -1063,8 +1084,15 @@ void deploy()
     //initialize_shared_folder();
     //initialize_shared_files();
     initialize_current();
-    // run_migration();
-    // run_seed();
+    if (IS_ERROR_DEPLOY == 0) 
+    {
+        if (ENABLE_MIGRATION == 1) {
+            // run_migration();
+            // run_seed();
+        }   
+    } else {
+        // deploy_rollback();
+    }
     run_preinstall();
 
     /* --------------------------------------- 

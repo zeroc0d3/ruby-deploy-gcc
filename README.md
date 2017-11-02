@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.11                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.12                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
