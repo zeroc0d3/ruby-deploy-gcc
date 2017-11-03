@@ -889,22 +889,22 @@ void generate_secret_token()
 
 /* --------------------------------------- 
     Deploy Process: 
-        1) Clone Repository to Unix DateTime Release Folder
-        2) Checkout Branch
-        3) Remove Shared Folders
-        4) Remove Shared Files
-        5) Create Symlink Shared Folders
-        6) Create Symlink Shared Files
-        7) Install Bundle  (gem install bundle)
-        8) Install Package (bundle install)
-        9) Compile Assets 
-        10) Install NPM
-        11) Migrate Database
-        12) Seed Database
-        13) Create Symlink Release -> Current
-        14) Service Unicorn Stop
-        15) Service Unicorn Start
-        16) FINISH
+        1)  [X] Clone Repository to Unix DateTime Release Folder
+        2)  [X] Checkout Branch
+        3)  [X] Install Bundle  (gem install bundle)
+        4)  [X] Install Package (bundle install)
+        5)  [X] Remove Shared Folders
+        6)  [X] Remove Shared Files
+        7)  [X] Create Symlink Shared Folders
+        8)  [X] Create Symlink Shared Files
+        9)  [ ] Compile Assets 
+        10) [ ] Install NPM [**optional**]
+        11) [ ] Migrate Database
+        12) [ ] Seed Database
+        13) [X] Create Symlink Release -> Current
+        14) [ ] Service Unicorn Stop
+        15) [ ] Service Unicorn Start
+        16) **FINISH**
 
         Note: On Failed 
         Remove Unix DateTime Release Folder
@@ -1193,9 +1193,8 @@ void deploy()
     if (ENABLE_BUNDLE_INSTALL == 1) {
         install_package();
     }
-    //initialize_shared_folder();
-    //initialize_shared_files();
-    initialize_current();
+    initialize_shared_folder();
+    initialize_shared_files();
     if (IS_ERROR_DEPLOY == 0) 
     {
         if (ENABLE_MIGRATION == 1) {
@@ -1205,6 +1204,7 @@ void deploy()
     } else {
         // deploy_rollback();
     }
+    initialize_current();
     run_preinstall();
 
     /* --------------------------------------- 
