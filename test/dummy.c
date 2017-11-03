@@ -28,17 +28,17 @@ int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still e
         USER CONFIGURATION 
    ======================================= */
 int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
-char ENV[64]      = "staging";        // Selected Environment (staging / production)
+char ENV[64]      = "production";     // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                // Rails Version (default: 5)
 int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
 int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
 int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
 int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
-int ENABLE_FAYE_SERVICE    = 0;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
-int ENABLE_MONGODB_SERVICE = 0;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
-int ENABLE_PUSHR_SERVICE   = 0;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
-int ENABLE_REDIS_SERVICE   = 0;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
 // Repository
@@ -600,37 +600,53 @@ void stop_redis()
 /* --------------------------------------- 
         Assets
    --------------------------------------- */
-void asset_precompile()
+void asset_precompile_process()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Precompile Assets";
     char STR_SERVICE[512]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    if (RAILS_VERSION >= 5) {
+    if (RAILS_VERSION >= 5)
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
-    } else {
+    }
+    else
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     }
-    header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
+}
+
+void asset_precompile()
+{
+    header();
+    asset_precompile_process();
     footer();
 }
 
-void asset_rollback()
+void asset_rollback_process()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Rollback Assets";
     char STR_SERVICE[512]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    if (RAILS_VERSION >= 5) {
+    if (RAILS_VERSION >= 5)
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
-    } else {
+    }
+    else
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     }
-    header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
+}
+
+void asset_rollback()
+{
+    header();
+    asset_rollback_process();
     footer();
 }
 
@@ -1192,15 +1208,15 @@ void run_preinstall()
    --------------------------------------- */
 void server_up_process()
 {
-    restart_unicorn_process();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
-        restart_faye_process();
-        restart_pushr_process();
+        if (ENABLE_FAYE_SERVICE == 1) { restart_faye_process(); }
+        if (ENABLE_PUSHR_SERVICE == 1) { restart_pushr_process(); }
     }
-    restart_sidekiq_process();
-    restart_mongodb_process();
+    if (ENABLE_MONGODB_SERVICE == 1) { restart_mongodb_process(); }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) { restart_sidekiq_process(); }
+    restart_unicorn_process();
 }
 
 void server_up()
@@ -1215,15 +1231,15 @@ void server_up()
    --------------------------------------- */
 void server_down_process()
 {
-    kill_unicorn();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
-        kill_faye();
-        kill_pushr();
+        if (ENABLE_FAYE_SERVICE == 1) { kill_faye(); }
+        if (ENABLE_PUSHR_SERVICE == 1) { kill_pushr(); }
     }
-    kill_sidekiq();
-    kill_mongodb();
+    if (ENABLE_MONGODB_SERVICE == 1) { kill_mongodb(); }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) { kill_sidekiq(); }
+    kill_unicorn();
 }
 
 void server_down()
@@ -1272,8 +1288,8 @@ void deploy()
     initialize_shared_files();
     if (ENABLE_COMPILE_ASSETS == 1)
     {
-        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback(); }
-        asset_precompile();
+        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback_process(); }
+        asset_precompile_process();
     }
     if (ENABLE_MIGRATION == 1)
     {

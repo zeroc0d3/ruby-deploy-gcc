@@ -348,19 +348,24 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    if (ENABLE_FAYE_SERVICE == 1) {
+    if (ENABLE_FAYE_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
     }
-    if (ENABLE_MONGODB_SERVICE == 1) {
+    if (ENABLE_MONGODB_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
     }
-    if (ENABLE_PUSHR_SERVICE == 1) {
+    if (ENABLE_PUSHR_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
     }
-    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+    if (ENABLE_SIDEKIQ_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
     }
-    if (ENABLE_REDIS_SERVICE == 1) {
+    if (ENABLE_REDIS_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
     }
     printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
@@ -408,7 +413,7 @@ void menu()
     if (ENABLE_SIDEKIQ_SERVICE == 1)
     {
         printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
-    }    
+    }
     printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
@@ -468,9 +473,7 @@ void run_cmd(char STR_SERVICE[512],
     /* --------------------------------- *
      *          For Test Only            *
      * --------------------------------- */
-    /*
-    message_ok(STR_SERVICE);
-    */
+    //message_ok(STR_SERVICE);
 }
 
 void run_single(char STR_SERVICE[512],
@@ -597,37 +600,53 @@ void stop_redis()
 /* --------------------------------------- 
         Assets
    --------------------------------------- */
-void asset_precompile()
+void asset_precompile_process()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Precompile Assets";
     char STR_SERVICE[512]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    if (RAILS_VERSION >= 5) {
+    if (RAILS_VERSION >= 5)
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
-    } else {
+    }
+    else
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     }
-    header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
+}
+
+void asset_precompile()
+{
+    header();
+    asset_precompile_process();
     footer();
 }
 
-void asset_rollback()
+void asset_rollback_process()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Rollback Assets";
     char STR_SERVICE[512]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    if (RAILS_VERSION >= 5) {
+    if (RAILS_VERSION >= 5)
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
-    } else {
+    }
+    else
+    {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
     }
-    header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
+}
+
+void asset_rollback()
+{
+    header();
+    asset_rollback_process();
     footer();
 }
 
@@ -1189,15 +1208,15 @@ void run_preinstall()
    --------------------------------------- */
 void server_up_process()
 {
-    restart_unicorn_process();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
-        restart_faye_process();
-        restart_pushr_process();
+        if (ENABLE_FAYE_SERVICE == 1) { restart_faye_process(); }
+        if (ENABLE_PUSHR_SERVICE == 1) { restart_pushr_process(); }
     }
-    restart_sidekiq_process();
-    restart_mongodb_process();
+    if (ENABLE_MONGODB_SERVICE == 1) { restart_mongodb_process(); }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) { restart_sidekiq_process(); }
+    restart_unicorn_process();
 }
 
 void server_up()
@@ -1212,15 +1231,15 @@ void server_up()
    --------------------------------------- */
 void server_down_process()
 {
-    kill_unicorn();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
-        kill_faye();
-        kill_pushr();
+        if (ENABLE_FAYE_SERVICE == 1) { kill_faye(); }
+        if (ENABLE_PUSHR_SERVICE == 1) { kill_pushr(); }
     }
-    kill_sidekiq();
-    kill_mongodb();
+    if (ENABLE_MONGODB_SERVICE == 1) { kill_mongodb(); }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) { kill_sidekiq(); }
+    kill_unicorn();
 }
 
 void server_down()
@@ -1269,8 +1288,8 @@ void deploy()
     initialize_shared_files();
     if (ENABLE_COMPILE_ASSETS == 1)
     {
-        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback(); }
-        asset_precompile();
+        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback_process(); }
+        asset_precompile_process();
     }
     if (ENABLE_MIGRATION == 1)
     {
