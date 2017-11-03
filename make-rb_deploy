@@ -4,6 +4,13 @@ PATH_PWD=`pwd`
 cd $PATH_PWD
 gcc -o rb_deploy rb_deploy.c
 
-### Setup for All Users ###
+# ======================= #
+#   Setup for All Users   #
+# ======================= #
+# A) Using Compile  
 # sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+
+# B) Using Symlink  
+# sudo ln -s rb_deploy /usr/local/bin/rb_deploy
+
 # sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy

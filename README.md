@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.12                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.13                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
@@ -79,21 +79,21 @@ After successfully deploy, your application would be look's like:
 ```
 
 ## Deploy Process
-* Clone Repository to Unix DateTime Release Folder
-* Checkout Branch
-* Remove Shared Folders
-* Remove Shared Files
-* Create Symlink Shared Folders
-* Create Symlink Shared Files
-* Install Bundle  (gem install bundle)
-* Install Package (bundle install)
-* Compile Assets 
-* Install NPM [optional]
-* Migrate Database
-* Seed Database
-* Create Symlink Release -> Current
-* Service Unicorn Stop
-* Service Unicorn Start
+* - [X] Clone Repository to Unix DateTime Release Folder
+* - [X] Checkout Branch
+* - [X] Install Bundle  (gem install bundle)
+* - [X] Install Package (bundle install)
+* - [X] Remove Shared Folders
+* - [X] Remove Shared Files
+* - [X] Create Symlink Shared Folders
+* - [X] Create Symlink Shared Files
+* - [ ] Compile Assets 
+* - [ ] Install NPM [**optional**]
+* - [ ] Migrate Database
+* - [ ] Seed Database
+* - [X] Create Symlink Release -> Current
+* - [ ] Service Unicorn Stop
+* - [ ] Service Unicorn Start
 * **FINISH**
     
 ## Deploy Rollback 
@@ -105,48 +105,44 @@ On Failed Deploy:
 ## Configuration
 * Clone this repo
 * Add `rb_deploy.c`, `make-rb_deploy` and `preinstall.sh` to your root path of Ruby or Rails project
-* Setup Number of Release 
+* Setup **User** Configuration 
   ```
-  int NUM_RELEASE  = 10; // Maximum Number of Release Folder 
-  ```
-* Setup Number of Line Log
-  ```
-  int NUM_LOG_VIEW = 50; // Maximum Line Number Viewing Log 
-  ```
-* Setup Rails Version
-  ```
-  int RAILS_VERSION = 5; // Rails Version (default: 5)
-  ```
-* Setup Environment
-  ```
-  char ENV[64] = "production";   # for Production
-  char ENV[64] = "staging";      # for Development
-  ```
-* Setup Repository & Branch
-  ```
+  int NUM_RELEASE   = 10;            // Maximum Number of Release Folder 
+  char ENV[64]      = "staging";     // Selected Environment (staging / production)
+  int NUM_LOG_VIEW  = 50;            // Maximum Line Number Viewing Log 
+  int RAILS_VERSION = 5;             // Rails Version (default: 5)
+  int ENABLE_MIGRATION = 0;          // Force Enable Migration (0 = disable/default, 1 = enable)
+  int ENABLE_BUNDLE_INSTALL = 1;     // Enable Running "bundle install"
+
+  // Repository
   char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
   char REPO_BRANCH[64] = "master";
-  ```
-* Setup Your Root Path
-  ```
-  char DEV_APP_ROOT[512]  = "/home/zeroc0d3/ZEROC0D3LAB/ruby-deploy/deploy-binary";  // Development Root Path
-  char PROD_APP_ROOT[512] = "/home/zeroc0d3/deploy";                                 // Production Root Path
-  ```
-* Setup Your Binary Path
-  Hint: `which [binary]` 
-  (eg: `which gem`, `which bundle`, `which unicorn`, `which rake`, `which rakeup`)
-  ```
-  // Log
-  char SYS_LOG_ENV[512];                                               // Path Log Environment
-  char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
-  char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
-  char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
-  char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
-  char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
-  char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
-  char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
-  char SYS_LOG_REDIS[521]        = "/var/log/redis/redis-server.log";  // Path Log Redis
 
+  // Shared Folders
+  char *LIST_SHARED_FOLDERS[] = {
+      "log",
+      "tmp/pids",
+      "tmp/cache",
+      "tmp/sockets",
+      "vendor/bundle",
+      "public/uploads",
+      "public/system",
+      "public/assets",
+      NULL
+  };
+
+  // Shared Files
+  char *LIST_SHARED_FILES[] = {
+      "config/application.yml",
+      "config/database.yml",
+      "config/mongoid.yml",
+      "config/secrets.yml",
+      "config/sidekiq.yml",
+      NULL
+  };
+  ```
+* Setup **Staging/Development** Environment
+  ```
   // DEVELOPMENT CONFIGURATION //
   // Development Environment
   char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
@@ -160,7 +156,7 @@ On Failed Deploy:
   char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
   char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 
-  char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Environment
+  char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/staging.log";                // Development Path Log Environment
   char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
   char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
   char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
@@ -173,7 +169,9 @@ On Failed Deploy:
   char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
   char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                     // Development Path of Gem Binary
   char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Development Path of Bundle Binary
-
+  ```
+* Setup **Production** Environment
+  ```  
   // PRODUCTION CONFIGURATION //
   // Production Environment
   char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                               // Production Root Path
@@ -200,30 +198,43 @@ On Failed Deploy:
   char PROD_PATH_RACKUP[512]    = "/home/deploy/.rbenv/shims/rackup";           // Production Path of Rackup Binary
   char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
   char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
-  ```   
-* Setup Shared Folders & Files
-  ```
-  char *SHARED_FOLDERS[] = {
-    "log",
-    "tmp/pids",
-    "tmp/cache",
-    "tmp/sockets",
-    "vendor/bundle",
-    "public/uploads",
-    "public/system",
-    "public/assets"};
-
-  char *SHARED_FILES[] = {
-    "config/application.yml",
-    "config/database.yml",
-    "config/mongoid.yml",
-    "config/secrets.yml",
-    "config/sidekiq.yml"};
-  ```
+  ``` 
 
 ## Make Binary
 * Build your binary deploy
   `./make-rb_deploy`
+
+## Deploy Target VPS
+* Create Project Folder
+  ```
+  /home/deploy/rb_deploy
+  ```
+* Upload Deployment Tools (after make binary)
+  ```
+  make-rb_deploy
+  rb_deploy.c
+  rb_deploy
+  preinstall.sh
+  ```
+* Upload Shared Folders (example folders)
+  ```
+  "log",
+  "tmp/pids",
+  "tmp/cache",
+  "tmp/sockets",
+  "vendor/bundle",
+  "public/uploads",
+  "public/system",
+  "public/assets",
+  ```
+* Upload Shared Files (example files)
+  ```
+  "config/application.yml",
+  "config/database.yml",
+  "config/mongoid.yml",
+  "config/secrets.yml",
+  "config/sidekiq.yml",
+  ```
 
 ## Run
 * Running 
@@ -232,7 +243,8 @@ On Failed Deploy:
 ## Setup For All Users
 * Uncomment line in file `make-rb_deploy`
   ```
-  # sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+  # sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c     // Using Compile, or 
+  # sudo ln -s rb_deploy /usr/local/bin/rb_deploy        // Using Symlink
   # sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
   ```
 * Running 
@@ -241,16 +253,16 @@ On Failed Deploy:
   ```
 
 ## Road Map
-- [X] Nginx `[restart|reload]`
-- [X] Assets Precompile
-- [X] Assets Clobber (Cleanup Compiled)
-- [X] MongoDB `[restart|stop]`
-- [X] Unicorn `[restart|stop]`
-- [X] Faye `[restart|stop]`
-- [X] Pushr `[restart|stop]`
-- [X] Sidekiq `[restart|stop]`
-- [X] Redis `[restart|stop]`
-- [ ] Deploy
+* - [X] Nginx `[restart|reload]`
+* - [X] Assets Precompile
+* - [X] Assets Clobber (Cleanup Compiled)
+* - [X] MongoDB `[restart|stop]`
+* - [X] Unicorn `[restart|stop]`
+* - [X] Faye `[restart|stop]`
+* - [X] Pushr `[restart|stop]`
+* - [X] Sidekiq `[restart|stop]`
+* - [X] Redis `[restart|stop]`
+* - [ ] Deploy
 
 ## License
 [**MIT License**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/LICENSE)
