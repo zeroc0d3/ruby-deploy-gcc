@@ -35,10 +35,10 @@ int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/def
 int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
 int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
 int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
-int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
-int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
-int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
-int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 0;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 0;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 0;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_REDIS_SERVICE   = 0;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
 // Repository
@@ -348,19 +348,24 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    if (ENABLE_FAYE_SERVICE == 1) {
+    if (ENABLE_FAYE_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
     }
-    if (ENABLE_MONGODB_SERVICE == 1) {
+    if (ENABLE_MONGODB_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
     }
-    if (ENABLE_PUSHR_SERVICE == 1) {
+    if (ENABLE_PUSHR_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
     }
-    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+    if (ENABLE_SIDEKIQ_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
     }
-    if (ENABLE_REDIS_SERVICE == 1) {
+    if (ENABLE_REDIS_SERVICE == 1)
+    {
         printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
     }
     printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
@@ -393,10 +398,22 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-env         --> View Environment's Log                 \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -l-memcached   --> View Memcached Log                     \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
+    if (ENABLE_MONGODB_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
+    }
+    if (ENABLE_PUSHR_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
+    }
+    if (ENABLE_REDIS_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
+    }
     printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
