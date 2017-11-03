@@ -67,16 +67,49 @@ Ruby Deploy build with GCC
 After successfully deploy, your application would be look's like:
 ```
 .
-├── current -> release/201710250642_1508888522
+├── current -> /home/zeroc0d3/rb_deploy/release/201711031754_1509706492
 ├── make-rb_deploy
 ├── preinstall.sh
 ├── rb_deploy
 ├── rb_deploy.c
 ├── release
-│   ├── 201710241803_1508842994
-│   ├── 201710241906_1508846808
-│   └── 201710250642_1508888522
+|    ├── 201711031439_1509694746
+|    ├── 201711031445_1509695138
+|    └── 201711031754_1509706492
+│       ├── config
+│       │   ├── application.yml -> /home/zeroc0d3/rb_deploy/shared/config/database.yml
+│       │   ├── database.yml -> /home/zeroc0d3/rb_deploy/shared/config/database.yml
+│       │   ├── secrets.yml -> /home/zeroc0d3/rb_deploy/shared/config/secrets.yml
+|       │   └── sidekiq.yml -> /home/zeroc0d3/rb_deploy/shared/config/sidekiq.yml
+|       ├── log -> /home/zeroc0d3/rb_deploy/shared/log
+|       ├── public
+|       │   ├── assets -> /home/zeroc0d3/rb_deploy/shared/public/assets
+|       │   ├── uploads -> /home/zeroc0d3/rb_deploy/shared/public/uploads
+|       │   └── system -> /home/zeroc0d3/rb_deploy/shared/public/system
+|       ├── tmp 
+|       │   ├── pids -> /home/zeroc0d3/rb_deploy/shared/tmp/pids
+|       │   ├── cache -> /home/zeroc0d3/rb_deploy/shared/tmp/cache
+|       │   └── sockets -> /home/zeroc0d3/rb_deploy/shared/tmp/sockets
+|       └── vendor
+|           └── bundle -> /home/zeroc0d3/rb_deploy/shared/vendor/bundle
 └── shared
+    ├── config
+    │   ├── application.yml
+    │   ├── database.yml
+    │   ├── mongoid.yml
+    │   ├── secrets.yml
+    │   └── sidekiq.yml
+    ├── log
+    ├── public
+    │   ├── assets
+    │   ├── uploads
+    │   └── system
+    ├── tmp
+    │   ├── pids
+    │   ├── cache
+    │   └── sockets
+    └── vendor
+        └── bundle
 ```
 
 ## Deploy Process
