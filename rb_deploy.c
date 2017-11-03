@@ -27,12 +27,19 @@ int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still e
 /* ======================================= 
         USER CONFIGURATION 
    ======================================= */
-int NUM_RELEASE   = 10;                    // Maximum Number of Release Folder 
-char ENV[64]      = "staging";             // Selected Environment (staging / production)
-int NUM_LOG_VIEW  = 50;                    // Maximum Line Number Viewing Log 
-int RAILS_VERSION = 5;                     // Rails Version (default: 5)
-int ENABLE_MIGRATION = 0;                  // Force Enable Migration (0 = disable/default, 1 = enable)
-int ENABLE_BUNDLE_INSTALL = 1;             // Enable Running "bundle install"
+int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
+char ENV[64]      = "staging";        // Selected Environment (staging / production)
+int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
+int RAILS_VERSION = 5;                // Rails Version (default: 5)
+int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
+int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
+int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
+int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
+int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
 // Repository
 char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
@@ -123,7 +130,7 @@ char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.13";               // Version 
+char VERSION[16] = "1.2.14";               // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -341,19 +348,45 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
+    }
+    if (ENABLE_MONGODB_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
+    }
+    if (ENABLE_PUSHR_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
+    }
+    if (ENABLE_REDIS_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    }
     printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
+    }
+    if (ENABLE_MONGODB_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dm            --> Stop MongoDB                           \033[0m\n");
+    }
+    if (ENABLE_PUSHR_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
+    }
+    if (ENABLE_REDIS_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    }
     printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
@@ -897,13 +930,13 @@ void generate_secret_token()
         6)  [X] Remove Shared Files
         7)  [X] Create Symlink Shared Folders
         8)  [X] Create Symlink Shared Files
-        9)  [ ] Compile Assets 
+        9)  [X] Compile Assets 
         10) [ ] Install NPM [**optional**]
-        11) [ ] Migrate Database
-        12) [ ] Seed Database
+        11) [X] Migrate Database
+        12) [X] Seed Database
         13) [X] Create Symlink Release -> Current
-        14) [ ] Service Unicorn Stop
-        15) [ ] Service Unicorn Start
+        14) [X] Service Unicorn Stop
+        15) [X] Service Unicorn Start
         16) **FINISH**
 
         Note: On Failed 
@@ -989,6 +1022,7 @@ void initialize_shared_folder()
     message_service(STR_DESCRIPTION);
     
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FOLDERS[index] != NULL; ++index)
     {
         sprintf(LOOP_SOURCE_FOLDER_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FOLDERS[index]);
@@ -1016,6 +1050,7 @@ void initialize_shared_files()
     // Goto Root App
     // Looping Create Shared Files
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FILES[index] != NULL; ++index)
     {
         sprintf(LOOP_SOURCE_FILES_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FILES[index]);
@@ -1140,27 +1175,31 @@ void run_preinstall()
 /* --------------------------------------- 
         Restart Server
    --------------------------------------- */
-void server_up()
+void server_up_process()
 {
-    header();
     restart_unicorn_process();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
         restart_faye_process();
         restart_pushr_process();
-    }    
+    }
     restart_sidekiq_process();
     restart_mongodb_process();
+}
+
+void server_up()
+{
+    header();
+    server_up_process();
     footer();
 }
 
 /* --------------------------------------- 
         Shutdown Server
    --------------------------------------- */
-void server_down()
+void server_down_process()
 {
-    header();
     kill_unicorn();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
@@ -1170,6 +1209,12 @@ void server_down()
     }
     kill_sidekiq();
     kill_mongodb();
+}
+
+void server_down()
+{
+    header();
+    server_down_process();
     footer();
 }
 
@@ -1184,6 +1229,21 @@ void deploy_rollback()
     }
 }
 
+void remove_release_clone()
+{
+    select_env();
+    char STR_DESCRIPTION[512] = "Rollback Deploy";
+    char STR_SERVICE[512]     = "Rollingback Deployment Process...";
+    char STR_COMMAND[1024];
+
+    // Goto Root App
+    // Remove All Cloned Folder (SNAP_FOLDER)
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, STR_FOLDER);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
 void deploy()
 {
     header();
@@ -1195,26 +1255,28 @@ void deploy()
     }
     initialize_shared_folder();
     initialize_shared_files();
-    if (IS_ERROR_DEPLOY == 0) 
+    if (ENABLE_COMPILE_ASSETS == 1)
     {
-        if (ENABLE_MIGRATION == 1) {
-            // run_migration();
-            // run_seed();
-        }   
-    } else {
-        // deploy_rollback();
+        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback(); }
+        asset_precompile();
     }
-    initialize_current();
-    run_preinstall();
+    if (ENABLE_MIGRATION == 1)
+    {
+        if (IS_ERROR_DEPLOY == 0) { run_migration(); } else { deploy_rollback(); }
+        if (IS_ERROR_DEPLOY == 0) { run_seed(); } else { deploy_rollback(); }
+    }
+    if (IS_ERROR_DEPLOY == 0)
+    {
+        initialize_current();
+        run_preinstall();
 
-    /* --------------------------------------- 
-            Server Up
-       --------------------------------------- */
-    // restart_unicorn_process();
-    // restart_faye_process();
-    // restart_pushr_process();
-    // restart_sidekiq_process();
-    // restart_mongodb_process();
+        /* --------------------------------------- 
+                Server Up
+           --------------------------------------- */
+        server_up_process();
+    } else {
+        remove_release_clone();
+    }    
     footer();
 }
 

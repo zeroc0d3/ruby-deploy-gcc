@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
@@ -20,60 +21,57 @@ char cmdRun[2048];
 char DATE_TIME[100];
 char SNAP_FOLDER[100];
 char STR_FOLDER[512];
-int IS_ERROR_DEPLOY = 0;  // Error Deployment Status   (0 = no error, 1 = still error)
-int IS_ROLLBACK = 0;      // Rollback Status           (0 = no rollback migration, 1 = rollback on failed deploy) 
+int IS_ROLLBACK = 0;     // Rollback Status           (0 = no rollback migration, 1 = rollback on failed deploy)
+int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still error)
 
 /* ======================================= 
-CONFIGURATION 
-======================================= */
-char VERSION[16]  = "1.2.12";              // Version 
-int NUM_RELEASE   = 10;                    // Maximum Number of Release Folder 
-char ENV[64]      = "staging";             // Selected Environment (staging / production)
-int NUM_LOG_VIEW  = 50;                    // Maximum Line Number Viewing Log 
-int RAILS_VERSION = 5;                     // Rails Version (default: 5)
-int ENABLE_MIGRATION = 0;                  // Force Enable Migration (0 = disable/default, 1 = enable)
-
-char APP_ROOT[512];                        // Root Path
-char APP_CURRENT[64] = "current";          // Current Folder
-char APP_RELEASE[64] = "release";          // Release Folder
-char APP_SHARED[64]  = "shared";           // Shared Folder
-char CURRENT_FOLDER[1024];                 // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
-char SHARED_FOLDER[1024];                  // SHARED_FOLDER  = APP_ROOT/APP_SHARED
-char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Server-Up
-
-// GENERAL CONFIGURATION //
-// Config
-char CONFIG_UNICORN[512];           // Unicorn Config
-char CONFIG_FAYE[512];              // Faye Config
-char CONFIG_PUSHR[512];             // Pushr Config
-char CONFIG_SIDEKIQ[512];           // Sidekiq Config
-// PID
-char PID_UNICORN[512];              // Path PID Unicorn
-char PID_FAYE[512];                 // Path PID Faye
-char PID_PUSHR[512];                // Path PID Pushr
-char PID_SIDEKIQ[512];              // Path PID Sidekiq
-// Binary
-char PATH_UNICORN[512];             // Path of Unicorn Binary
-char PATH_RAKE[512];                // Path of Rake Binary
-char PATH_RAILS[512];               // Path of Rails Binary
-char PATH_RACKUP[512];              // Path of Rackup Binary
-char PATH_GEM[512];                 // Path of Gem Binary
-char PATH_BUNDLE[512];              // Path of Bundle Binary
-// Log
-char SYS_LOG_ENV[512];                                               // Path Log Environment
-char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
-char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
-char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
-char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
-char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
-char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
-char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
-char SYS_LOG_REDIS[521]        = "/var/log/redis/redis-server.log";  // Path Log Redis
+        USER CONFIGURATION 
+   ======================================= */
+int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
+char ENV[64]      = "staging";        // Selected Environment (staging / production)
+int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
+int RAILS_VERSION = 5;                // Rails Version (default: 5)
+int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
+int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
+int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
+int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
+int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
 // Repository
 char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
 char REPO_BRANCH[64] = "master";
 
+// Shared Folders
+char *LIST_SHARED_FOLDERS[] = {
+    "log",
+    "tmp/pids",
+    "tmp/cache",
+    "tmp/sockets",
+    "vendor/bundle",
+    "public/uploads",
+    "public/system",
+    "public/assets",
+    NULL
+};
+
+// Shared Files
+char *LIST_SHARED_FILES[] = {
+    "config/application.yml",
+    "config/database.yml",
+    "config/mongoid.yml",
+    "config/secrets.yml",
+    "config/sidekiq.yml",
+    NULL
+};
+
+
+/* ======================================= 
+        ENVIRONMENT CONFIGURATION 
+   ======================================= */
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
 char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
@@ -129,26 +127,97 @@ char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              //
 char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
 
 
-char *SHARED_FOLDERS[] = {
-    "log",
-    "tmp/pids",
-    "tmp/cache",
-    "tmp/sockets",
-    "vendor/bundle",
-    "public/uploads",
-    "public/system",
-    "public/assets"};
+/* ======================================= 
+        SYSTEM CONFIGURATION 
+   ======================================= */
+char VERSION[16] = "1.2.14";               // Version 
+char APP_ROOT[512];                        // Root Path
+char APP_CURRENT[64] = "current";          // Current Folder
+char APP_RELEASE[64] = "release";          // Release Folder
+char APP_SHARED[64]  = "shared";           // Shared Folder
+char CURRENT_FOLDER[1024];                 // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];                  // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Server-Up
 
-char *SHARED_FILES[] = {
-    "config/application.yml",
-    "config/database.yml",
-    "config/mongoid.yml",
-    "config/secrets.yml",
-    "config/sidekiq.yml"};
+// GENERAL CONFIGURATION //
+// Config
+char CONFIG_UNICORN[512];           // Unicorn Config
+char CONFIG_FAYE[512];              // Faye Config
+char CONFIG_PUSHR[512];             // Pushr Config
+char CONFIG_SIDEKIQ[512];           // Sidekiq Config
+// PID
+char PID_UNICORN[512];              // Path PID Unicorn
+char PID_FAYE[512];                 // Path PID Faye
+char PID_PUSHR[512];                // Path PID Pushr
+char PID_SIDEKIQ[512];              // Path PID Sidekiq
+// Binary
+char PATH_UNICORN[512];             // Path of Unicorn Binary
+char PATH_RAKE[512];                // Path of Rake Binary
+char PATH_RAILS[512];               // Path of Rails Binary
+char PATH_RACKUP[512];              // Path of Rackup Binary
+char PATH_GEM[512];                 // Path of Gem Binary
+char PATH_BUNDLE[512];              // Path of Bundle Binary
+// Log
+char SYS_LOG_ENV[512];                                               // Path Log Environment
+char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
+char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
+char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
+char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
+char SYS_LOG_NGINX_ACCESS[512] = "/var/log/nginx/access.log";        // Path Log NGINX Access
+char SYS_LOG_MONGODB[512]      = "/var/log/mongodb.log";             // Path Log MongoDB
+char SYS_LOG_MEMCACHED[521]    = "/var/log/memcached.log";           // Path Log Memcached
+char SYS_LOG_REDIS[521]        = "/var/log/redis/redis-server.log";  // Path Log Redis
+
 
 /* ======================================= 
         SUB MAIN PROGRAM
    ======================================= */
+char *trim(char *str)
+{
+  size_t len = 0;
+  char *frontp = str;
+  char *endp = NULL;
+
+  if (str == NULL) {
+    return NULL;
+  }
+  if (str[0] == '\0') {
+    return str;
+  }
+
+  len = strlen(str);
+  endp = str + len;
+
+  /* Move the front and back pointers to address the first non-whitespace
+   * characters from each end.
+   */
+  while (isspace((unsigned char)*frontp)) {
+    ++frontp;
+  }
+  if (endp != frontp) {
+    while (isspace((unsigned char)*(--endp)) && endp != frontp) {
+    }
+  }
+
+  if (str + len - 1 != endp)
+    *(endp + 1) = '\0';
+  else if (frontp != str && endp == frontp)
+    *str = '\0';
+
+  /* Shift the string so that it starts at str so that if it's dynamically
+   * allocated, we can still free it on the returned pointer.  Note the reuse
+   * of endp to mean the front of the string buffer now.
+   */
+  endp = str;
+  if (frontp != str) {
+    while (*frontp) {
+      *endp++ = *frontp++;
+    }
+    *endp = '\0';
+  }
+  return str;
+}
+
 void get_time()
 {
     char buff[100];
@@ -279,19 +348,45 @@ void menu()
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
+    }
+    if (ENABLE_MONGODB_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
+    }
+    if (ENABLE_PUSHR_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
+    }
+    if (ENABLE_REDIS_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    }
     printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
+    }
+    if (ENABLE_MONGODB_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dm            --> Stop MongoDB                           \033[0m\n");
+    }
+    if (ENABLE_PUSHR_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
+    }
+    if (ENABLE_REDIS_SERVICE == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    }
     printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
@@ -318,50 +413,60 @@ void menu()
 /* --------------------------------------- 
         Running Command
    --------------------------------------- */
-void run_fastcmd(char STR_COMMAND[1024])
-{
-    sprintf(cmdRun, "%s", STR_COMMAND);
-    ret = system(cmdRun);
-}
-
-void run_cmd(char STR_SERVICE[300],
-             char STR_DESCRIPTION[300],
-             char STR_COMMAND[1024])
+void message_service(char STR_DESCRIPTION[512])
 {
     get_time();
     printf("\n\033[22;34m[ %s ] ##### %s     \033[0m\n", DATE_TIME, STR_DESCRIPTION);
+}
+
+void message_ok(char STR_SERVICE[512])
+{
+    get_time();
+    printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
+    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+}
+
+void message_error(char STR_SERVICE[512])
+{
+    get_time();
+    printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
+    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+}
+
+void run_fastcmd(char STR_COMMAND[1024])
+{
+    sprintf(cmdRun, "%s", STR_COMMAND);
+    //ret = system(cmdRun);
+}
+
+void run_cmd(char STR_SERVICE[512],
+             char STR_DESCRIPTION[512],
+             char STR_COMMAND[1024])
+{
+    message_service(STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
     // ret = system(cmdRun);
     // if (!ret) {
-    //     get_time();
-    //     IS_ERROR_DEPLOY = 0; 
-    //     printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-    //     printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    //     IS_ERROR_DEPLOY = 0;
+    //     message_ok(STR_SERVICE);
     // } else {
-    //     get_time();
     //     IS_ERROR_DEPLOY = 1;
-    //     printf("\n\033[22;31m[ %s ] :: [ ✘ ] \033[0m", DATE_TIME);
-    //     printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    //     message_error(STR_SERVICE);
     // }
     /* --------------------------------- *
      *          For Test Only            *
      * --------------------------------- */
-    get_time();
-    printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    message_ok(STR_SERVICE);
 }
 
-void run_single(char STR_SERVICE[300],
-                char STR_DESCRIPTION[300],
+void run_single(char STR_SERVICE[512],
+                char STR_DESCRIPTION[512],
                 char STR_COMMAND[1024])
 {
-    get_time();
-    printf("\n\033[22;34m[ %s ] ##### %s     \033[0m\n", DATE_TIME, STR_DESCRIPTION);
+    message_service(STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
     //system(cmdRun);
-    get_time();
-    printf("\n\033[22;32m[ %s ] :: [ ✔ ] \033[0m", DATE_TIME);
-    printf("\033[22;32m %s               \033[0m\n", STR_SERVICE);
+    message_ok(STR_SERVICE);
 }
 
 /* --------------------------------------- 
@@ -370,8 +475,8 @@ void run_single(char STR_SERVICE[300],
 void nginx_restart() 
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Restart NGINX Service";
-    char STR_SERVICE[300]     = "NGINX Restarting...";
+    char STR_DESCRIPTION[512] = "Restart NGINX Service";
+    char STR_SERVICE[512]     = "NGINX Restarting...";
     char STR_COMMAND[1024]    = "sudo /etc/init.d/nginx restart";
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -382,8 +487,8 @@ void nginx_restart()
 void nginx_reload()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Reload NGINX Service";
-    char STR_SERVICE[300]     = "NGINX Reloading...";
+    char STR_DESCRIPTION[512] = "Reload NGINX Service";
+    char STR_SERVICE[512]     = "NGINX Reloading...";
     char STR_COMMAND[1024]    = "sudo /etc/init.d/nginx reload";
     header();
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -396,8 +501,8 @@ void nginx_reload()
    --------------------------------------- */
 void kill_mongodb()
 {
-    char STR_DESCRIPTION[300] = "Stop MongoDB Service";
-    char STR_SERVICE[300]     = "MongoDB Stop...";
+    char STR_DESCRIPTION[512] = "Stop MongoDB Service";
+    char STR_SERVICE[512]     = "MongoDB Stop...";
     char STR_COMMAND[1024]    = "ps aux | grep -i mongod | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -406,8 +511,8 @@ void kill_mongodb()
 void run_mongodb()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Start MongoDB Service";
-    char STR_SERVICE[300]     = "MongoDB Start...";
+    char STR_DESCRIPTION[512] = "Start MongoDB Service";
+    char STR_SERVICE[512]     = "MongoDB Start...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "cd %s; sudo mongod --fork --logpath %s", APP_ROOT, SYS_LOG_MONGODB);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -439,8 +544,8 @@ void stop_mongodb()
    --------------------------------------- */
 void kill_redis()
 {
-    char STR_DESCRIPTION[300] = "Stop Redis Service";
-    char STR_SERVICE[300]     = "Redis Stop...";
+    char STR_DESCRIPTION[512] = "Stop Redis Service";
+    char STR_SERVICE[512]     = "Redis Stop...";
     char STR_COMMAND[1024]    = "ps aux | grep -i redis-server | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -448,8 +553,8 @@ void kill_redis()
 
 void run_redis()
 {
-    char STR_DESCRIPTION[300] = "Start Redis Service (Daemonize)";
-    char STR_SERVICE[300]     = "Redis Start...";
+    char STR_DESCRIPTION[512] = "Start Redis Service (Daemonize)";
+    char STR_SERVICE[512]     = "Redis Start...";
     char STR_COMMAND[1024]    = "redis-server --daemonize yes";
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -481,8 +586,8 @@ void stop_redis()
 void asset_precompile()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Precompile Assets";
-    char STR_SERVICE[300]     = "Precompiling All Assets...";
+    char STR_DESCRIPTION[512] = "Precompile Assets";
+    char STR_SERVICE[512]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
     if (RAILS_VERSION >= 5) {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
@@ -498,8 +603,8 @@ void asset_precompile()
 void asset_rollback()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Rollback Assets";
-    char STR_SERVICE[300]     = "Rollingback (Cleanup) All Assets...";
+    char STR_DESCRIPTION[512] = "Rollback Assets";
+    char STR_SERVICE[512]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
     if (RAILS_VERSION >= 5) {
         sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
@@ -518,8 +623,8 @@ void asset_rollback()
 void kill_unicorn()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Stop Unicorn Service";
-    char STR_SERVICE[300]     = "Unicorn Terminated...";
+    char STR_DESCRIPTION[512] = "Stop Unicorn Service";
+    char STR_SERVICE[512]     = "Unicorn Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i unicorn | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -528,8 +633,8 @@ void kill_unicorn()
 void run_unicorn()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Run Unicorn Service";
-    char STR_SERVICE[300]     = "Unicorn Running...";
+    char STR_DESCRIPTION[512] = "Run Unicorn Service";
+    char STR_SERVICE[512]     = "Unicorn Running...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "cd %s; %s exec %s -D -c %s -E %s", APP_ROOT, PATH_BUNDLE, PATH_UNICORN, CONFIG_UNICORN, ENV);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -562,8 +667,8 @@ void stop_unicorn()
 void kill_faye()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Stop Faye Service";
-    char STR_SERVICE[300]     = "Faye Terminated...";
+    char STR_DESCRIPTION[512] = "Stop Faye Service";
+    char STR_SERVICE[512]     = "Faye Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i faye | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -572,8 +677,8 @@ void kill_faye()
 void run_faye()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Run Faye Service";
-    char STR_SERVICE[300]     = "Faye Running...";
+    char STR_DESCRIPTION[512] = "Run Faye Service";
+    char STR_SERVICE[512]     = "Faye Running...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s %s -E %s -o 0.0.0.0 -D -P %s", APP_ROOT, ENV, PATH_RACKUP, CONFIG_FAYE, ENV, PID_FAYE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
@@ -605,8 +710,8 @@ void stop_faye()
    --------------------------------------- */
 void kill_pushr()
 {
-    char STR_DESCRIPTION[300] = "Stop Pushr Service";
-    char STR_SERVICE[300]     = "Pushr Terminated...";
+    char STR_DESCRIPTION[512] = "Stop Pushr Service";
+    char STR_SERVICE[512]     = "Pushr Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i pushr | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -646,8 +751,8 @@ void stop_pushr()
    --------------------------------------- */
 void kill_sidekiq()
 {
-    char STR_DESCRIPTION[300] = "Stop Sidekiq Service";
-    char STR_SERVICE[300]     = "Sidekiq Terminated...";
+    char STR_DESCRIPTION[512] = "Stop Sidekiq Service";
+    char STR_SERVICE[512]     = "Sidekiq Terminated...";
     char STR_COMMAND[1024]    = "ps aux | grep -i sidekiq | awk {'print $2'} | sudo xargs kill -9";
     run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -815,22 +920,22 @@ void generate_secret_token()
 
 /* --------------------------------------- 
     Deploy Process: 
-        1) Clone Repository to Unix DateTime Release Folder
-        2) Checkout Branch
-        3) Remove Shared Folders
-        4) Remove Shared Files
-        5) Create Symlink Shared Folders
-        6) Create Symlink Shared Files
-        7) Install Bundle  (gem install bundle)
-        8) Install Package (bundle install)
-        9) Compile Assets 
-        10) Install NPM
-        11) Migrate Database
-        12) Seed Database
-        13) Create Symlink Release -> Current
-        14) Service Unicorn Stop
-        15) Service Unicorn Start
-        16) FINISH
+        1)  [X] Clone Repository to Unix DateTime Release Folder
+        2)  [X] Checkout Branch
+        3)  [X] Install Bundle  (gem install bundle)
+        4)  [X] Install Package (bundle install)
+        5)  [X] Remove Shared Folders
+        6)  [X] Remove Shared Files
+        7)  [X] Create Symlink Shared Folders
+        8)  [X] Create Symlink Shared Files
+        9)  [X] Compile Assets 
+        10) [ ] Install NPM [**optional**]
+        11) [X] Migrate Database
+        12) [X] Seed Database
+        13) [X] Create Symlink Release -> Current
+        14) [X] Service Unicorn Stop
+        15) [X] Service Unicorn Start
+        16) **FINISH**
 
         Note: On Failed 
         Remove Unix DateTime Release Folder
@@ -838,8 +943,8 @@ void generate_secret_token()
 void git_clone()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Clone Repository";
-    char STR_SERVICE[300]     = "Cloning Process...";
+    char STR_DESCRIPTION[512] = "Clone Repository";
+    char STR_SERVICE[512]     = "Cloning Process...";
     char STR_COMMAND[1024];
     get_folder();
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
@@ -851,8 +956,8 @@ void git_clone()
 void change_branch()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Setup Branch";
-    char STR_SERVICE[300]     = "Changing Branch...";
+    char STR_DESCRIPTION[512] = "Setup Branch";
+    char STR_SERVICE[512]     = "Changing Branch...";
     char STR_COMMAND[1024];
     // Goto App Path Release
     // Checkout Branch
@@ -864,8 +969,8 @@ void change_branch()
 void install_bundle()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Install Bundle";
-    char STR_SERVICE[300]     = "Running: `gem install bundle`...";
+    char STR_DESCRIPTION[512] = "Install Bundle";
+    char STR_SERVICE[512]     = "Running: `gem install bundle`...";
     char STR_COMMAND[1024];
     // Goto App Path Release
     // Run: gem install bundle
@@ -877,8 +982,8 @@ void install_bundle()
 void install_package()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Install Ruby Package";
-    char STR_SERVICE[300]     = "Running: `bundle install`...";
+    char STR_DESCRIPTION[512] = "Install Ruby Package";
+    char STR_SERVICE[512]     = "Running: `bundle install`...";
     char STR_COMMAND[1024];
     // Goto App Path Release
     // Run: bundle install
@@ -887,43 +992,83 @@ void install_package()
     sleep(1);
 }
 
+void remove_release_folders(char RELEASE_SHARED_FOLDERS[512])
+{
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, RELEASE_SHARED_FOLDERS);
+    run_fastcmd(STR_COMMAND);
+}
+
+void remove_release_files(char RELEASE_SHARED_FILES[512])
+{
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "cd %s; rm -f %s", APP_ROOT, RELEASE_SHARED_FILES);
+    run_fastcmd(STR_COMMAND);
+}
+
 void initialize_shared_folder()
 {
+    int index;
     select_env();
-    char STR_DESCRIPTION[300] = "Initialize Shared Folders";
-    char STR_SERVICE[300]     = "Initializing Shared Folders...";
+    char STR_DESCRIPTION[512] = "Initialize Shared Folders";
+    char STR_SERVICE[512]     = "Initializing Shared Folders...";
     char STR_COMMAND[1024];
-    char LOOP_FOLDER_SHARED[1024];
-    char LOOP_PATH_FOLDER_SHARED[1024];
+    char LOOP_SOURCE_FOLDER_SHARED[1024];
+    char LOOP_TARGET_FOLDER_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Folders
+    message_service(STR_DESCRIPTION);
+    
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
-    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FOLDER_SHARED, LOOP_PATH_FOLDER_SHARED);
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    for (index = 0; LIST_SHARED_FOLDERS[index] != NULL; ++index)
+    {
+        sprintf(LOOP_SOURCE_FOLDER_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FOLDERS[index]);
+        sprintf(LOOP_TARGET_FOLDER_SHARED, "%s/%s", STR_FOLDER, LIST_SHARED_FOLDERS[index]);
+        
+        // Remove Release Folders
+        remove_release_folders(LOOP_TARGET_FOLDER_SHARED);
+        // Create New Symlink From Shared
+        sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_SOURCE_FOLDER_SHARED, LOOP_TARGET_FOLDER_SHARED);
+        run_fastcmd(STR_COMMAND);
+    }
+    message_ok(STR_SERVICE);
     sleep(1);
 }
 
 void initialize_shared_files()
 {
+    int index;
     select_env();
-    char STR_DESCRIPTION[300] = "Initialize Shared Files";
-    char STR_SERVICE[300]     = "Initializing Shared Files...";
+    char STR_DESCRIPTION[512] = "Initialize Shared Files";
+    char STR_SERVICE[512]     = "Initializing Shared Files...";
     char STR_COMMAND[1024];
-    char LOOP_FILE_SHARED[1024];
-    char LOOP_PATH_FILE_SHARED[1024];
+    char LOOP_SOURCE_FILES_SHARED[1024];
+    char LOOP_TARGET_FILES_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Files
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
-    sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_FILE_SHARED, LOOP_PATH_FILE_SHARED);
-    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    for (index = 0; LIST_SHARED_FILES[index] != NULL; ++index)
+    {
+        sprintf(LOOP_SOURCE_FILES_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FILES[index]);
+        sprintf(LOOP_TARGET_FILES_SHARED, "%s/%s", STR_FOLDER, LIST_SHARED_FILES[index]);
+
+        // Remove Release Files
+        remove_release_files(LOOP_TARGET_FILES_SHARED);
+        // Create New Symlink From Shared
+        sprintf(STR_COMMAND, "cd %s; ln -sfn %s %s", APP_ROOT, LOOP_SOURCE_FILES_SHARED, LOOP_TARGET_FILES_SHARED);
+        run_fastcmd(STR_COMMAND);
+    }
+    message_ok(STR_SERVICE);
     sleep(1);
 }
 
 void initialize_current()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Initialize Current Folder";
-    char STR_SERVICE[300]     = "Initializing Current Folder...";
+    char STR_DESCRIPTION[512] = "Initialize Current Folder";
+    char STR_SERVICE[512]     = "Initializing Current Folder...";
     char STR_COMMAND[1024];
     // Goto Root App
     // Symlink Current Folder From Latest Release
@@ -939,8 +1084,8 @@ void initialize_current()
 void run_migration()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Migration Database";
-    char STR_SERVICE[300]     = "Running Migration Database...";
+    char STR_DESCRIPTION[512] = "Migration Database";
+    char STR_SERVICE[512]     = "Running Migration Database...";
     char STR_COMMAND[1024];
     int FORCE_MIGRATION =  1; // Force Migration on Production Environment
     
@@ -962,8 +1107,8 @@ void run_migration()
 void run_seed()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Seed Database";
-    char STR_SERVICE[300]     = "Running Seed Database...";
+    char STR_DESCRIPTION[512] = "Seed Database";
+    char STR_SERVICE[512]     = "Running Seed Database...";
     char STR_COMMAND[1024];
     int FORCE_SEED = 1; // Force Seed on Production Environment
 
@@ -987,8 +1132,8 @@ void run_seed()
 void run_migration_rollback()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Migration Rollback";
-    char STR_SERVICE[300]     = "Running Rollback Migration...";
+    char STR_DESCRIPTION[512] = "Migration Rollback";
+    char STR_SERVICE[512]     = "Running Rollback Migration...";
     char STR_COMMAND[1024];
     int ROLLBACK = 1;  // Number of Rollback Step
 
@@ -1013,8 +1158,8 @@ void run_migration_rollback()
 void run_preinstall()
 {
     select_env();
-    char STR_DESCRIPTION[300] = "Preinstallation";
-    char STR_SERVICE[300] = "Running Preinstall Configuration...";
+    char STR_DESCRIPTION[512] = "Preinstallation";
+    char STR_SERVICE[512] = "Running Preinstall Configuration...";
     char STR_COMMAND[1024];
     // Goto Root App
     // Symlink preinstall script to 'release' folder
@@ -1028,27 +1173,31 @@ void run_preinstall()
 /* --------------------------------------- 
         Restart Server
    --------------------------------------- */
-void server_up()
+void server_up_process()
 {
-    header();
     restart_unicorn_process();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
     {
         restart_faye_process();
         restart_pushr_process();
-    }    
+    }
     restart_sidekiq_process();
     restart_mongodb_process();
+}
+
+void server_up()
+{
+    header();
+    server_up_process();
     footer();
 }
 
 /* --------------------------------------- 
         Shutdown Server
    --------------------------------------- */
-void server_down()
+void server_down_process()
 {
-    header();
     kill_unicorn();
     // Production Environment
     if (strcmp(ENV, "production") == 0)
@@ -1058,6 +1207,12 @@ void server_down()
     }
     kill_sidekiq();
     kill_mongodb();
+}
+
+void server_down()
+{
+    header();
+    server_down_process();
     footer();
 }
 
@@ -1072,35 +1227,54 @@ void deploy_rollback()
     }
 }
 
+void remove_release_clone()
+{
+    select_env();
+    char STR_DESCRIPTION[512] = "Rollback Deploy";
+    char STR_SERVICE[512]     = "Rollingback Deployment Process...";
+    char STR_COMMAND[1024];
+
+    // Goto Root App
+    // Remove All Cloned Folder (SNAP_FOLDER)
+    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, STR_FOLDER);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
 void deploy()
 {
     header();
     git_clone();
     change_branch();
     install_bundle();
-    install_package();
-    //initialize_shared_folder();
-    //initialize_shared_files();
-    initialize_current();
-    if (IS_ERROR_DEPLOY == 0) 
-    {
-        if (ENABLE_MIGRATION == 1) {
-            // run_migration();
-            // run_seed();
-        }   
-    } else {
-        // deploy_rollback();
+    if (ENABLE_BUNDLE_INSTALL == 1) {
+        install_package();
     }
-    run_preinstall();
+    initialize_shared_folder();
+    initialize_shared_files();
+    if (ENABLE_COMPILE_ASSETS == 1)
+    {
+        if (ENABLE_CLOBBER_ASSETS == 1) { asset_rollback(); }
+        asset_precompile();
+    }
+    if (ENABLE_MIGRATION == 1)
+    {
+        if (IS_ERROR_DEPLOY == 0) { run_migration(); } else { deploy_rollback(); }
+        if (IS_ERROR_DEPLOY == 0) { run_seed(); } else { deploy_rollback(); }
+    }
+    if (IS_ERROR_DEPLOY == 0)
+    {
+        initialize_current();
+        run_preinstall();
 
-    /* --------------------------------------- 
-            Server Up
-       --------------------------------------- */
-    // restart_unicorn_process();
-    // restart_faye_process();
-    // restart_pushr_process();
-    // restart_sidekiq_process();
-    // restart_mongodb_process();
+        /* --------------------------------------- 
+                Server Up
+           --------------------------------------- */
+        server_up_process();
+    } else {
+        remove_release_clone();
+    }    
     footer();
 }
 

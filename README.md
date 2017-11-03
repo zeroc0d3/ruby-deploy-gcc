@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.13                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.14                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
@@ -36,6 +36,7 @@ Ruby Deploy build with GCC
   ### STOP SERVICES ###                                                   
 --------------------------------------------------------------------------
   # ./rb_deploy -df            --> Stop Faye                              
+  # ./rb_deploy -dm            --> Stop MongoDB                              
   # ./rb_deploy -dp            --> Stop Pushr                             
   # ./rb_deploy -dq            --> Stop Sidekiq                           
   # ./rb_deploy -ds            --> Stop Redis                             
@@ -87,13 +88,13 @@ After successfully deploy, your application would be look's like:
 * - [X] Remove Shared Files
 * - [X] Create Symlink Shared Folders
 * - [X] Create Symlink Shared Files
-* - [ ] Compile Assets 
+* - [X] Compile Assets 
 * - [ ] Install NPM [**optional**]
-* - [ ] Migrate Database
-* - [ ] Seed Database
+* - [X] Migrate Database
+* - [X] Seed Database
 * - [X] Create Symlink Release -> Current
-* - [ ] Service Unicorn Stop
-* - [ ] Service Unicorn Start
+* - [X] Service Unicorn Stop
+* - [X] Service Unicorn Start
 * **FINISH**
     
 ## Deploy Rollback 
@@ -107,12 +108,19 @@ On Failed Deploy:
 * Add `rb_deploy.c`, `make-rb_deploy` and `preinstall.sh` to your root path of Ruby or Rails project
 * Setup **User** Configuration 
   ```
-  int NUM_RELEASE   = 10;            // Maximum Number of Release Folder 
-  char ENV[64]      = "staging";     // Selected Environment (staging / production)
-  int NUM_LOG_VIEW  = 50;            // Maximum Line Number Viewing Log 
-  int RAILS_VERSION = 5;             // Rails Version (default: 5)
-  int ENABLE_MIGRATION = 0;          // Force Enable Migration (0 = disable/default, 1 = enable)
-  int ENABLE_BUNDLE_INSTALL = 1;     // Enable Running "bundle install"
+  int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
+  char ENV[64]      = "staging";        // Selected Environment (staging / production)
+  int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
+  int RAILS_VERSION = 5;                // Rails Version (default: 5)
+  int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
+  int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
+  int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
+  int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
+  int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+  int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+  int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+  int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
+  int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
   // Repository
   char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
@@ -262,7 +270,7 @@ On Failed Deploy:
 * - [X] Pushr `[restart|stop]`
 * - [X] Sidekiq `[restart|stop]`
 * - [X] Redis `[restart|stop]`
-* - [ ] Deploy
+* - [X] Deploy
 
 ## License
 [**MIT License**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/LICENSE)

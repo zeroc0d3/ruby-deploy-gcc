@@ -1,88 +1,104 @@
-version 1.2.13
+## version 1.2.14
 ====================
-- Deploy with symlink shared folders & files
-- On failed Deploy, after running migration, then rollback migration
-- Update feature messages
+* Optional Running Services 
+  - Migration
+  - Bundle install
+  - Asset clobber
+  - Asset precompile
+  - Faye
+  - MongoDB
+  - Pushr
+  - Redis
+  - Sidekiq
+* Finishing Deployment Process 
+  - Rollback Migration (On Failed)
+  - Remove Clone Repository (On Failed)  
 
-version 1.2.12
+## version 1.2.13
 ====================
-Running/Stop services on production only:
-- pusher
-- faye     
-Rollback migration on failed process deployment
+* Deploy with symlink shared folders & files
+* On failed Deploy, after running migration, then rollback migration
+* Update feature messages
 
-version 1.2.11
+## version 1.2.12
 ====================
-Add feature show environment logs:
-- log/production.log  (production log)
-- log/staging.log     (development log)
+* Running/Stop services on production only:
+  - pusher
+  - faye     
+* Rollback migration on failed process deployment
 
-version 1.2.10
+## version 1.2.11
 ====================
-- Change environment default for production
-- Add selection running command for different Rails (RAILS_VERSION)
+* Add feature show environment logs:
+  - log/production.log  (production log)
+  - log/staging.log     (development log)
+
+## version 1.2.10
+====================
+* Change environment default for production
+* Add selection running command for different Rails (RAILS_VERSION)
   Rails >= 5, using "bundle exec rails"
   Rails < 5, using "bundle exec rake" 
 
-version 1.2.9
+## version 1.2.9
 ====================
-Running `bundle exec` for
-- Asset clobber
-- Asset precompile
-- Running unicorn
+* Running `bundle exec` for
+  - Asset clobber
+  - Asset precompile
+  - Running unicorn
 
-version 1.2.8
+## version 1.2.8
 ====================
-- Add feature generate secret token ("-key" option)
-- Add feature stop unicorn
+* Add feature generate secret token ("-key" option)
+* Add feature stop unicorn
 
-version 1.2.7
+## version 1.2.7
 ====================
-- Add limit number of viewing logs features
+* Add limit number of viewing logs features
 
-version 1.2.6
+## version 1.2.6
 ====================
-- Add view logs features 
-- Change command 'run_kill' to 'run_single'
+* Add view logs features 
+* Change command 'run_kill' to 'run_single'
 
-version 1.2.5
+## version 1.2.5
 ====================
-- Add migration & seed database
-- Add migration rollback (on failed)
+* Add migration & seed database
+* Add migration rollback (on failed)
 
-version 1.2.4
+## version 1.2.4
 ====================
-- Add preinstall script
-- Add version number
+* Add preinstall script
+* Add version number
 
-version 1.2.3
+## version 1.2.3
 ====================
-- Fixing sidekiq service command
-- Fixing symlink 'current' folder from latest repository
-- Add symlink folders (on progress) 
-- Add symlink files (on progress) 
+* Fixing sidekiq service command
+* Fixing symlink 'current' folder from latest repository
+* Add symlink folders (on progress) 
+* Add symlink files (on progress) 
 
-version 1.2.2
+## version 1.2.2
 ====================
-Add dummy test in 'test' folder
+* Add dummy test in 'test' folder
 
-version 1.2.1
+## version 1.2.1
 ====================
-Add mongod for server_up & server_down services
+* Add mongod for server_up & server_down services
 
-version 1.2
+## version 1.2
 ====================
-- Add log files
-- Fixing mongodb service run & stop
+* Add log files
+* Fixing mongodb service run & stop
 
-version 1.1
+## version 1.1
 ====================
-Update snapshot deploy process
+* Update snapshot deploy process
 
-version 1.0
+## version 1.0
 ====================
-Fixing message & respond services
+* Fixing message & respond services
 
-version 0.9
+## version 0.9
 ====================
-Add roadmap & redis feature
+* Add roadmap & redis feature
