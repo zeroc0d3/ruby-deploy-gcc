@@ -28,16 +28,16 @@ int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still e
         USER CONFIGURATION 
    ======================================= */
 int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
-char ENV[64]      = "production";     // Selected Environment (staging / production)
+char ENV[64]      = "staging";        // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                // Rails Version (default: 5)
 int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
 int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
 int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
 int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
-int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
-int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
-int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 0;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 0;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 0;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
 int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
@@ -130,7 +130,7 @@ char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.14";               // Version 
+char VERSION[16] = "1.2.15";               // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -313,15 +313,15 @@ void header()
     logo();
     printf("\033[22;32m==========================================================================\033[0m\n");
     get_time();
-    printf("\033[22;31m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
-    printf("\033[22;31m# Start at: %s  \033[0m\n", DATE_TIME);
+    printf("\033[22;37m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
+    printf("\033[22;33m# Start at: %s  \033[0m\n", DATE_TIME);
 }
 
 void footer() {
-    printf("\033[22;32m==========================================================================\033[0m\n");
     get_time();
-    printf("\033[22;31m# Finish at: %s  \033[0m\n", DATE_TIME);
-    printf("\033[22;31m# END PROCESS.....                  \033[0m\n\n");
+    printf("\033[22;32m==========================================================================\033[0m\n");
+    printf("\033[22;33m# Finish at: %s  \033[0m\n", DATE_TIME);
+    printf("\033[22;37m# END PROCESS.....                  \033[0m\n\n");
 }
 
 void menu()
@@ -453,7 +453,7 @@ void message_error(char STR_SERVICE[512])
 void run_fastcmd(char STR_COMMAND[1024])
 {
     sprintf(cmdRun, "%s", STR_COMMAND);
-    //ret = system(cmdRun);
+    // ret = system(cmdRun);
 }
 
 void run_cmd(char STR_SERVICE[512],
@@ -482,7 +482,7 @@ void run_single(char STR_SERVICE[512],
 {
     message_service(STR_DESCRIPTION);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    //system(cmdRun);
+    // system(cmdRun);
     message_ok(STR_SERVICE);
 }
 
@@ -1051,7 +1051,6 @@ void initialize_shared_folder()
     // Goto Root App
     // Looping Create Shared Folders
     message_service(STR_DESCRIPTION);
-    
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FOLDERS[index] != NULL; ++index)
@@ -1080,6 +1079,7 @@ void initialize_shared_files()
     char LOOP_TARGET_FILES_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Files
+    message_service(STR_DESCRIPTION);
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FILES[index] != NULL; ++index)
@@ -1192,7 +1192,7 @@ void run_preinstall()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Preinstallation";
-    char STR_SERVICE[512] = "Running Preinstall Configuration...";
+    char STR_SERVICE[512]     = "Running Preinstall Configuration...";
     char STR_COMMAND[1024];
     // Goto Root App
     // Symlink preinstall script to 'release' folder
@@ -1293,8 +1293,12 @@ void deploy()
     }
     if (ENABLE_MIGRATION == 1)
     {
-        if (IS_ERROR_DEPLOY == 0) { run_migration(); } else { deploy_rollback(); }
-        if (IS_ERROR_DEPLOY == 0) { run_seed(); } else { deploy_rollback(); }
+        run_migration();
+        if (IS_ERROR_DEPLOY == 0) { run_seed(); } 
+        else {
+            IS_ROLLBACK = 1;
+            deploy_rollback();
+        }
     }
     if (IS_ERROR_DEPLOY == 0)
     {
@@ -1306,6 +1310,7 @@ void deploy()
            --------------------------------------- */
         server_up_process();
     } else {
+        deploy_rollback();
         remove_release_clone();
     }    
     footer();

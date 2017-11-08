@@ -130,7 +130,7 @@ char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.14";               // Version 
+char VERSION[16] = "1.2.15";               // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -313,15 +313,16 @@ void header()
     logo();
     printf("\033[22;32m==========================================================================\033[0m\n");
     get_time();
-    printf("\033[22;31m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
-    printf("\033[22;31m# Start at: %s  \033[0m\n", DATE_TIME);
+    printf("\033[22;37m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
+    printf("\033[22;33m# Start at: %s  \033[0m\n", DATE_TIME);
 }
 
-void footer() {
-    printf("\033[22;32m==========================================================================\033[0m\n");
+void footer()
+{
     get_time();
-    printf("\033[22;31m# Finish at: %s  \033[0m\n", DATE_TIME);
-    printf("\033[22;31m# END PROCESS.....                  \033[0m\n\n");
+    printf("\033[22;32m==========================================================================\033[0m\n");
+    printf("\033[22;33m# Finish at: %s  \033[0m\n", DATE_TIME);
+    printf("\033[22;37m# END PROCESS.....                  \033[0m\n\n");
 }
 
 void menu()
@@ -1050,8 +1051,7 @@ void initialize_shared_folder()
     char LOOP_TARGET_FOLDER_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Folders
-    message_service(STR_DESCRIPTION);
-    
+    message_service(STR_DESCRIPTION);    
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FOLDERS[index] != NULL; ++index)
@@ -1080,6 +1080,7 @@ void initialize_shared_files()
     char LOOP_TARGET_FILES_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Files
+    message_service(STR_DESCRIPTION);
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
     sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
     for (index = 0; LIST_SHARED_FILES[index] != NULL; ++index)
@@ -1192,7 +1193,7 @@ void run_preinstall()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Preinstallation";
-    char STR_SERVICE[512] = "Running Preinstall Configuration...";
+    char STR_SERVICE[512]     = "Running Preinstall Configuration...";
     char STR_COMMAND[1024];
     // Goto Root App
     // Symlink preinstall script to 'release' folder
@@ -1293,8 +1294,12 @@ void deploy()
     }
     if (ENABLE_MIGRATION == 1)
     {
-        if (IS_ERROR_DEPLOY == 0) { run_migration(); } else { deploy_rollback(); }
-        if (IS_ERROR_DEPLOY == 0) { run_seed(); } else { deploy_rollback(); }
+        run_migration();
+        if (IS_ERROR_DEPLOY == 0) { run_seed(); } 
+        else {
+            IS_ROLLBACK = 1;
+            deploy_rollback();
+        }
     }
     if (IS_ERROR_DEPLOY == 0)
     {
@@ -1306,6 +1311,7 @@ void deploy()
            --------------------------------------- */
         server_up_process();
     } else {
+        deploy_rollback();
         remove_release_clone();
     }    
     footer();

@@ -1,3 +1,7 @@
+## version 1.2.15
+====================
+* Fixing migration & rollback migration in deploy process
+
 ## version 1.2.14
 ====================
 * Optional Running Services 

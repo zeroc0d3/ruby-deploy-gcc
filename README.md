@@ -5,7 +5,7 @@ Ruby Deploy build with GCC
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.14                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.15                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
@@ -73,25 +73,25 @@ After successfully deploy, your application would be look's like:
 ├── rb_deploy
 ├── rb_deploy.c
 ├── release
-|    ├── 201711031439_1509694746
-|    ├── 201711031445_1509695138
-|    └── 201711031754_1509706492
+│    ├── 201711031439_1509694746
+│    ├── 201711031445_1509695138
+│    └── 201711031754_1509706492
 │       ├── config
 │       │   ├── application.yml -> /home/zeroc0d3/rb_deploy/shared/config/database.yml
 │       │   ├── database.yml -> /home/zeroc0d3/rb_deploy/shared/config/database.yml
 │       │   ├── secrets.yml -> /home/zeroc0d3/rb_deploy/shared/config/secrets.yml
-|       │   └── sidekiq.yml -> /home/zeroc0d3/rb_deploy/shared/config/sidekiq.yml
-|       ├── log -> /home/zeroc0d3/rb_deploy/shared/log
-|       ├── public
-|       │   ├── assets -> /home/zeroc0d3/rb_deploy/shared/public/assets
-|       │   ├── uploads -> /home/zeroc0d3/rb_deploy/shared/public/uploads
-|       │   └── system -> /home/zeroc0d3/rb_deploy/shared/public/system
-|       ├── tmp 
-|       │   ├── pids -> /home/zeroc0d3/rb_deploy/shared/tmp/pids
-|       │   ├── cache -> /home/zeroc0d3/rb_deploy/shared/tmp/cache
-|       │   └── sockets -> /home/zeroc0d3/rb_deploy/shared/tmp/sockets
-|       └── vendor
-|           └── bundle -> /home/zeroc0d3/rb_deploy/shared/vendor/bundle
+│       │   └── sidekiq.yml -> /home/zeroc0d3/rb_deploy/shared/config/sidekiq.yml
+│       ├── log -> /home/zeroc0d3/rb_deploy/shared/log
+│       ├── public
+│       │   ├── assets -> /home/zeroc0d3/rb_deploy/shared/public/assets
+│       │   ├── uploads -> /home/zeroc0d3/rb_deploy/shared/public/uploads
+│       │   └── system -> /home/zeroc0d3/rb_deploy/shared/public/system
+│       ├── tmp 
+│       │   ├── pids -> /home/zeroc0d3/rb_deploy/shared/tmp/pids
+│       │   ├── cache -> /home/zeroc0d3/rb_deploy/shared/tmp/cache
+│       │   └── sockets -> /home/zeroc0d3/rb_deploy/shared/tmp/sockets
+│       └── vendor
+│           └── bundle -> /home/zeroc0d3/rb_deploy/shared/vendor/bundle
 └── shared
     ├── config
     │   ├── application.yml
@@ -294,15 +294,15 @@ On Failed Deploy:
   ```
 
 ## Road Map
-* - [X] Nginx `[restart|reload]`
+* - [X] Nginx `[restart│reload]`
 * - [X] Assets Precompile
 * - [X] Assets Clobber (Cleanup Compiled)
-* - [X] MongoDB `[restart|stop]`
-* - [X] Unicorn `[restart|stop]`
-* - [X] Faye `[restart|stop]`
-* - [X] Pushr `[restart|stop]`
-* - [X] Sidekiq `[restart|stop]`
-* - [X] Redis `[restart|stop]`
+* - [X] MongoDB `[restart│stop]`
+* - [X] Unicorn `[restart│stop]`
+* - [X] Faye `[restart│stop]`
+* - [X] Pushr `[restart│stop]`
+* - [X] Sidekiq `[restart│stop]`
+* - [X] Redis `[restart│stop]`
 * - [X] Deploy
 
 ## License
