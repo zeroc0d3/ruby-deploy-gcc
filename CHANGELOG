@@ -4,8 +4,9 @@
 * Execute service with `bundle exec`
 * Define all binaries path for `bundle`, `gem`, `rackup`, `rails`, `rake`, `pushr`, `sidekiq` and `unicorn` 
 * Successfully on first testing deployment on Production VPS
-  - Add sample configuration nginx for staging & production
-  - Add sample configuration & initializers for faye rails
+  - Add sample nginx configuration for staging & production
+  - Add sample faye configuration & initializers in "myapps" rails application
+  - Add sample unicorn configuration for staging & production
 
 ## version 1.2.15
 ====================
