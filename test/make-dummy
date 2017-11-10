@@ -1,0 +1,19 @@
+#! /bin/sh
+
+PATH_PWD=`pwd` 
+cd $PATH_PWD
+gcc -o test_dummy dummy.c
+
+# ======================= #
+#   Setup for All Users   #
+# ======================= #
+PATH_LINK="/usr/local/bin/test_dummy"
+# A) Using Compile  
+# sudo gcc -o $PATH_LINK dummy.c 
+
+# B) Using Symlink  
+if ! [ -f "$PATH_LINK" ]
+then
+  sudo ln -s $PATH_PWD/test_dummy /usr/local/bin/test_dummy
+  sudo ln -s /usr/local/bin/test_dummy /bin/test_dummy
+fi

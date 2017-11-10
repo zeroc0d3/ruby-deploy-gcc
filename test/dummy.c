@@ -20,7 +20,7 @@ int ret;
 char cmdRun[2048];
 char DATE_TIME[100];
 char SNAP_FOLDER[100];
-char STR_FOLDER[512];
+char SNAP_FOLDER_RELEASE[512];
 int IS_ROLLBACK = 0;     // Rollback Status           (0 = no rollback migration, 1 = rollback on failed deploy)
 int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still error)
 
@@ -35,9 +35,9 @@ int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/def
 int ENABLE_BUNDLE_INSTALL  = 1;       // Enable Running "bundle install" (0 = disable/default, 1 = enable)
 int ENABLE_CLOBBER_ASSETS  = 1;       // Enable Running Clobber/Cleanup Assets (0 = disable/default, 1 = enable)
 int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = disable/default, 1 = enable)
-int ENABLE_FAYE_SERVICE    = 0;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
-int ENABLE_MONGODB_SERVICE = 0;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
-int ENABLE_PUSHR_SERVICE   = 0;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
+int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
 int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
@@ -48,89 +48,97 @@ char REPO_BRANCH[64] = "master";
 // Shared Folders
 char *LIST_SHARED_FOLDERS[] = {
     "log",
-    "tmp/pids",
+    "public/assets",
+    "public/system",
+    "public/uploads",
     "tmp/cache",
+    "tmp/pids",
     "tmp/sockets",
     "vendor/bundle",
-    "public/uploads",
-    "public/system",
-    "public/assets",
     NULL
 };
 
 // Shared Files
 char *LIST_SHARED_FILES[] = {
+    ".env",
+    "faye.ru",
     "config/application.yml",
     "config/database.yml",
     "config/mongoid.yml",
+    "config/pushr-staging.yml",
+    "config/pushr-production.yml",
     "config/secrets.yml",
     "config/sidekiq.yml",
+    "config/unicorn/staging.rb",
+    "config/unicorn/production.rb",
     NULL
 };
-
 
 /* ======================================= 
         ENVIRONMENT CONFIGURATION 
    ======================================= */
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
-char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                // Development Root Path
-char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/unicorn/staging.rb";      // Development Unicorn Config
-char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/faye.ru";                        // Development Faye Config
-char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/config/pushr-staging.yaml";      // Development Pushr Config
-char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/config/sidekiq.yml";             // Development Sidekiq Config
+char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                       // Development Root Path
+char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/faye.ru";                        // Development Faye Config
+char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/config/pushr-staging.yaml";      // Development Pushr Config
+char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/sidekiq.yml";             // Development Sidekiq Config
+char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/unicorn/staging.rb";      // Development Unicorn Config
 
-char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
-char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/faye.pid";              // Development Path PID Faye
-char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/pushr.pid";             // Development Path PID Pushr
-char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
+char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/faye.pid";              // Development Path PID Faye
+char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/pushr.pid";             // Development Path PID Pushr
+char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
+char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
 
-char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/log/staging.log";                // Development Path Log Environment
-char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/log/pushr.log";                  // Development Path Log Pushr
-char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/sidekiq.log";                // Development Path Log Sidekiq
-char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/log/unicorn.log";                // Development Path Log Unicorn
+char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/current/log/staging.log";                // Development Path Log Environment
+char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/log/pushr.log";                  // Development Path Log Pushr
+char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/sidekiq.log";                // Development Path Log Sidekiq
+char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/unicorn.log";                // Development Path Log Unicorn
 
-char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                 // Development Path of Unicorn Binary
-// < Rails v5.0
-char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                    // Development Path of Rake Binary
+char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                   // Development Path of Bundle Binary
+char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                      // Development Path of Gem Binary
+char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                   // Development Path of Rackup Binary
 // >= Rails v5.0
-char DEV_PATH_RAILS[512]      = "/home/zeroc0d3/.rbenv/shims/rails";                   // Development Path of Rails Binary
-char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                  // Development Path of Rackup Binary
-char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                     // Development Path of Gem Binary
-char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                  // Development Path of Bundle Binary
+char DEV_PATH_RAILS[512]      = "/home/zeroc0d3/.rbenv/shims/rails";                    // Development Path of Rails Binary
+// < Rails v5.0
+char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                     // Development Path of Rake Binary
+char DEV_PATH_PUSHR[512]      = "/home/zeroc0d3/.rbenv/shims/pushr";                    // Development Path of Pushr Binary
+char DEV_PATH_SIDEKIQ[512]    = "/home/zeroc0d3/.rbenv/shims/sidekiq";                  // Development Path of Sidekiq Binary
+char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                  // Development Path of Unicorn Binary
 
 // PRODUCTION CONFIGURATION //
 // Production Environment
-char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                               // Production Root Path
-char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/config/unicorn/production.rb";  // Production Unicorn Config
-char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/faye.ru";                       // Production Faye Config
-char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/config/pushr-production.yaml";  // Production Pushr Config
-char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/config/sidekiq.yml";            // Production Sidekiq Config
+char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                                      // Production Root Path
+char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/current/config/unicorn/production.rb";  // Production Unicorn Config
+char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/current/faye.ru";                       // Production Faye Config
+char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/current/config/pushr-production.yaml";  // Production Pushr Config
+char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/current/config/sidekiq.yml";            // Production Sidekiq Config
 
-char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
-char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/tmp/pids/faye.pid";             // Production Path PID Faye
-char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/tmp/pids/pushr.pid";            // Production Path PID Pushr
-char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/current/tmp/pids/faye.pid";             // Production Path PID Faye
+char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/current/tmp/pids/pushr.pid";            // Production Path PID Pushr
+char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/current/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
 
-char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/log/production.log";            // Production Path Log Environment
-char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/log/pushr.log";                 // Production Path Log Pushr
-char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/log/sidekiq.log";               // Production Path Log Sidekiq
-char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/log/unicorn.log";               // Production Path Log Unicorn
+char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/current/log/production.log";            // Production Path Log Environment
+char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/current/log/pushr.log";                 // Production Path Log Pushr
+char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/log/sidekiq.log";               // Production Path Log Sidekiq
+char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/current/log/unicorn.log";               // Production Path Log Unicorn
 
-char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          // Production Path of Unicorn Binary
-// < Rails v5.0
-char PROD_PATH_RAKE[512]      = "/home/deploy/.rbenv/shims/rake";             // Production Path of Rake Binary
+char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
+char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
+char PROD_PATH_RACKUP[512]    = "/home/deploy/.rbenv/shims/rackup";           // Production Path of Rackup Binary
 // >= Rails v5.0
 char PROD_PATH_RAILS[512]     = "/home/deploy/.rbenv/shims/rails";            // Production Path of Rails Binary
-char PROD_PATH_RACKUP[512]    = "/home/deploy/.rbenv/shims/rackup";           // Production Path of Rackup Binary
-char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
-char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
-
+// < Rails v5.0
+char PROD_PATH_RAKE[512]      = "/home/deploy/.rbenv/shims/rake";             // Production Path of Rake Binary
+char PROD_PATH_PUSHR[512]     = "/home/deploy/.rbenv/shims/pushr";            // Production Path of Pushr Binary
+char PROD_PATH_SIDEKIQ[512]   = "/home/deploy/.rbenv/shims/sidekiq";          // Production Path of Sidekiq Binary
+char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          // Production Path of Unicorn Binary
 
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.15";               // Version 
+char VERSION[16] = "1.2.16";               // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -151,12 +159,14 @@ char PID_FAYE[512];                 // Path PID Faye
 char PID_PUSHR[512];                // Path PID Pushr
 char PID_SIDEKIQ[512];              // Path PID Sidekiq
 // Binary
-char PATH_UNICORN[512];             // Path of Unicorn Binary
-char PATH_RAKE[512];                // Path of Rake Binary
-char PATH_RAILS[512];               // Path of Rails Binary
-char PATH_RACKUP[512];              // Path of Rackup Binary
-char PATH_GEM[512];                 // Path of Gem Binary
 char PATH_BUNDLE[512];              // Path of Bundle Binary
+char PATH_GEM[512];                 // Path of Gem Binary
+char PATH_RACKUP[512];              // Path of Rackup Binary
+char PATH_RAILS[512];               // Path of Rails Binary
+char PATH_RAKE[512];                // Path of Rake Binary
+char PATH_PUSHR[512];               // Path of Pushr Binary
+char PATH_SIDEKIQ[512];             // Path of Sidekiq Binary
+char PATH_UNICORN[512];             // Path of Unicorn Binary
 // Log
 char SYS_LOG_ENV[512];                                               // Path Log Environment
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
@@ -241,6 +251,16 @@ void get_folder()
     sprintf(SNAP_FOLDER, "%s_%d", buff, buff_unix);
 }
 
+void get_folder_release()
+{
+    sprintf(SNAP_FOLDER_RELEASE, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+}
+
+void get_folder_current()
+{
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+}
+
 /* --------------------------------------- 
         Select Environment
    --------------------------------------- */
@@ -250,46 +270,50 @@ void select_env()
     if (environment == 0)
     {
         sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
-        sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
         sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
         sprintf(CONFIG_PUSHR, "%s", PROD_CONFIG_PUSHR);
         sprintf(CONFIG_SIDEKIQ, "%s", PROD_CONFIG_SIDEKIQ);
-        sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
+        sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
         sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
         sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
+        sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
-        sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
-        sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
-        sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
-        sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
-        sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
         sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
+        sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
+        sprintf(PATH_PUSHR, "%s", PROD_PATH_PUSHR);
+        sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
+        sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
+        sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
+        sprintf(PATH_SIDEKIQ, "%s", PROD_PATH_SIDEKIQ);
+        sprintf(PATH_UNICORN, "%s", PROD_PATH_UNICORN);
     }
     else
     {
         sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
-        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
         sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
         sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
         sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
-        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
+        sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
         sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
         sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
+        sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
         sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
-        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
-        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
-        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
-        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
-        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
         sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
+        sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
+        sprintf(PATH_PUSHR, "%s", DEV_PATH_PUSHR);
+        sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
+        sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
+        sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
+        sprintf(PATH_SIDEKIQ, "%s", DEV_PATH_SIDEKIQ);
+        sprintf(PATH_UNICORN, "%s", DEV_PATH_UNICORN);
     }
 }
 
@@ -317,7 +341,8 @@ void header()
     printf("\033[22;33m# Start at: %s  \033[0m\n", DATE_TIME);
 }
 
-void footer() {
+void footer()
+{
     get_time();
     printf("\033[22;32m==========================================================================\033[0m\n");
     printf("\033[22;33m# Finish at: %s  \033[0m\n", DATE_TIME);
@@ -531,7 +556,9 @@ void run_mongodb()
     char STR_DESCRIPTION[512] = "Start MongoDB Service";
     char STR_SERVICE[512]     = "MongoDB Start...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; sudo mongod --fork --logpath %s", APP_ROOT, SYS_LOG_MONGODB);
+    // Goto App Current Folder
+    get_folder_current();
+    sprintf(STR_COMMAND, "cd %s; sudo mongod --fork --logpath %s", APP_CURRENT, SYS_LOG_MONGODB);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -606,13 +633,17 @@ void asset_precompile_process()
     char STR_DESCRIPTION[512] = "Precompile Assets";
     char STR_SERVICE[512]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
+    // Goto App Current Folder
+    get_folder_current();
     if (RAILS_VERSION >= 5)
     {
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
+        // Run: bundle exec rake assets:precompile RAILS_ENV=[environment]
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV);
     }
     else
     {
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+        // Run: bundle exec rails assets:precompile RAILS_ENV=[environment]
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -631,13 +662,17 @@ void asset_rollback_process()
     char STR_DESCRIPTION[512] = "Rollback Assets";
     char STR_SERVICE[512]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
+    // Goto App Current Folder
+    get_folder_current();
     if (RAILS_VERSION >= 5)
     {
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAILS, ENV);
+        // Run: bundle exec rake assets:clobber RAILS_ENV=[environment]
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV);
     }
     else
     {
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", APP_ROOT, PATH_BUNDLE, PATH_RAKE, ENV);
+        // Run: bundle exec rails assets:clobber RAILS_ENV=[environment]
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -669,7 +704,10 @@ void run_unicorn()
     char STR_DESCRIPTION[512] = "Run Unicorn Service";
     char STR_SERVICE[512]     = "Unicorn Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; %s exec %s -D -c %s -E %s", APP_ROOT, PATH_BUNDLE, PATH_UNICORN, CONFIG_UNICORN, ENV);
+    // Goto App Current Folder
+    get_folder_current();
+    // Run: bundle exec unicorn -D -c [config_unicorn] -E [environment]
+    sprintf(STR_COMMAND, "cd %s; %s exec %s -D -c %s -E %s", CURRENT_FOLDER, PATH_BUNDLE, PATH_UNICORN, CONFIG_UNICORN, ENV);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -713,7 +751,9 @@ void run_faye()
     char STR_DESCRIPTION[512] = "Run Faye Service";
     char STR_SERVICE[512]     = "Faye Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s %s -E %s -o 0.0.0.0 -D -P %s", APP_ROOT, ENV, PATH_RACKUP, CONFIG_FAYE, ENV, PID_FAYE);
+    // Goto App Current Folder
+    get_folder_current();
+    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s exec %s %s -E %s -o 0.0.0.0 -D -P %s", CURRENT_FOLDER, ENV, PATH_BUNDLE, PATH_RACKUP, CONFIG_FAYE, ENV, PID_FAYE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -755,7 +795,9 @@ void run_pushr()
     char STR_DESCRIPTION[256] = "Run Pushr Service";
     char STR_SERVICE[256]     = "Pushr Running...";
     char STR_COMMAND[1024];
-    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s exec pushr -c %s -p %s >> %s", APP_ROOT, ENV, PATH_BUNDLE, CONFIG_PUSHR, PID_PUSHR, SYS_LOG_PUSHR);
+    // Goto App Current Folder
+    get_folder_current();
+    sprintf(STR_COMMAND, "cd %s; RAILS_ENV=%s %s exec %s -c %s -p %s >> %s", CURRENT_FOLDER, ENV, PATH_BUNDLE, PATH_PUSHR, CONFIG_PUSHR, PID_PUSHR, SYS_LOG_PUSHR);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
 
@@ -796,8 +838,13 @@ void run_sidekiq()
     char STR_DESCRIPTION[256] = "Run Sidekiq Service";
     char STR_SERVICE[256]     = "Sidekiq Running...";
     char STR_COMMAND[1024];
-    // sprintf(STR_COMMAND, "cd %s; %s exec sidekiq -d -e %s -C %s -L %s", APP_ROOT, PATH_BUNDLE, ENV, CONFIG_SIDEKIQ, SYS_LOG_SIDEKIQ);
-    sprintf(STR_COMMAND, "cd %s; %s exec sidekiq --queue default --index 0 --pidfile %s --environment %s --logfile %s --concurrency 10 --daemon", APP_ROOT, PATH_BUNDLE, PID_SIDEKIQ, ENV, SYS_LOG_SIDEKIQ);
+    // Goto App Current Folder
+    get_folder_current();
+    // Run: bundle exec sidekiq -d -e [environment] -C [config_sidekiq] -L [log_sidekiq]
+    // sprintf(STR_COMMAND, "cd %s; %s exec %s -d -e %s -C %s -L %s", CURRENT_FOLDER, PATH_BUNDLE, PATH_SIDEKIQ, ENV, CONFIG_SIDEKIQ, SYS_LOG_SIDEKIQ);
+
+    // Run: bundle exec sidekiq --queue default --index 0 --pidfile [pid_sidekiq] --environment [environment] --logfile [log_sidekiq] --concurrency 10 --daemon
+    sprintf(STR_COMMAND, "cd %s; %s exec %s --queue default --index 0 --pidfile %s --environment %s --logfile %s --concurrency 10 --daemon", CURRENT_FOLDER, PATH_BUNDLE, PATH_SIDEKIQ, PID_SIDEKIQ, ENV, SYS_LOG_SIDEKIQ);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
 
@@ -980,9 +1027,9 @@ void git_clone()
     char STR_SERVICE[512]     = "Cloning Process...";
     char STR_COMMAND[1024];
     get_folder();
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-    sprintf(STR_COMMAND, "cd %s; git clone %s %s", APP_ROOT, REPO_NAME, STR_FOLDER);
-    //printf("%s, %s, %s", STR_FOLDER, SNAP_FOLDER, REPO_BRANCHR_COMMAND);
+    sprintf(SNAP_FOLDER_RELEASE, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; git clone %s %s", APP_ROOT, REPO_NAME, SNAP_FOLDER_RELEASE);
+    //printf("%s, %s, %s", SNAP_FOLDER_RELEASE, SNAP_FOLDER, REPO_BRANCHR_COMMAND);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
 }
 
@@ -993,8 +1040,9 @@ void change_branch()
     char STR_SERVICE[512]     = "Changing Branch...";
     char STR_COMMAND[1024];
     // Goto App Path Release
+    get_folder_release();
     // Checkout Branch
-    sprintf(STR_COMMAND, "cd %s; git checkout %s", STR_FOLDER, REPO_BRANCH);
+    sprintf(STR_COMMAND, "cd %s; git checkout %s", SNAP_FOLDER_RELEASE, REPO_BRANCH);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1006,8 +1054,9 @@ void install_bundle()
     char STR_SERVICE[512]     = "Running: `gem install bundle`...";
     char STR_COMMAND[1024];
     // Goto App Path Release
+    get_folder_release();
     // Run: gem install bundle
-    sprintf(STR_COMMAND, "cd %s; %s install bundle", STR_FOLDER, PATH_GEM);
+    sprintf(STR_COMMAND, "cd %s; %s install bundle", SNAP_FOLDER_RELEASE, PATH_GEM);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1019,8 +1068,9 @@ void install_package()
     char STR_SERVICE[512]     = "Running: `bundle install`...";
     char STR_COMMAND[1024];
     // Goto App Path Release
+    get_folder_release();
     // Run: bundle install
-    sprintf(STR_COMMAND, "cd %s; %s install", STR_FOLDER, PATH_BUNDLE);
+    sprintf(STR_COMMAND, "cd %s; %s install", SNAP_FOLDER_RELEASE, PATH_BUNDLE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1028,6 +1078,9 @@ void install_package()
 void remove_release_folders(char RELEASE_SHARED_FOLDERS[512])
 {
     char STR_COMMAND[1024];
+    // Goto App Path Release
+    get_folder_release();
+    // Run: rm -rf [release_folder]
     sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, RELEASE_SHARED_FOLDERS);
     run_fastcmd(STR_COMMAND);
 }
@@ -1035,6 +1088,9 @@ void remove_release_folders(char RELEASE_SHARED_FOLDERS[512])
 void remove_release_files(char RELEASE_SHARED_FILES[512])
 {
     char STR_COMMAND[1024];
+    // Goto App Path Release
+    get_folder_release();
+    // Run: rm -f [release_file]
     sprintf(STR_COMMAND, "cd %s; rm -f %s", APP_ROOT, RELEASE_SHARED_FILES);
     run_fastcmd(STR_COMMAND);
 }
@@ -1050,13 +1106,14 @@ void initialize_shared_folder()
     char LOOP_TARGET_FOLDER_SHARED[1024];
     // Goto Root App
     // Looping Create Shared Folders
-    message_service(STR_DESCRIPTION);
+    message_service(STR_DESCRIPTION);    
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    get_folder_release();
+
     for (index = 0; LIST_SHARED_FOLDERS[index] != NULL; ++index)
     {
         sprintf(LOOP_SOURCE_FOLDER_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FOLDERS[index]);
-        sprintf(LOOP_TARGET_FOLDER_SHARED, "%s/%s", STR_FOLDER, LIST_SHARED_FOLDERS[index]);
+        sprintf(LOOP_TARGET_FOLDER_SHARED, "%s/%s", SNAP_FOLDER_RELEASE, LIST_SHARED_FOLDERS[index]);
         
         // Remove Release Folders
         remove_release_folders(LOOP_TARGET_FOLDER_SHARED);
@@ -1081,11 +1138,12 @@ void initialize_shared_files()
     // Looping Create Shared Files
     message_service(STR_DESCRIPTION);
     sprintf(SHARED_FOLDER, "%s/%s", APP_ROOT, APP_SHARED);
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
+    get_folder_release();
+
     for (index = 0; LIST_SHARED_FILES[index] != NULL; ++index)
     {
         sprintf(LOOP_SOURCE_FILES_SHARED, "%s/%s", SHARED_FOLDER, LIST_SHARED_FILES[index]);
-        sprintf(LOOP_TARGET_FILES_SHARED, "%s/%s", STR_FOLDER, LIST_SHARED_FILES[index]);
+        sprintf(LOOP_TARGET_FILES_SHARED, "%s/%s", SNAP_FOLDER_RELEASE, LIST_SHARED_FILES[index]);
 
         // Remove Release Files
         remove_release_files(LOOP_TARGET_FILES_SHARED);
@@ -1103,10 +1161,10 @@ void initialize_current()
     char STR_DESCRIPTION[512] = "Initialize Current Folder";
     char STR_SERVICE[512]     = "Initializing Current Folder...";
     char STR_COMMAND[1024];
-    // Goto Root App
+    // Goto App Current Folder
+    get_folder_current();
     // Symlink Current Folder From Latest Release
-    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
-    sprintf(STR_COMMAND, "cd %s; rm -f %s; ln -s %s %s", APP_ROOT, CURRENT_FOLDER, STR_FOLDER, CURRENT_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; rm -f %s; ln -s %s %s", APP_ROOT, CURRENT_FOLDER, SNAP_FOLDER_RELEASE, CURRENT_FOLDER);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1121,17 +1179,16 @@ void run_migration()
     char STR_SERVICE[512]     = "Running Migration Database...";
     char STR_COMMAND[1024];
     int FORCE_MIGRATION =  1; // Force Migration on Production Environment
-    
-    // Goto Root App
-    // Running migration database in the newest 'release' folder
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
 
+    // Goto App Path Release
+    get_folder_release();
+    // Running migration database in the newest 'release' folder
     if (RAILS_VERSION >= 5) { 
         // >= Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_MIGRATION);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_MIGRATION);
     } else {
         // < Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_MIGRATION);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:migrate RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_MIGRATION);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -1145,16 +1202,15 @@ void run_seed()
     char STR_COMMAND[1024];
     int FORCE_SEED = 1; // Force Seed on Production Environment
 
-    // Goto Root App
+    // Goto App Path Release
+    get_folder_release();
     // Running seed database in the newest 'release' folder
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-
     if (RAILS_VERSION >= 5) {
         // >= Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_SEED);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAILS, ENV, FORCE_SEED);
     } else {
         // < Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_SEED);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:seed RAILS_ENV=%s DISABLE_DATABASE_ENVIRONMENT_CHECK=%d", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAKE, ENV, FORCE_SEED);
     }
     // NOTE: Specific seed database class
     // bundle exec rake db:seed SEED_FILES=[class_seed_name] RAILS_ENV=[environment]
@@ -1169,17 +1225,16 @@ void run_migration_rollback()
     char STR_SERVICE[512]     = "Running Rollback Migration...";
     char STR_COMMAND[1024];
     int ROLLBACK = 1;  // Number of Rollback Step
-
-    // Goto Root App
+    
+    // Goto App Path Release
+    get_folder_release();
     // Running rollback migration in the newest 'release' folder
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-
     if (RAILS_VERSION >= 5) {
         // >= Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAILS, ROLLBACK, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAILS, ROLLBACK, ENV);
     } else {
         // < Rails v5.0
-        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", STR_FOLDER, PATH_BUNDLE, PATH_RAKE, ROLLBACK, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s db:rollback STEP=%d RAILS_ENV=%s", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAKE, ROLLBACK, ENV);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -1194,7 +1249,8 @@ void run_preinstall()
     char STR_DESCRIPTION[512] = "Preinstallation";
     char STR_SERVICE[512]     = "Running Preinstall Configuration...";
     char STR_COMMAND[1024];
-    // Goto Root App
+    // Goto Current Path
+    get_folder_release();
     // Symlink preinstall script to 'release' folder
     // Running Preinstallation in the newest 'release' folder
     sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
@@ -1266,11 +1322,10 @@ void remove_release_clone()
     char STR_DESCRIPTION[512] = "Rollback Deploy";
     char STR_SERVICE[512]     = "Rollingback Deployment Process...";
     char STR_COMMAND[1024];
-
-    // Goto Root App
+    // Goto Root Path
+    get_folder_release();
     // Remove All Cloned Folder (SNAP_FOLDER)
-    sprintf(STR_FOLDER, "%s/%s/%s", APP_ROOT, APP_RELEASE, SNAP_FOLDER);
-    sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, STR_FOLDER);
+    sprintf(STR_COMMAND, "cd %s; rm -rf %s", APP_ROOT, SNAP_FOLDER_RELEASE);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }

@@ -7,10 +7,13 @@ gcc -o rb_deploy rb_deploy.c
 # ======================= #
 #   Setup for All Users   #
 # ======================= #
+PATH_LINK="/usr/local/bin/tvmu"
 # A) Using Compile  
-# sudo gcc -o /usr/local/bin/rb_deploy rb_deploy.c 
+# sudo gcc -o $PATH_LINK rb_deploy.c 
 
 # B) Using Symlink  
-# sudo ln -s rb_deploy /usr/local/bin/rb_deploy
-
-# sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
+if ! [ -f "$PATH_LINK" ]
+then
+  sudo ln -s $PATH_PWD/rb_deploy /usr/local/bin/rb_deploy
+  sudo ln -s /usr/local/bin/rb_deploy /bin/rb_deploy
+fi

@@ -1,3 +1,12 @@
+## version 1.2.16
+====================
+* Remaping configuration for Staging / Production environment to `current` folder moved from `shared` folder
+* Execute service with `bundle exec`
+* Define all binaries path for `bundle`, `gem`, `rackup`, `rails`, `rake`, `pushr`, `sidekiq` and `unicorn` 
+* Successfully on first testing deployment on Production VPS
+  - Add sample configuration nginx for staging & production
+  - Add sample configuration & initializers for faye rails
+
 ## version 1.2.15
 ====================
 * Fixing migration & rollback migration in deploy process
