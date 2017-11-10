@@ -71,7 +71,7 @@ server{
   try_files /system/maintenance.html $uri/index.html $uri @unicorn;
 
   location ~ ^/(assets)/ {
-    root /home/deploy/production/public;
+    root /home/deploy/rb_deploy/public;
     gzip_static on;
     expires 1y;
     add_header Cache-Control public;
