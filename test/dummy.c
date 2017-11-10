@@ -28,7 +28,7 @@ int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still e
         USER CONFIGURATION 
    ======================================= */
 int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
-char ENV[64]      = "staging";        // Selected Environment (staging / production)
+char ENV[64]      = "production";     // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                // Rails Version (default: 5)
 int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
@@ -633,17 +633,17 @@ void asset_precompile_process()
     char STR_DESCRIPTION[512] = "Precompile Assets";
     char STR_SERVICE[512]     = "Precompiling All Assets...";
     char STR_COMMAND[1024];
-    // Goto App Current Folder
-    get_folder_current();
+    // Goto App Release Folder
+    get_folder_release();
     if (RAILS_VERSION >= 5)
     {
         // Run: bundle exec rake assets:precompile RAILS_ENV=[environment]
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAILS, ENV);
     }
     else
     {
         // Run: bundle exec rails assets:precompile RAILS_ENV=[environment]
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:precompile RAILS_ENV=%s --trace", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAKE, ENV);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
@@ -662,17 +662,17 @@ void asset_rollback_process()
     char STR_DESCRIPTION[512] = "Rollback Assets";
     char STR_SERVICE[512]     = "Rollingback (Cleanup) All Assets...";
     char STR_COMMAND[1024];
-    // Goto App Current Folder
-    get_folder_current();
+    // Goto App Release Folder
+    get_folder_release();
     if (RAILS_VERSION >= 5)
     {
         // Run: bundle exec rake assets:clobber RAILS_ENV=[environment]
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAILS, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAILS, ENV);
     }
     else
     {
         // Run: bundle exec rails assets:clobber RAILS_ENV=[environment]
-        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", CURRENT_FOLDER, PATH_BUNDLE, PATH_RAKE, ENV);
+        sprintf(STR_COMMAND, "cd %s; %s exec %s assets:clobber RAILS_ENV=%s --trace", SNAP_FOLDER_RELEASE, PATH_BUNDLE, PATH_RAKE, ENV);
     }
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);

@@ -7,7 +7,7 @@ gcc -o rb_deploy rb_deploy.c
 # ======================= #
 #   Setup for All Users   #
 # ======================= #
-PATH_LINK="/usr/local/bin/tvmu"
+PATH_LINK="/usr/local/bin/rb_deploy"
 # A) Using Compile  
 # sudo gcc -o $PATH_LINK rb_deploy.c 
 
