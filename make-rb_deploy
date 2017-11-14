@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 PATH_PWD=`pwd` 
 cd $PATH_PWD
