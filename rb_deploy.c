@@ -138,7 +138,7 @@ char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.16";               // Version 
+char VERSION[16] = "1.2.16.1";             // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder

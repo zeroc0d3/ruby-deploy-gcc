@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # ========== PREINSTALLATION SCRIPTS ========== # 
 #  Do Not Remove This File !                    #

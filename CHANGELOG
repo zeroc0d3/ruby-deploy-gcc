@@ -1,3 +1,7 @@
+## version 1.2.16.1
+====================
+* Change environment script from `#!/bin/sh` to `#!/usr/bin/env sh`
+
 ## version 1.2.16
 ====================
 * Remaping configuration for Staging / Production environment to `current` folder moved from `shared` folder
