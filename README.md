@@ -5,7 +5,7 @@ Deployment tools for Ruby & Rails, build with GNU C (GCC)
 
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.16.1                                          
+  ZeroC0D3 Ruby Deploy :: ver-1.2.16.2                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
