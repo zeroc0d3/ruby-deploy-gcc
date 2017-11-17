@@ -1,5 +1,5 @@
 # ruby-deploy-gcc
-Deployment tools for Ruby & Rails, build with GNU C (GCC)
+Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 
 ![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
 
