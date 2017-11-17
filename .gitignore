@@ -7,3 +7,12 @@ shared
 shared/**
 rb_deploy
 test/test_*
+shared/config/aws.yml
+shared/config/database.yml
+shared/config/mongoid.yml
+shared/config/pushr-development.yml
+shared/config/pushr-staging.yml
+shared/config/pushr-production.yml
+shared/config/secrets.yml
+shared/config/sidekiq.yml
+shared/config/yourub.yml
