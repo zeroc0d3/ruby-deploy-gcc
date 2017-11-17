@@ -1,3 +1,8 @@
+## version 1.2.16.2
+====================
+* Add wiki page documentation
+* Add example `shared` folder
+
 ## version 1.2.16.1
 ====================
 * Change environment script from `#!/bin/sh` to `#!/usr/bin/env sh`

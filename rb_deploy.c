@@ -42,7 +42,7 @@ int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disab
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
 
 // Repository
-char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-installation.git";
+char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-deploy-gcc.git";
 char REPO_BRANCH[64] = "master";
 
 // Shared Folders
@@ -138,7 +138,7 @@ char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.16.1";             // Version 
+char VERSION[16] = "1.2.16.2";             // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder

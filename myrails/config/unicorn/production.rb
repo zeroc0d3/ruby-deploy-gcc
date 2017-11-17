@@ -6,7 +6,7 @@ Unicorn::HttpServer::START_CTX[0] = "#{ root }/bin/unicorn"
 pid               "#{ root }/tmp/pids/unicorn.pid"
 stderr_path       "#{ root }/log/unicorn.log"
 stdout_path       "#{ root }/log/unicorn.log"
-listen            "#{ root }/tmp/sockets/unicorn-tvmu.socket"
+listen            "#{ root }/tmp/sockets/unicorn-production.socket"
 
 worker_processes  4
 timeout           90
@@ -35,3 +35,4 @@ end
 defined?(ActiveRecord::Base) and
   ActiveRecord::Base.establish_connection
 end
+
