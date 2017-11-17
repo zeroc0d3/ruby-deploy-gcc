@@ -1,0 +1,7 @@
+type: Pushr::ConfigurationApns
+  app: pushr-production
+  enabled: true
+  connections: 1
+  sandbox: true
+  certificate: apn-certs/production.pem
+  certificate_password: production

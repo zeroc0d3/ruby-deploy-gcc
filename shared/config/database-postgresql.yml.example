@@ -1,0 +1,39 @@
+#################################
+#   PostgreSQL                  #
+#################################
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 10 } %>
+
+development:
+  <<: *default
+  host: 127.0.0.1
+  port: 5432
+  username: zeroc0d3_team
+  password: zeroc0d3_team
+  database: rb_deploy
+
+test:
+  <<: *default
+  host: 127.0.0.1
+  port: 5432
+  username: zeroc0d3_team
+  password: zeroc0d3_team
+  database: rb_deploy
+
+staging:
+  <<: *default
+  host: 127.0.0.1
+  port: 5432
+  username: zeroc0d3_team
+  password: zeroc0d3_team
+  database: rb_deploy
+
+production:
+  <<: *default
+  host: 192.168.0.100
+  port: 5433
+  username: zeroc0d3_team
+  password: <%= ENV['ZEROC0D3_DATABASE_PASSWORD'] %>
+  database: rb_deploy_pro

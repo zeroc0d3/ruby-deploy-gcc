@@ -1,0 +1,7 @@
+type: Pushr::ConfigurationApns
+  app: pushr-staging
+  enabled: true
+  connections: 1
+  sandbox: true
+  certificate: apn-certs/staging.pem
+  certificate_password: staging

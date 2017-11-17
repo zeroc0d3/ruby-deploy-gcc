@@ -1,0 +1,7 @@
+type: Pushr::ConfigurationApns
+  app: pushr-development
+  enabled: true
+  connections: 1
+  sandbox: true
+  certificate: apn-certs/development.pem
+  certificate_password: development

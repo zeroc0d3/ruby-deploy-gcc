@@ -1,0 +1,20 @@
+default: &default
+  access_key_id: '[access_key_id]'
+  secret_access_key: '[secret_access_key]'
+  bucket: '[bucket_name]'
+  revision: '0.0.10.6'
+
+  region: '[aws_region]'
+  account: '[account_id]'
+  input_bucket: '[input_bucket]'
+  output_bucket: '[output_bucket]'
+  pipeline_id: '[pipeline_id]'
+
+development:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

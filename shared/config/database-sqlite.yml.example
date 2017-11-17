@@ -1,0 +1,23 @@
+#################################
+#   SQLite                      #
+#################################
+sqlite_default: &sqlite_default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+sqlite_development:
+  <<: *sqlite_default
+  database: db/rb_deploy.db
+
+sqlite_test:
+  <<: *sqlite_default
+  database: db/rb_deploy.db
+
+sqlite_staging:
+  <<: *sqlite_default
+  database: db/rb_deploy.db
+
+sqlite_production:
+  <<: *sqlite_default
+  database: db/rb_deploy_pro.db

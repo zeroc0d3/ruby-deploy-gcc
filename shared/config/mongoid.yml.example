@@ -1,0 +1,8 @@
+production:
+  clients:
+    default:
+      database: rb_deploy_pro
+      hosts:
+        - 127.0.0.1:27017
+      options:
+  options:
