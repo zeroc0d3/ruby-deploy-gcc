@@ -1,7 +1,7 @@
 # ruby-deploy-gcc
 Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 
-![alt text](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
+![Deploy Process](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
 
 ```
 ==========================================================================
@@ -64,7 +64,7 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 ```
 
 ## Documentation
-* Configuration & How-To see:
+* Configuration & How-To, see
 [**Wiki Documentation**](https://github.com/zeroc0d3/ruby-deploy-gcc/wiki)
 
 ## Roadmap

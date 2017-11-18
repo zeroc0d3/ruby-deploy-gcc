@@ -1,5 +1,5 @@
 upstream faye_server {
-  server dev.zeroc0d3lab.com:9292;
+  server zeroc0d3lab.com:9292;
 }
 
 upstream production {
@@ -8,7 +8,7 @@ upstream production {
 
 server {
   listen 80;
-  server_name dev.zeroc0d3lab.com;
+  server_name zeroc0d3lab.com;
   root /home/deploy/rb_deploy/current/public;
 
   client_max_body_size 300M;
@@ -60,7 +60,7 @@ server{
   ssl_certificate     /etc/ssl/star_zeroc0d3lab_com.pem;
   ssl_certificate_key /etc/ssl/zeroc0d3lab.key;
 
-  server_name dev.zeroc0d3lab.com;
+  server_name zeroc0d3lab.com;
   root /home/deploy/rb_deploy/current/public;
 
   client_max_body_size 300M;
