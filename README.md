@@ -3,9 +3,11 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 
 ![Deploy Process](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
 
+## Dashboard
+$VERSION = The Latest Version Stable
 ```
 ==========================================================================
-  ZeroC0D3 Ruby Deploy :: ver-1.2.16.2                                          
+  ZeroC0D3 Ruby Deploy :: ver-$VERSION                                          
   (c) 2017 ZeroC0D3 Team                                                  
 ==========================================================================
   ### ENVIRONMENT DEPLOY ###                                              
