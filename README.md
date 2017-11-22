@@ -77,6 +77,7 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 * - [X] Assets Precompile
 * - [X] Assets Clobber (Cleanup Compiled)
 * - [X] MongoDB `[restart│stop]`
+* - [X] Puma `[restart│stop]`
 * - [X] Unicorn `[restart│stop]`
 * - [X] Faye `[restart│stop]`
 * - [X] Pushr `[restart│stop]`
