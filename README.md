@@ -4,8 +4,8 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 ![Deploy Process](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/snapshot/deploy_process1.png)
 
 ## Dashboard
-$VERSION = The Latest Version Stable
-$WEB_SERVER = PUMA (default)
+* $VERSION = The Latest Version Stable
+* $WEB_SERVER = PUMA (default)
 
 ```
 ==========================================================================
