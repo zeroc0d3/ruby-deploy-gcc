@@ -1,3 +1,5 @@
+# config/unicorn/production.rb
+
 root = "/home/zeroc0d3/zeroc0d3-deploy/current"
 working_directory root
 

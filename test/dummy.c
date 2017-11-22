@@ -28,7 +28,7 @@ int IS_ERROR_DEPLOY = 0; // Error Deployment Status   (0 = no error, 1 = still e
         USER CONFIGURATION 
    ======================================= */
 int NUM_RELEASE   = 10;               // Maximum Number of Release Folder 
-char ENV[64]      = "production";     // Selected Environment (staging / production)
+char ENV[64]      = "staging";        // Selected Environment (staging / production)
 int NUM_LOG_VIEW  = 50;               // Maximum Line Number Viewing Log 
 int RAILS_VERSION = 5;                // Rails Version (default: 5)
 int ENABLE_MIGRATION = 0;             // Force Enable Migration (0 = disable/default, 1 = enable)
@@ -40,6 +40,7 @@ int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = dis
 int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
 int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
+int CONF_WEB_SERVER        = 2;       // Default Running Webserver (1 = Unicorn, 2 = Puma / default)
 
 // Repository
 char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-deploy-gcc.git";
@@ -62,6 +63,7 @@ char *LIST_SHARED_FOLDERS[] = {
 char *LIST_SHARED_FILES[] = {
     ".env",
     "faye.ru",
+    "config.ru",
     "config/application.yml",
     "config/database.yml",
     "config/mongoid.yml",
@@ -69,6 +71,8 @@ char *LIST_SHARED_FILES[] = {
     "config/pushr-production.yml",
     "config/secrets.yml",
     "config/sidekiq.yml",
+    "config/puma/staging.rb",
+    "config/puma/production.rb",
     "config/unicorn/staging.rb",
     "config/unicorn/production.rb",
     NULL
@@ -84,16 +88,20 @@ char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/faye.ru"
 char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/config/pushr-staging.yaml";      // Development Pushr Config
 char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/sidekiq.yml";             // Development Sidekiq Config
 char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/unicorn/staging.rb";      // Development Unicorn Config
+char DEV_CONFIG_PUMA[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/config/puma/staging.rb";         // Development Puma Config
 
 char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/faye.pid";              // Development Path PID Faye
 char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/pushr.pid";             // Development Path PID Pushr
 char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
+char DEV_PID_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/puma.pid";              // Development Path PID Puma
+char DEV_PID_STATE_PUMA[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/puma.state";            // Development Path PID State Puma
 
 char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/current/log/staging.log";                // Development Path Log Environment
 char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/log/pushr.log";                  // Development Path Log Pushr
 char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/sidekiq.log";                // Development Path Log Sidekiq
 char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/unicorn.log";                // Development Path Log Unicorn
+char DEV_LOG_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/log/puma.log";                   // Development Path Log Puma
 
 char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                   // Development Path of Bundle Binary
 char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                      // Development Path of Gem Binary
@@ -105,24 +113,29 @@ char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";             
 char DEV_PATH_PUSHR[512]      = "/home/zeroc0d3/.rbenv/shims/pushr";                    // Development Path of Pushr Binary
 char DEV_PATH_SIDEKIQ[512]    = "/home/zeroc0d3/.rbenv/shims/sidekiq";                  // Development Path of Sidekiq Binary
 char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                  // Development Path of Unicorn Binary
+char DEV_PATH_PUMA[512]       = "/home/zeroc0d3/.rbenv/shims/puma";                     // Development Path of Puma Binary
 
 // PRODUCTION CONFIGURATION //
 // Production Environment
 char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                                      // Production Root Path
-char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/current/config/unicorn/production.rb";  // Production Unicorn Config
 char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/current/faye.ru";                       // Production Faye Config
 char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/current/config/pushr-production.yaml";  // Production Pushr Config
 char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/current/config/sidekiq.yml";            // Production Sidekiq Config
+char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/current/config/unicorn/production.rb";  // Production Unicorn Config
+char PROD_CONFIG_PUMA[512]    = "/home/deploy/rb_deploy/current/config/puma/production.rb";     // Production Puma Config
 
 char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/current/tmp/pids/faye.pid";             // Production Path PID Faye
 char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/current/tmp/pids/pushr.pid";            // Production Path PID Pushr
 char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
 char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/current/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
+char PROD_PID_PUMA[512]       = "/home/deploy/rb_deploy/current/tmp/pids/puma.pid";             // Production Path PID Puma
+char PROD_PID_STATE_PUMA[512] = "/home/deploy/rb_deploy/current/tmp/pids/puma.state";           // Production Path PID State Puma
 
 char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/current/log/production.log";            // Production Path Log Environment
 char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/current/log/pushr.log";                 // Production Path Log Pushr
 char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/log/sidekiq.log";               // Production Path Log Sidekiq
 char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/current/log/unicorn.log";               // Production Path Log Unicorn
+char PROD_LOG_PUMA[512]       = "/home/deploy/rb_deploy/current/log/puma.log";                  // Production Path Log Unicorn
 
 char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
 char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
@@ -134,11 +147,12 @@ char PROD_PATH_RAKE[512]      = "/home/deploy/.rbenv/shims/rake";             //
 char PROD_PATH_PUSHR[512]     = "/home/deploy/.rbenv/shims/pushr";            // Production Path of Pushr Binary
 char PROD_PATH_SIDEKIQ[512]   = "/home/deploy/.rbenv/shims/sidekiq";          // Production Path of Sidekiq Binary
 char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          // Production Path of Unicorn Binary
+char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             // Production Path of Puma Binary
 
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.2.16.2";             // Version 
+char VERSION[16] = "1.3";                  // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -149,21 +163,25 @@ char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Serv
 
 // GENERAL CONFIGURATION //
 // Config
-char CONFIG_UNICORN[512];           // Unicorn Config
 char CONFIG_FAYE[512];              // Faye Config
+char CONFIG_PUMA[512];              // Puma Config
 char CONFIG_PUSHR[512];             // Pushr Config
 char CONFIG_SIDEKIQ[512];           // Sidekiq Config
+char CONFIG_UNICORN[512];           // Unicorn Config
 // PID
-char PID_UNICORN[512];              // Path PID Unicorn
 char PID_FAYE[512];                 // Path PID Faye
+char PID_PUMA[512];                 // Path PID Puma
+char PID_STATE_PUMA[512];           // Path PID State Puma
 char PID_PUSHR[512];                // Path PID Pushr
 char PID_SIDEKIQ[512];              // Path PID Sidekiq
+char PID_UNICORN[512];              // Path PID Unicorn
 // Binary
 char PATH_BUNDLE[512];              // Path of Bundle Binary
 char PATH_GEM[512];                 // Path of Gem Binary
 char PATH_RACKUP[512];              // Path of Rackup Binary
 char PATH_RAILS[512];               // Path of Rails Binary
 char PATH_RAKE[512];                // Path of Rake Binary
+char PATH_PUMA[512];                // Path of Puma Binary
 char PATH_PUSHR[512];               // Path of Pushr Binary
 char PATH_SIDEKIQ[512];             // Path of Sidekiq Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
@@ -271,10 +289,13 @@ void select_env()
     {
         sprintf(APP_ROOT, "%s", PROD_APP_ROOT);
         sprintf(CONFIG_FAYE, "%s", PROD_CONFIG_FAYE);
+        sprintf(CONFIG_PUMA, "%s", PROD_CONFIG_PUMA);
         sprintf(CONFIG_PUSHR, "%s", PROD_CONFIG_PUSHR);
         sprintf(CONFIG_SIDEKIQ, "%s", PROD_CONFIG_SIDEKIQ);
         sprintf(CONFIG_UNICORN, "%s", PROD_CONFIG_UNICORN);
         sprintf(PID_FAYE, "%s", PROD_PID_FAYE);
+        sprintf(PID_PUMA, "%s", PROD_PID_PUMA);
+        sprintf(PID_STATE_PUMA, "%s", PROD_PID_STATE_PUMA);
         sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
@@ -295,10 +316,13 @@ void select_env()
     {
         sprintf(APP_ROOT, "%s", DEV_APP_ROOT);
         sprintf(CONFIG_FAYE, "%s", DEV_CONFIG_FAYE);
+        sprintf(CONFIG_PUMA, "%s", DEV_CONFIG_PUMA);
         sprintf(CONFIG_PUSHR, "%s", DEV_CONFIG_PUSHR);
         sprintf(CONFIG_SIDEKIQ, "%s", DEV_CONFIG_SIDEKIQ);
         sprintf(CONFIG_UNICORN, "%s", DEV_CONFIG_UNICORN);
         sprintf(PID_FAYE, "%s", DEV_PID_FAYE);
+        sprintf(PID_PUMA, "%s", DEV_PID_PUMA);
+        sprintf(PID_STATE_PUMA, "%s", DEV_PID_STATE_PUMA);
         sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
@@ -360,6 +384,12 @@ void menu()
     printf("\033[22;34m  # ENVIRONMENT   : \033[22;32m%s                                         \033[0m\n", ENV);
     printf("\033[22;34m  # PATH ROOT     : \033[22;32m%s                                         \033[0m\n", APP_ROOT);
     printf("\033[22;34m  # RAILS VERSION : \033[22;32m%d                                         \033[0m\n", RAILS_VERSION);
+    if (CONF_WEB_SERVER == 1) 
+    {
+        printf("\033[22;34m  # WEB SERVER    : \033[22;32mUNICORN                                \033[0m\n");
+    } else {
+        printf("\033[22;34m  # WEB SERVER    : \033[22;32mPUMA                                   \033[0m\n");
+    }
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### NGINX SERVICES ###                                                  \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -393,7 +423,12 @@ void menu()
     {
         printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
     }
-    printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
+    if (CONF_WEB_SERVER == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
+    } else {
+        printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Puma                           \033[0m\n");
+    }
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -417,7 +452,14 @@ void menu()
     {
         printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
     }
-    printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
+    if (CONF_WEB_SERVER == 1)
+    {
+        printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
+    }
+    else
+    {
+        printf("\033[22;34m  # ./rb_deploy -du            --> Stop Puma                              \033[0m\n");
+    }
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -439,7 +481,14 @@ void menu()
     {
         printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
     }
-    printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n");
+
+    if (CONF_WEB_SERVER == 1)
+    { 
+        printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n"); 
+    } else 
+    { 
+        printf("\033[22;34m  # ./rb_deploy -l-puma        --> View Puma Log                          \033[0m\n"); 
+    }
     printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
     printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
@@ -682,6 +731,53 @@ void asset_rollback()
 {
     header();
     asset_rollback_process();
+    footer();
+}
+
+/* --------------------------------------- 
+        Puma
+   --------------------------------------- */
+void kill_puma()
+{
+    select_env();
+    char STR_DESCRIPTION[512] = "Stop Puma Service";
+    char STR_SERVICE[512]     = "Puma Terminated...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i puma | awk {'print $2'} | sudo xargs kill -9";
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_puma()
+{
+    select_env();
+    char STR_DESCRIPTION[512] = "Run Puma Service";
+    char STR_SERVICE[512]     = "Puma Running...";
+    char STR_COMMAND[1024];
+    // Goto App Current Folder
+    get_folder_current();
+    // Run: bundle exec puma -D -c [config_puma] -E [environment]
+    sprintf(STR_COMMAND, "cd %s; %s exec %s -C %s RAILS_ENV=%s", CURRENT_FOLDER, PATH_BUNDLE, PATH_PUMA, CONFIG_PUMA, ENV);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void restart_puma_process()
+{
+    kill_puma();
+    run_puma();
+}
+
+void restart_puma()
+{
+    header();
+    restart_puma_process();
+    footer();
+}
+
+void stop_puma()
+{
+    header();
+    kill_puma();
     footer();
 }
 
@@ -1272,7 +1368,12 @@ void server_up_process()
     }
     if (ENABLE_MONGODB_SERVICE == 1) { restart_mongodb_process(); }
     if (ENABLE_SIDEKIQ_SERVICE == 1) { restart_sidekiq_process(); }
-    restart_unicorn_process();
+
+    if (CONF_WEB_SERVER == 1) {
+        restart_unicorn_process();
+    } else {
+        restart_puma_process();
+    }        
 }
 
 void server_up()
@@ -1405,9 +1506,12 @@ int main(int argc, char **argv) {
         restart_sidekiq();
     } else if (strcmp(argv[1], "-rs") == 0) {
         restart_redis();
-    } else if (strcmp(argv[1], "-ru") == 0) {
-        restart_unicorn();
-
+    } else if (strcmp(argv[1], "-ru") == 0) {        
+        if (CONF_WEB_SERVER == 1) {
+            restart_unicorn();
+        } else {
+            restart_puma();
+        }
     // Stop Services
     } else if (strcmp(argv[1], "-df") == 0) {
         stop_faye();
@@ -1420,8 +1524,11 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "-ds") == 0) {
         stop_redis();
     } else if (strcmp(argv[1], "-du") == 0) {
-        stop_unicorn();
-
+        if (CONF_WEB_SERVER == 1) {
+            stop_unicorn();
+        } else {
+            stop_puma();
+        }
     // View Log
     } else if (strcmp(argv[1], "-l-env") == 0) {
         log_env();

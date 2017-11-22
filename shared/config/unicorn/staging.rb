@@ -1,3 +1,5 @@
+# config/unicorn/production.rb
+
 root = "/home/zeroc0d3/zeroc0d3-deploy/current"
 working_directory root
 
@@ -35,4 +37,3 @@ end
 defined?(ActiveRecord::Base) and
   ActiveRecord::Base.establish_connection
 end
-
