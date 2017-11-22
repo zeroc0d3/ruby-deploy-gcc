@@ -5,6 +5,8 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 
 ## Dashboard
 $VERSION = The Latest Version Stable
+$WEB_SERVER = PUMA (default)
+
 ```
 ==========================================================================
   ZeroC0D3 Ruby Deploy :: ver-$VERSION                                          
@@ -14,7 +16,8 @@ $VERSION = The Latest Version Stable
 --------------------------------------------------------------------------
   # ENVIRONMENT   : staging                                         
   # PATH ROOT     : /home/zeroc0d3/zeroc0d3-deploy                                         
-  # RAILS VERSION : 5                                         
+  # RAILS VERSION : 5  
+  # WEB SERVER    : $WEB_SERVER                                       
 --------------------------------------------------------------------------
   ### NGINX SERVICES ###                                                  
 --------------------------------------------------------------------------
@@ -33,7 +36,7 @@ $VERSION = The Latest Version Stable
   # ./rb_deploy -rp            --> Restart Pushr                          
   # ./rb_deploy -rq            --> Restart Sidekiq                        
   # ./rb_deploy -rs            --> Restart Redis                          
-  # ./rb_deploy -ru            --> Restart Unicorn                        
+  # ./rb_deploy -ru            --> Restart $WEB_SERVER                        
 --------------------------------------------------------------------------
   ### STOP SERVICES ###                                                   
 --------------------------------------------------------------------------
@@ -42,7 +45,7 @@ $VERSION = The Latest Version Stable
   # ./rb_deploy -dp            --> Stop Pushr                             
   # ./rb_deploy -dq            --> Stop Sidekiq                           
   # ./rb_deploy -ds            --> Stop Redis                             
-  # ./rb_deploy -du            --> Stop Unicorn                           
+  # ./rb_deploy -du            --> Stop $WEB_SERVER                           
 --------------------------------------------------------------------------
   ### VIEW LOGS ###                                                       
 --------------------------------------------------------------------------
@@ -52,7 +55,7 @@ $VERSION = The Latest Version Stable
   # ./rb_deploy -l-pushr       --> View Pushr Log                         
   # ./rb_deploy -l-redis       --> View Redis Log                         
   # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       
-  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       
+  # ./rb_deploy -l-puma        --> View $WEB_SERVER Log                       
   # ./rb_deploy -la-nginx      --> View NGINX Access Log                  
   # ./rb_deploy -le-nginx      --> View NGINX Error Log                   
 --------------------------------------------------------------------------
