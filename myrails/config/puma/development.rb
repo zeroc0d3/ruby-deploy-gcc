@@ -1,16 +1,16 @@
-# config/puma/staging.rb
+# config/puma/development.rb
 require "active_record"
   
 root = "/home/zeroc0d3/zeroc0d3-deploy/current"
 
-# Default to staging
-rails_env     = ENV['RAILS_ENV'] || "staging"
+# Default to development
+rails_env     = ENV['RAILS_ENV'] || "development"
 threads_count = Integer(ENV['RAILS_MAX_THREADS'] || 4)
 environment rails_env
 
 pidfile           "#{ root }/tmp/pids/puma.pid"
-stdout_redirect   "#{ root }/log/puma.log"
-bind              "unix://#{ root }/tmp/sockets/puma-staging.socket"
+#stdout_redirect   "#{ root }/log/puma.log"
+bind              "unix://#{ root }/tmp/sockets/puma-development.socket"
 state_path        "#{ root }/tmp/pids/puma.state"
 rackup            DefaultRackup
 port              ENV['PORT'] || 3000
@@ -58,7 +58,7 @@ worker_timeout    90
 preload_app!
 
 on_worker_boot do
-  ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNotEstablished
+  ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNodevelopmentablished
   ActiveRecord::Base.establish_connection(YAML.load_file("#{ root }/config/database.yml")[rails_env])
 end
 

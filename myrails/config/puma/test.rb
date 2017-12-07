@@ -1,16 +1,16 @@
-# config/puma/staging.rb
+# config/puma/test.rb
 require "active_record"
   
 root = "/home/zeroc0d3/zeroc0d3-deploy/current"
 
-# Default to staging
-rails_env     = ENV['RAILS_ENV'] || "staging"
+# Default to test
+rails_env     = ENV['RAILS_ENV'] || "test"
 threads_count = Integer(ENV['RAILS_MAX_THREADS'] || 4)
 environment rails_env
 
 pidfile           "#{ root }/tmp/pids/puma.pid"
-stdout_redirect   "#{ root }/log/puma.log"
-bind              "unix://#{ root }/tmp/sockets/puma-staging.socket"
+#stdout_redirect   "#{ root }/log/puma.log"
+bind              "unix://#{ root }/tmp/sockets/puma-test.socket"
 state_path        "#{ root }/tmp/pids/puma.state"
 rackup            DefaultRackup
 port              ENV['PORT'] || 3000
