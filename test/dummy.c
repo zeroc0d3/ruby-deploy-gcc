@@ -1145,7 +1145,7 @@ void generate_secret_token()
     Deploy Process: 
         1)  [X] Clone Repository to Unix DateTime Release Folder
         2)  [X] Checkout Branch
-        3)  [X] Install Bundle  (gem install bundle)
+        3)  [X] Install Bundle  (gem install bundler)
         4)  [X] Install Package (bundle install)
         5)  [X] Remove Shared Folders
         6)  [X] Remove Shared Files
@@ -1196,12 +1196,12 @@ void install_bundle()
 {
     select_env();
     char STR_DESCRIPTION[512] = "Install Bundle";
-    char STR_SERVICE[512]     = "Running: `gem install bundle`...";
+    char STR_SERVICE[512]     = "Running: `gem install bundler`...";
     char STR_COMMAND[1024];
     // Goto App Path Release
     get_folder_release();
     // Run: gem install bundle
-    sprintf(STR_COMMAND, "cd %s; %s install bundle", SNAP_FOLDER_RELEASE, PATH_GEM);
+    sprintf(STR_COMMAND, "cd %s; %s install bundler", SNAP_FOLDER_RELEASE, PATH_GEM);
     get_command(STR_COMMAND);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
