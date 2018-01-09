@@ -85,5 +85,12 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 * - [X] Redis `[restart│stop]`
 * - [X] Deploy
 
+
+## Changelog
+[**Log history**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/CHANGELOG)
+
+## Version
+[**Latest**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/VERSION)
+
 ## License
 [**MIT License**](https://github.com/zeroc0d3/ruby-deploy-gcc/blob/master/LICENSE)
