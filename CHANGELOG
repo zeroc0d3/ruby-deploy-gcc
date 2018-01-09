@@ -1,3 +1,7 @@
+## version 1.4.1
+====================
+* Fixing debug command from all step running deploy
+
 ## version 1.4
 ====================
 * Add puma_start.sh & puma_stop.sh script for Running or Stop puma service
