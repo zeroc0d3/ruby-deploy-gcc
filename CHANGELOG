@@ -1,6 +1,7 @@
 ## version 1.4.2
 ====================
 * Add service push notification via GCM (Google Cloud Messaging)
+* Add view log puma
 * Fixing before and after web service up (restart process)
 * Fixing before and after web service down (kill process)
 

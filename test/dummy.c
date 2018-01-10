@@ -202,6 +202,7 @@ char PATH_SIDEKIQ[512];             // Path of Sidekiq Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 // Log
 char SYS_LOG_ENV[512];                                               // Path Log Environment
+char SYS_LOG_PUMA[512];                                              // Path Log Puma
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
 char SYS_LOG_PUSH_GCM[512];                                          // Path Log Push GCM (Google Cloud Messaging)
 char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
@@ -325,6 +326,7 @@ void select_env()
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
+        sprintf(SYS_LOG_PUMA, "%s", PROD_LOG_PUMA);
         sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
         sprintf(SYS_LOG_PUSH_GCM, "%s", PROD_LOG_PUSH_GCM);
         sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
@@ -357,6 +359,7 @@ void select_env()
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
+        sprintf(SYS_LOG_PUMA, "%s", DEV_LOG_PUMA);
         sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
         sprintf(SYS_LOG_PUSH_GCM, "%s", DEV_LOG_PUSH_GCM);
         sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
@@ -580,7 +583,7 @@ void run_single(char STR_SERVICE[512],
     message_service(STR_DESCRIPTION);
     get_command(STR_COMMAND);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    //system(cmdRun);
+    // system(cmdRun);
     message_ok(STR_SERVICE);
 }
 
@@ -1147,6 +1150,18 @@ void log_sidekiq()
     footer();
 }
 
+void log_puma()
+{
+    select_env();
+    char STR_DESCRIPTION[256] = "View Puma Log [Ctrl+C to Exit]";
+    char STR_SERVICE[256]     = "Viewing Puma Log...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_PUMA);
+    header();
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    footer();
+}
+
 void log_unicorn()
 {
     select_env();
@@ -1615,6 +1630,7 @@ int main(int argc, char **argv) {
         } else {
             restart_puma();
         }
+
     // Stop Services
     } else if (strcmp(argv[1], "-df") == 0) {
         stop_faye();
@@ -1634,6 +1650,7 @@ int main(int argc, char **argv) {
         } else {
             stop_puma();
         }
+
     // View Log
     } else if (strcmp(argv[1], "-l-env") == 0) {
         log_env();
@@ -1647,10 +1664,12 @@ int main(int argc, char **argv) {
         log_redis();    
     } else if (strcmp(argv[1], "-l-pushr") == 0) {
         log_pusher();
-    } else if (strcmp(argv[1], "-l-sidekiq") == 0){
-        log_sidekiq();
-    } else if (strcmp(argv[1], "-l-unicorn") == 0){
-        log_unicorn();    
+    } else if (strcmp(argv[1], "-l-sidekiq") == 0) {
+        log_sidekiq();        
+    } else if (strcmp(argv[1], "-l-unicorn") == 0) {
+        log_unicorn();
+    } else if (strcmp(argv[1], "-l-puma") == 0) {
+        log_puma();    
     } else if (strcmp(argv[1], "-la-nginx") == 0) {
         log_nginx_access();
     } else if (strcmp(argv[1], "-le-nginx") == 0) {
