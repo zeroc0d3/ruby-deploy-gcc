@@ -1193,8 +1193,8 @@ void generate_secret_token()
         11) [X] Migrate Database
         12) [X] Seed Database
         13) [X] Create Symlink Release -> Current
-        14) [X] Service Unicorn Stop
-        15) [X] Service Unicorn Start
+        14) [X] Service Puma/Unicorn Stop
+        15) [X] Service Puma/Unicorn Start
         16) **FINISH**
 
         Note: On Failed 

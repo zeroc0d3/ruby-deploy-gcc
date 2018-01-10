@@ -84,7 +84,7 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
 * - [X] Unicorn `[restart│stop]`
 * - [X] Faye `[restart│stop]`
 * - [X] Pushr `[restart│stop]`
-* - [X] Push GCM (Google Cloud Messaging)
+* - [X] Push GCM (Google Cloud Messaging) `[restart│stop]`
 * - [X] Sidekiq `[restart│stop]`
 * - [X] Redis `[restart│stop]`
 * - [X] Deploy
