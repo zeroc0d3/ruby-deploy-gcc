@@ -1,6 +1,6 @@
 /* 
  * File:   rb_deploy.c
- * Author: ZeroC0D3 LAB (zeroc0d3)
+ * Author: ZeroC0D3 Engineer (zeroc0d3)
  *
  * Created on Oct 22nd, 2017, 08:00 
  * 
@@ -38,9 +38,10 @@ int ENABLE_COMPILE_ASSETS  = 1;       // Enable Running Assets Precompile (0 = d
 int ENABLE_FAYE_SERVICE    = 1;       // Enable Running Faye Service (0 = disable/default, 1 = enable)
 int ENABLE_MONGODB_SERVICE = 1;       // Enable Running MongoDB Service (0 = disable/default, 1 = enable)
 int ENABLE_PUSHR_SERVICE   = 1;       // Enable Running Pushr Service (0 = disable/default, 1 = enable)
+int ENABLE_PUSHGCM_SERVICE = 1;       // Enable Running Push GCM (Google Notification) Service (0 = disable/default, 1 = enable)
 int ENABLE_REDIS_SERVICE   = 1;       // Enable Running Redis Service (0 = disable/default, 1 = enable)
 int ENABLE_SIDEKIQ_SERVICE = 1;       // Enable Running Sidekiq Service (0 = disable/default, 1 = enable)
-int CONF_WEB_SERVER        = 2;       // Default Running Webserver (1 = Unicorn, 2 = Puma / default)
+int CONF_WEB_SERVER = 2;              // Default Running Webserver (1 = Unicorn, 2 = Puma / default)
 
 // Repository
 char REPO_NAME[1024] = "git@github.com:zeroc0d3/ruby-deploy-gcc.git";
@@ -83,16 +84,17 @@ char *LIST_SHARED_FILES[] = {
    ======================================= */
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
-char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                       // Development Root Path
+char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                        // Development Root Path
 char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/faye.ru";                        // Development Faye Config
 char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/config/pushr-staging.yaml";      // Development Pushr Config
 char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/sidekiq.yml";             // Development Sidekiq Config
 char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/unicorn/staging.rb";      // Development Unicorn Config
 char DEV_CONFIG_PUMA[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/config/puma/staging.rb";         // Development Puma Config
-char DEV_CONFIG_RU[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/config/config.ru";                          // Development config.ru
+char DEV_CONFIG_RU[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/config/config.ru";               // Development config.ru
 
 char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/faye.pid";              // Development Path PID Faye
 char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/pushr.pid";             // Development Path PID Pushr
+char DEV_PID_PUSH_GCM[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/push_gcm.pid";          // Development Path PID GCM (Google Cloud Messaging)
 char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
 char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
 char DEV_PID_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/puma.pid";              // Development Path PID Puma
@@ -103,22 +105,24 @@ char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/log/push
 char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/sidekiq.log";                // Development Path Log Sidekiq
 char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/unicorn.log";                // Development Path Log Unicorn
 char DEV_LOG_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/log/puma.log";                   // Development Path Log Puma
+char DEV_LOG_PUSH_GCM[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/log/push_gcm.log";               // Development Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
 
-char DEV_PATH_BUNDLE[512]     = "/home/zeroc0d3/.rbenv/shims/bundle";                   // Development Path of Bundle Binary
-char DEV_PATH_GEM[512]        = "/home/zeroc0d3/.rbenv/shims/gem";                      // Development Path of Gem Binary
-char DEV_PATH_RACKUP[512]     = "/home/zeroc0d3/.rbenv/shims/rackup";                   // Development Path of Rackup Binary
+char DEV_PATH_BUNDLE[512]     = "/home/deploy/.rbenv/shims/bundle";                   // Development Path of Bundle Binary
+char DEV_PATH_GEM[512]        = "/home/deploy/.rbenv/shims/gem";                      // Development Path of Gem Binary
+char DEV_PATH_RACKUP[512]     = "/home/deploy/.rbenv/shims/rackup";                   // Development Path of Rackup Binary
 // >= Rails v5.0
-char DEV_PATH_RAILS[512]      = "/home/zeroc0d3/.rbenv/shims/rails";                    // Development Path of Rails Binary
+char DEV_PATH_RAILS[512]      = "/home/deploy/.rbenv/shims/rails";                    // Development Path of Rails Binary
 // < Rails v5.0
-char DEV_PATH_RAKE[512]       = "/home/zeroc0d3/.rbenv/shims/rake";                     // Development Path of Rake Binary
-char DEV_PATH_PUSHR[512]      = "/home/zeroc0d3/.rbenv/shims/pushr";                    // Development Path of Pushr Binary
-char DEV_PATH_SIDEKIQ[512]    = "/home/zeroc0d3/.rbenv/shims/sidekiq";                  // Development Path of Sidekiq Binary
-char DEV_PATH_UNICORN[512]    = "/home/zeroc0d3/.rbenv/shims/unicorn";                  // Development Path of Unicorn Binary
-char DEV_PATH_PUMA[512]       = "/home/zeroc0d3/.rbenv/shims/puma";                     // Development Path of Puma Binary
+char DEV_PATH_RAKE[512]       = "/home/deploy/.rbenv/shims/rake";                     // Development Path of Rake Binary
+char DEV_PATH_PUSHR[512]      = "/home/deploy/.rbenv/shims/pushr";                    // Development Path of Pushr Binary
+char DEV_PATH_PUSH_GCM[512]   = "/home/deploy/.rbenv/shims/push";                     // Development Path of Push GCM Binary
+char DEV_PATH_SIDEKIQ[512]    = "/home/deploy/.rbenv/shims/sidekiq";                  // Development Path of Sidekiq Binary
+char DEV_PATH_UNICORN[512]    = "/home/deploy/.rbenv/shims/unicorn";                  // Development Path of Unicorn Binary
+char DEV_PATH_PUMA[512]       = "/home/deploy/.rbenv/shims/puma";                     // Development Path of Puma Binary
 
 // PRODUCTION CONFIGURATION //
 // Production Environment
-char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                                      // Production Root Path
+char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                                       // Production Root Path
 char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/current/faye.ru";                       // Production Faye Config
 char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/current/config/pushr-production.yaml";  // Production Pushr Config
 char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/current/config/sidekiq.yml";            // Production Sidekiq Config
@@ -128,6 +132,7 @@ char PROD_CONFIG_RU[512]      = "/home/deploy/rb_deploy/current/config/config.ru
 
 char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/current/tmp/pids/faye.pid";             // Production Path PID Faye
 char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/current/tmp/pids/pushr.pid";            // Production Path PID Pushr
+char PROD_PID_PUSH_GCM[512]   = "/home/deploy/rb_deploy/current/tmp/pids/push_gcm.pid";         // Production Path PID GCM (Google Cloud Messaging)
 char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
 char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/current/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
 char PROD_PID_PUMA[512]       = "/home/deploy/rb_deploy/current/tmp/pids/puma.pid";             // Production Path PID Puma
@@ -138,6 +143,7 @@ char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/current/log/pushr.log"; 
 char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/log/sidekiq.log";               // Production Path Log Sidekiq
 char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/current/log/unicorn.log";               // Production Path Log Unicorn
 char PROD_LOG_PUMA[512]       = "/home/deploy/rb_deploy/current/log/puma.log";                  // Production Path Log Unicorn
+char PROD_LOG_PUSH_GCM[512]   = "/home/deploy/rb_deploy/current/log/push_gcm.log";              // Production Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
 
 char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
 char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
@@ -147,6 +153,7 @@ char PROD_PATH_RAILS[512]     = "/home/deploy/.rbenv/shims/rails";            //
 // < Rails v5.0
 char PROD_PATH_RAKE[512]      = "/home/deploy/.rbenv/shims/rake";             // Production Path of Rake Binary
 char PROD_PATH_PUSHR[512]     = "/home/deploy/.rbenv/shims/pushr";            // Production Path of Pushr Binary
+char PROD_PATH_PUSH_GCM[512]  = "/home/deploy/.rbenv/shims/push";             // Production Path of Push GCM Binary
 char PROD_PATH_SIDEKIQ[512]   = "/home/deploy/.rbenv/shims/sidekiq";          // Production Path of Sidekiq Binary
 char PROD_PATH_UNICORN[512]   = "/home/deploy/.rbenv/shims/unicorn";          // Production Path of Unicorn Binary
 char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             // Production Path of Puma Binary
@@ -154,7 +161,7 @@ char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.4.1";                // Version 
+char VERSION[16] = "1.4.2";                // Version 
 char APP_ROOT[512];                        // Root Path
 char APP_CURRENT[64] = "current";          // Current Folder
 char APP_RELEASE[64] = "release";          // Release Folder
@@ -162,8 +169,8 @@ char APP_SHARED[64]  = "shared";           // Shared Folder
 char CURRENT_FOLDER[1024];                 // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
 char SHARED_FOLDER[1024];                  // SHARED_FOLDER  = APP_ROOT/APP_SHARED
 char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Server-Up
-int  DEBUG_LINE      = 1;                  // Debug Version (Show Command)
-int  LOG_LINE        = 1;                  // Add Logfile (Log All Command)
+int DEBUG_LINE       = 1;                  // Debug Version (Show Command), (0 = disable, 1 = enable)
+int LOG_LINE         = 1;                  // Add Logfile (Log All Command), (0 = disable, 1 = enable)
 char LOGFILE[64]     = "rb_deploy.log";    // Logfile Deploy
 
 // GENERAL CONFIGURATION //
@@ -179,6 +186,7 @@ char PID_FAYE[512];                 // Path PID Faye
 char PID_PUMA[512];                 // Path PID Puma
 char PID_STATE_PUMA[512];           // Path PID State Puma
 char PID_PUSHR[512];                // Path PID Pushr
+char PID_PUSH_GCM[512];             // Path PID Push GCM (Google Cloud Messaging)
 char PID_SIDEKIQ[512];              // Path PID Sidekiq
 char PID_UNICORN[512];              // Path PID Unicorn
 // Binary
@@ -189,11 +197,13 @@ char PATH_RAILS[512];               // Path of Rails Binary
 char PATH_RAKE[512];                // Path of Rake Binary
 char PATH_PUMA[512];                // Path of Puma Binary
 char PATH_PUSHR[512];               // Path of Pushr Binary
+char PATH_PUSH_GCM[512];            // Path of Push GCM (Google Cloud Messaging)
 char PATH_SIDEKIQ[512];             // Path of Sidekiq Binary
 char PATH_UNICORN[512];             // Path of Unicorn Binary
 // Log
 char SYS_LOG_ENV[512];                                               // Path Log Environment
 char SYS_LOG_PUSHR[512];                                             // Path Log Pushr
+char SYS_LOG_PUSH_GCM[512];                                          // Path Log Push GCM (Google Cloud Messaging)
 char SYS_LOG_SIDEKIQ[512];                                           // Path Log Sidekiq
 char SYS_LOG_UNICORN[512];                                           // Path Log Unicorn
 char SYS_LOG_NGINX_ERROR[512]  = "/var/log/nginx/error.log";         // Path Log NGINX Error
@@ -311,16 +321,19 @@ void select_env()
         sprintf(PID_PUMA, "%s", PROD_PID_PUMA);
         sprintf(PID_STATE_PUMA, "%s", PROD_PID_STATE_PUMA);
         sprintf(PID_PUSHR, "%s", PROD_PID_PUSHR);
+        sprintf(PID_PUSH_GCM, "%s", PROD_PID_PUSH_GCM);
         sprintf(PID_SIDEKIQ, "%s", PROD_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", PROD_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", PROD_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", PROD_LOG_PUSHR);
+        sprintf(SYS_LOG_PUSH_GCM, "%s", PROD_LOG_PUSH_GCM);
         sprintf(SYS_LOG_SIDEKIQ, "%s", PROD_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", PROD_LOG_UNICORN);
         sprintf(PATH_BUNDLE, "%s", PROD_PATH_BUNDLE);
         sprintf(PATH_GEM, "%s", PROD_PATH_GEM);
         sprintf(PATH_PUMA, "%s", PROD_PATH_PUMA);
         sprintf(PATH_PUSHR, "%s", PROD_PATH_PUSHR);
+        sprintf(PATH_PUSH_GCM, "%s", PROD_PATH_PUSH_GCM);
         sprintf(PATH_RACKUP, "%s", PROD_PATH_RACKUP);
         sprintf(PATH_RAILS, "%s", PROD_PATH_RAILS);
         sprintf(PATH_RAKE, "%s", PROD_PATH_RAKE);
@@ -340,16 +353,19 @@ void select_env()
         sprintf(PID_PUMA, "%s", DEV_PID_PUMA);
         sprintf(PID_STATE_PUMA, "%s", DEV_PID_STATE_PUMA);
         sprintf(PID_PUSHR, "%s", DEV_PID_PUSHR);
+        sprintf(PID_PUSH_GCM, "%s", DEV_PID_PUSH_GCM);
         sprintf(PID_SIDEKIQ, "%s", DEV_PID_SIDEKIQ);
         sprintf(PID_UNICORN, "%s", DEV_PID_UNICORN);
         sprintf(SYS_LOG_ENV, "%s", DEV_LOG_ENV);
         sprintf(SYS_LOG_PUSHR, "%s", DEV_LOG_PUSHR);
+        sprintf(SYS_LOG_PUSH_GCM, "%s", DEV_LOG_PUSH_GCM);
         sprintf(SYS_LOG_SIDEKIQ, "%s", DEV_LOG_SIDEKIQ);
         sprintf(SYS_LOG_UNICORN, "%s", DEV_LOG_UNICORN);
         sprintf(PATH_BUNDLE, "%s", DEV_PATH_BUNDLE);
         sprintf(PATH_GEM, "%s", DEV_PATH_GEM);
         sprintf(PATH_PUMA, "%s", DEV_PATH_PUMA);
         sprintf(PATH_PUSHR, "%s", DEV_PATH_PUSHR);
+        sprintf(PATH_PUSH_GCM, "%s", DEV_PATH_PUSH_GCM);
         sprintf(PATH_RACKUP, "%s", DEV_PATH_RACKUP);
         sprintf(PATH_RAILS, "%s", DEV_PATH_RAILS);
         sprintf(PATH_RAKE, "%s", DEV_PATH_RAKE);
@@ -360,23 +376,23 @@ void select_env()
 
 void logo()
 {
-    // printf("\033[22;32m==========================================================================\033[0m\n");
-    // printf("\033[22;31m  __________                  _________ _______       .___________        \033[0m\n");
-    // printf("\033[22;31m  \____    /___________  ____ \_   ___ \\   _  \    __| _/\_____  \  LAB  \033[0m\n");
-    // printf("\033[22;31m    /     // __ \_  __ \/  _ \/    \  \//  /_\  \  / __ |   _(__  <       \033[0m\n");
-    // printf("\033[22;31m   /     /\  ___/|  | \(  <_> )     \___\  \_/   \/ /_/ |  /       \      \033[0m\n");
-    // printf("\033[22;31m  /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /      \033[0m\n");
-    // printf("\033[22;31m          \/   \/                     \/       \/      \/        \/       \033[0m\n");
-    printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s                                          \033[0m\n", VERSION);
-    printf("\033[22;34m  (c) 2017 ZeroC0D3 Team                                                  \033[0m\n");
+    // printf("\033[22;32m===============================================================================\033[0m\n");
+    // printf("\033[22;31m    __________                  _________ _______       .___________           \033[0m\n");
+    // printf("\033[22;31m    \____    /___________  ____ \_   ___ \\   _  \    __| _/\_____  \  LAB     \033[0m\n");
+    // printf("\033[22;31m      /     // __ \_  __ \/  _ \/    \  \//  /_\  \  / __ |   _(__  <          \033[0m\n");
+    // printf("\033[22;31m     /     /\  ___/|  | \(  <_> )     \___\  \_/   \/ /_/ |  /       \         \033[0m\n");
+    // printf("\033[22;31m    /_______ \___  >__|   \____/ \______  /\_____  /\____ | /______  /         \033[0m\n");
+    // printf("\033[22;31m            \/   \/                     \/       \/      \/        \/          \033[0m\n");
+    printf("\033[22;32m===============================================================================\033[0m\n");
+    printf("\033[22;34m  ZeroC0D3 Ruby Deploy :: ver-%s                                               \033[0m\n", VERSION);
+    printf("\033[22;34m  (c) 2017-2018 ZeroC0D3 Team                                                  \033[0m\n");
 }
 
 void header()
 {
     system("clear");
     logo();
-    printf("\033[22;32m==========================================================================\033[0m\n");
+    printf("\033[22;32m===============================================================================\033[0m\n");
     get_time();
     printf("\033[22;37m# BEGIN PROCESS..... (Please Wait)  \033[0m\n");
     printf("\033[22;33m# Start at: %s  \033[0m\n", DATE_TIME);
@@ -385,8 +401,8 @@ void header()
 void footer()
 {
     get_time();
-    printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;33m# Finish at: %s  \033[0m\n", DATE_TIME);
+    printf("\033[22;32m===============================================================================\033[0m\n");
+    printf("\033[22;33m# Finish at: %s                     \033[0m\n", DATE_TIME);
     printf("\033[22;37m# END PROCESS.....                  \033[0m\n\n");
 }
 
@@ -395,127 +411,115 @@ void menu()
     select_env();
     system("clear");
     logo();
-    printf("\033[22;32m==========================================================================\033[0m\n");
-    printf("\033[22;32m  ### ENVIRONMENT DEPLOY ###                                              \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ENVIRONMENT   : \033[22;32m%s                                         \033[0m\n", ENV);
-    printf("\033[22;34m  # PATH ROOT     : \033[22;32m%s                                         \033[0m\n", APP_ROOT);
-    printf("\033[22;34m  # RAILS VERSION : \033[22;32m%d                                         \033[0m\n", RAILS_VERSION);
-    if (CONF_WEB_SERVER == 1) 
-    {
-        printf("\033[22;34m  # WEB SERVER    : \033[22;32mUNICORN                                \033[0m\n");
+    printf("\033[22;32m===============================================================================\033[0m\n");
+    printf("\033[22;32m  ### ENVIRONMENT DEPLOY ###                                                   \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ENVIRONMENT   : \033[22;32m%s                                              \033[0m\n", ENV);
+    printf("\033[22;34m  # PATH ROOT     : \033[22;32m%s                                              \033[0m\n", APP_ROOT);
+    printf("\033[22;34m  # RAILS VERSION : \033[22;32m%d                                              \033[0m\n", RAILS_VERSION);
+    if (CONF_WEB_SERVER == 1) {
+        printf("\033[22;34m  # WEB SERVER    : \033[22;32mUNICORN                                         \033[0m\n");
     } else {
-        printf("\033[22;34m  # WEB SERVER    : \033[22;32mPUMA                                   \033[0m\n");
+        printf("\033[22;34m  # WEB SERVER    : \033[22;32mPUMA                                            \033[0m\n");
     }
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### NGINX SERVICES ###                                                  \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -no            --> Reload NGINX                           \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -nr            --> Restart NGINX                          \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### ASSETS SERVICES ###                                                 \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ac            --> Assets Clobber (Rollback)              \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -ap            --> Assets Precompile                      \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### RESTART SERVICES ###                                                \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    if (ENABLE_FAYE_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -rf            --> Restart Faye                           \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### NGINX SERVICES ###                                                       \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -no           --> Reload NGINX                                 \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -nr           --> Restart NGINX                                \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### ASSETS SERVICES ###                                                      \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ac           --> Assets Clobber (Rollback)                    \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -ap           --> Assets Precompile                            \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### RESTART SERVICES ###                                                     \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rf           --> Restart Faye                                 \033[0m\n");
     }
-    if (ENABLE_MONGODB_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -rm            --> Restart MongoDB                        \033[0m\n");
+    if (ENABLE_PUSHGCM_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rg           --> Restart Push GCM (Google Cloud Messaging)    \033[0m\n");
     }
-    if (ENABLE_PUSHR_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -rp            --> Restart Pushr                          \033[0m\n");
+    if (ENABLE_MONGODB_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rm           --> Restart MongoDB                              \033[0m\n");
     }
-    if (ENABLE_SIDEKIQ_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -rq            --> Restart Sidekiq                        \033[0m\n");
+    if (ENABLE_PUSHR_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rp           --> Restart Pushr                                \033[0m\n");
     }
-    if (ENABLE_REDIS_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -rs            --> Restart Redis                          \033[0m\n");
+    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rq           --> Restart Sidekiq                              \033[0m\n");
     }
-    if (CONF_WEB_SERVER == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Unicorn                        \033[0m\n");
+    if (ENABLE_REDIS_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -rs           --> Restart Redis                                \033[0m\n");
+    }
+    if (CONF_WEB_SERVER == 1) {
+        printf("\033[22;34m  # ./rb_deploy -ru           --> Restart Unicorn                              \033[0m\n");
     } else {
-        printf("\033[22;34m  # ./rb_deploy -ru            --> Restart Puma                           \033[0m\n");
+        printf("\033[22;34m  # ./rb_deploy -ru           --> Restart Puma                                 \033[0m\n");
     }
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### STOP SERVICES ###                                                   \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    if (ENABLE_FAYE_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -df            --> Stop Faye                              \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### STOP SERVICES ###                                                        \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    if (ENABLE_FAYE_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -df           --> Stop Faye                                    \033[0m\n");
     }
-    if (ENABLE_MONGODB_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -dm            --> Stop MongoDB                           \033[0m\n");
+    if (ENABLE_PUSHGCM_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -dg           --> Stop Push GCM (Google Cloud Messaging)       \033[0m\n");
     }
-    if (ENABLE_PUSHR_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -dp            --> Stop Pushr                             \033[0m\n");
+    if (ENABLE_MONGODB_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -dm           --> Stop MongoDB                                 \033[0m\n");
     }
-    if (ENABLE_SIDEKIQ_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -dq            --> Stop Sidekiq                           \033[0m\n");
+    if (ENABLE_PUSHR_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -dp           --> Stop Pushr                                   \033[0m\n");
     }
-    if (ENABLE_REDIS_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -ds            --> Stop Redis                             \033[0m\n");
+    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -dq           --> Stop Sidekiq                                 \033[0m\n");
     }
-    if (CONF_WEB_SERVER == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -du            --> Stop Unicorn                           \033[0m\n");
+    if (ENABLE_REDIS_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -ds           --> Stop Redis                                   \033[0m\n");
     }
-    else
-    {
-        printf("\033[22;34m  # ./rb_deploy -du            --> Stop Puma                              \033[0m\n");
+    if (CONF_WEB_SERVER == 1) {
+        printf("\033[22;34m  # ./rb_deploy -du           --> Stop Unicorn                                 \033[0m\n");
+    } else {
+        printf("\033[22;34m  # ./rb_deploy -du           --> Stop Puma                                    \033[0m\n");
     }
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### VIEW LOGS ###                                                       \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-env         --> View Environment's Log                 \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -l-memcached   --> View Memcached Log                     \033[0m\n");
-    if (ENABLE_MONGODB_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -l-mongodb     --> View MongoDB Log                       \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### VIEW LOGS ###                                                            \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-env        --> View Environment's Log                       \033[0m\n");
+    if (ENABLE_PUSHGCM_SERVICE == 1) {
+    printf("\033[22;34m  # ./rb_deploy -l-gcm        --> View Push GCM Log                                \033[0m\n");
     }
-    if (ENABLE_PUSHR_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -l-pushr       --> View Pushr Log                         \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -l-memcached  --> View Memcached Log                               \033[0m\n");
+    if (ENABLE_MONGODB_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -l-mongodb    --> View MongoDB Log                             \033[0m\n");
     }
-    if (ENABLE_REDIS_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -l-redis       --> View Redis Log                         \033[0m\n");
+    if (ENABLE_PUSHR_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -l-pushr      --> View Pushr Log                               \033[0m\n");
     }
-    if (ENABLE_SIDEKIQ_SERVICE == 1)
-    {
-        printf("\033[22;34m  # ./rb_deploy -l-sidekiq     --> View Sidekiq Log                       \033[0m\n");
+    if (ENABLE_REDIS_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -l-redis      --> View Redis Log                               \033[0m\n");
+    }
+    if (ENABLE_SIDEKIQ_SERVICE == 1) {
+        printf("\033[22;34m  # ./rb_deploy -l-sidekiq    --> View Sidekiq Log                             \033[0m\n");
     }
 
-    if (CONF_WEB_SERVER == 1)
-    { 
-        printf("\033[22;34m  # ./rb_deploy -l-unicorn     --> View Unicorn Log                       \033[0m\n"); 
-    } else 
-    { 
-        printf("\033[22;34m  # ./rb_deploy -l-puma        --> View Puma Log                          \033[0m\n"); 
+    if (CONF_WEB_SERVER == 1) { 
+        printf("\033[22;34m  # ./rb_deploy -l-unicorn    --> View Unicorn Log                             \033[0m\n"); 
+    } else { 
+        printf("\033[22;34m  # ./rb_deploy -l-puma       --> View Puma Log                                \033[0m\n"); 
     }
-    printf("\033[22;34m  # ./rb_deploy -la-nginx      --> View NGINX Access Log                  \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -le-nginx      --> View NGINX Error Log                   \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### SERVER ###                                                          \033[0m\n");
-    printf("\033[22;32m--------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -key           --> Generate Secret Token                  \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -up            --> Server Up                              \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -down          --> Server Down                            \033[0m\n");
-    printf("\033[22;34m  # ./rb_deploy -deploy / -dep --> Running Deploy                         \033[0m\n");
-    printf("\033[22;32m==========================================================================\033[0m\n\n");
+    printf("\033[22;34m  # ./rb_deploy -la-nginx     --> View NGINX Access Log                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -le-nginx     --> View NGINX Error Log                         \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### SERVER ###                                                               \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -key          --> Generate Secret Token                        \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -up           --> Server Up                                    \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -down         --> Server Down                                  \033[0m\n");
+    printf("\033[22;34m  # ./rb_deploy -deploy / dep --> Running Deploy                               \033[0m\n");
+    printf("\033[22;32m===============================================================================\033[0m\n\n");
 }
 
 /* --------------------------------------- 
@@ -896,6 +900,50 @@ void stop_faye()
 }
 
 /* --------------------------------------- 
+        Push GCM (Google Cloud Messaging)
+   --------------------------------------- */
+void kill_push_gcm()
+{
+    char STR_DESCRIPTION[512] = "Stop Push GCM Service";
+    char STR_SERVICE[512]     = "Push GCM Terminated...";
+    char STR_COMMAND[1024]    = "ps aux | grep -i push | awk {'print $2'} | sudo xargs kill -9";
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void run_push_gcm()
+{
+    char STR_DESCRIPTION[256] = "Run Push GCM Service";
+    char STR_SERVICE[256]     = "Push GCM Running...";
+    char STR_COMMAND[1024];
+    // Goto App Current Folder
+    get_folder_current();
+    sprintf(STR_COMMAND, "cd %s; %s exec %s %s -p %s >> %s", CURRENT_FOLDER, PATH_BUNDLE, PATH_PUSH_GCM, ENV, PID_PUSH_GCM, SYS_LOG_PUSH_GCM);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+void restart_push_gcm_process()
+{
+    kill_push_gcm();
+    run_push_gcm();
+}
+
+void restart_push_gcm()
+{
+    header();
+    restart_push_gcm_process();
+    footer();
+}
+
+void stop_push_gcm()
+{
+    header();
+    kill_push_gcm();
+    footer();
+}
+
+/* --------------------------------------- 
         Pushr
    --------------------------------------- */
 void kill_pushr()
@@ -994,7 +1042,7 @@ void stop_sidekiq()
 void log_env()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Environment Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Environment Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Environment Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_ENV);
@@ -1003,10 +1051,22 @@ void log_env()
     footer();
 }
 
+void log_gcm()
+{
+    select_env();
+    char STR_DESCRIPTION[256] = "View Google Cloud Messaging (GCM) Log [Ctrl+C to Exit]";
+    char STR_SERVICE[256]     = "Viewing Google Cloud Messaging (GCM) Log...";
+    char STR_COMMAND[1024];
+    sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_PUSH_GCM);
+    header();
+    run_single(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    footer();
+}
+
 void log_nginx_error()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View NGINX Error Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View NGINX Error Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_NGINX_ERROR);
@@ -1018,7 +1078,7 @@ void log_nginx_error()
 void log_nginx_access()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View NGINX Access Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View NGINX Access Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing NGINX Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_NGINX_ACCESS);
@@ -1030,7 +1090,7 @@ void log_nginx_access()
 void log_mongodb()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View MongoDB Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View MongoDB Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing MongoDB Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_MONGODB);
@@ -1042,7 +1102,7 @@ void log_mongodb()
 void log_memcached()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Memcached Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Memcached Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Memcached Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_MEMCACHED);
@@ -1054,7 +1114,7 @@ void log_memcached()
 void log_redis()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Redis Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Redis Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Redis Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_REDIS);
@@ -1066,7 +1126,7 @@ void log_redis()
 void log_pusher()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Pushr Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Pushr Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Pushr Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_PUSHR);
@@ -1078,7 +1138,7 @@ void log_pusher()
 void log_sidekiq()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Sidekiq Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Sidekiq Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Sidekiq Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_SIDEKIQ);
@@ -1090,7 +1150,7 @@ void log_sidekiq()
 void log_unicorn()
 {
     select_env();
-    char STR_DESCRIPTION[256] = "View Unicorn Log (Ctrl+C to Exit)";
+    char STR_DESCRIPTION[256] = "View Unicorn Log [Ctrl+C to Exit]";
     char STR_SERVICE[256]     = "Viewing Unicorn Log...";
     char STR_COMMAND[1024];
     sprintf(STR_COMMAND, "sudo tail -f -n %d %s", NUM_LOG_VIEW, SYS_LOG_UNICORN);
@@ -1378,7 +1438,7 @@ void run_preinstall()
 
     // Copy preinstall script to 'current' folder
     // Running Preinstallation in the newest 'release' folder
-    sprintf(STR_COMMAND, "cd %s; cp %s/%s %s/%s; sudo /bin/sh %s/%s", CURRENT_FOLDER, APP_ROOT, PREINSTALL, CURRENT_FOLDER, PREINSTALL, CURRENT_FOLDER, PREINSTALL);
+    sprintf(STR_COMMAND, "cd %s; cp %s/%s %s/%s; sudo /bin/sh %s/%s", APP_ROOT, APP_ROOT, PREINSTALL, CURRENT_FOLDER, PREINSTALL, CURRENT_FOLDER, PREINSTALL);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1401,6 +1461,10 @@ void server_up_process()
         restart_unicorn_process();
     } else {
         restart_puma_process();
+    }
+
+    if (ENABLE_PUSHGCM_SERVICE == 1) {
+        restart_push_gcm_process();
     }        
 }
 
@@ -1424,7 +1488,16 @@ void server_down_process()
     }
     if (ENABLE_MONGODB_SERVICE == 1) { kill_mongodb(); }
     if (ENABLE_SIDEKIQ_SERVICE == 1) { kill_sidekiq(); }
-    kill_unicorn();
+    
+    if (CONF_WEB_SERVER == 1) {
+        kill_unicorn();
+    } else {
+        kill_puma();
+    }
+
+    if (ENABLE_PUSHGCM_SERVICE == 1) {
+        kill_push_gcm();
+    }        
 }
 
 void server_down()
@@ -1526,6 +1599,8 @@ int main(int argc, char **argv) {
     // Restart Services
     } else if (strcmp(argv[1], "-rf") == 0) {
         restart_faye();
+    } else if (strcmp(argv[1], "-rg") == 0) {
+        restart_push_gcm();
     } else if (strcmp(argv[1], "-rp") == 0) {
         restart_pushr();
     } else if (strcmp(argv[1], "-rm") == 0) {
@@ -1543,6 +1618,8 @@ int main(int argc, char **argv) {
     // Stop Services
     } else if (strcmp(argv[1], "-df") == 0) {
         stop_faye();
+    } else if (strcmp(argv[1], "-dg") == 0) {
+        stop_push_gcm();
     } else if (strcmp(argv[1], "-dp") == 0) {
         stop_pushr();
     } else if (strcmp(argv[1], "-dm") == 0) {
@@ -1560,6 +1637,8 @@ int main(int argc, char **argv) {
     // View Log
     } else if (strcmp(argv[1], "-l-env") == 0) {
         log_env();
+    } else if (strcmp(argv[1], "-l-gcm") == 0) {
+        log_gcm();
     } else if (strcmp(argv[1], "-l-memcached") == 0) {
         log_memcached();
     } else if (strcmp(argv[1], "-l-mongodb") == 0) {
