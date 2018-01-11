@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
-# ========== PREINSTALLATION SCRIPTS ========== # 
-#  Do Not Remove This File !                    #
-#  This is customize script before server up    # 
-# ============================================= #
+# ========== PRE-INSTALLATION SCRIPTS ========== # 
+#  Do Not Remove This File !                     #
+#  This is customize script before server up     # 
+# ============================================== #
 
 ENV='staging'
 GEM=`which gem`

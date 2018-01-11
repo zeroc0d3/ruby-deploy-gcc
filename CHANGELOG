@@ -1,3 +1,10 @@
+## version 1.5
+====================
+* Add afterinstall script for running some process after successfully deploy
+* Refactoring menu services (restart / stop)
+* Refactoring menu view logs
+* Refactoring menu utilities
+
 ## version 1.4.2
 ====================
 * Add service push notification via GCM (Google Cloud Messaging)

@@ -161,17 +161,18 @@ char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.4.2";                // Version 
-char APP_ROOT[512];                        // Root Path
-char APP_CURRENT[64] = "current";          // Current Folder
-char APP_RELEASE[64] = "release";          // Release Folder
-char APP_SHARED[64]  = "shared";           // Shared Folder
-char CURRENT_FOLDER[1024];                 // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
-char SHARED_FOLDER[1024];                  // SHARED_FOLDER  = APP_ROOT/APP_SHARED
-char PREINSTALL[64]  = "preinstall.sh";    // Preinstallation Script Before Server-Up
-int DEBUG_LINE       = 1;                  // Debug Version (Show Command), (0 = disable, 1 = enable)
-int LOG_LINE         = 1;                  // Add Logfile (Log All Command), (0 = disable, 1 = enable)
-char LOGFILE[64]     = "rb_deploy.log";    // Logfile Deploy
+char VERSION[16] = "1.5";                    // Version 
+char APP_ROOT[512];                          // Root Path
+char APP_CURRENT[64]   = "current";          // Current Folder
+char APP_RELEASE[64]   = "release";          // Release Folder
+char APP_SHARED[64]    = "shared";           // Shared Folder
+char CURRENT_FOLDER[1024];                   // CURRENT_FOLDER = APP_ROOT/APP_CURRENT
+char SHARED_FOLDER[1024];                    // SHARED_FOLDER  = APP_ROOT/APP_SHARED
+char PREINSTALL[64]    = "preinstall.sh";    // Preinstallation Script Before Server-Up
+char AFTERINSTALL[64]  = "afterinstall.sh";  // Preinstallation Script Before Server-Up
+int DEBUG_LINE         = 1;                  // Debug Version (Show Command), (0 = disable, 1 = enable)
+int LOG_LINE           = 1;                  // Add Logfile (Log All Command), (0 = disable, 1 = enable)
+char LOGFILE[64]       = "rb_deploy.log";    // Logfile Deploy
 
 // GENERAL CONFIGURATION //
 // Config
@@ -409,14 +410,14 @@ void footer()
     printf("\033[22;37m# END PROCESS.....                  \033[0m\n\n");
 }
 
-void menu()
+/* ======================================= 
+        MENU INITIALIZE
+   ======================================= */
+/* --------------------------------------- 
+        Core Menus
+   --------------------------------------- */
+void menu_environment()
 {
-    select_env();
-    system("clear");
-    logo();
-    printf("\033[22;32m===============================================================================\033[0m\n");
-    printf("\033[22;32m  ### ENVIRONMENT DEPLOY ###                                                   \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
     printf("\033[22;34m  # ENVIRONMENT   : \033[22;32m%s                                              \033[0m\n", ENV);
     printf("\033[22;34m  # PATH ROOT     : \033[22;32m%s                                              \033[0m\n", APP_ROOT);
     printf("\033[22;34m  # RAILS VERSION : \033[22;32m%d                                              \033[0m\n", RAILS_VERSION);
@@ -425,103 +426,281 @@ void menu()
     } else {
         printf("\033[22;34m  # WEB SERVER    : \033[22;32mPUMA                                            \033[0m\n");
     }
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### NGINX SERVICES ###                                                       \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+void menu_nginx()
+{
     printf("\033[22;34m  # ./rb_deploy -no           --> Reload NGINX                                 \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -nr           --> Restart NGINX                                \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### ASSETS SERVICES ###                                                      \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+void menu_assets()
+{
     printf("\033[22;34m  # ./rb_deploy -ac           --> Assets Clobber (Rollback)                    \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -ap           --> Assets Precompile                            \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### RESTART SERVICES ###                                                     \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+/* --------------------------------------- 
+        Restart Service Menus
+   --------------------------------------- */
+void menu_restart_faye()
+{
     if (ENABLE_FAYE_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rf           --> Restart Faye                                 \033[0m\n");
     }
+}
+
+void menu_restart_push_gcm()
+{
     if (ENABLE_PUSHGCM_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rg           --> Restart Push GCM (Google Cloud Messaging)    \033[0m\n");
     }
+}
+
+void menu_restart_mongodb()
+{
     if (ENABLE_MONGODB_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rm           --> Restart MongoDB                              \033[0m\n");
     }
+}
+
+void menu_restart_pushr()
+{
     if (ENABLE_PUSHR_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rp           --> Restart Pushr                                \033[0m\n");
     }
+}
+
+void menu_restart_sidekiq()
+{
     if (ENABLE_SIDEKIQ_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rq           --> Restart Sidekiq                              \033[0m\n");
     }
+}
+
+void menu_restart_redis()
+{
     if (ENABLE_REDIS_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -rs           --> Restart Redis                                \033[0m\n");
     }
+}
+
+void menu_restart_web_service()
+{
     if (CONF_WEB_SERVER == 1) {
         printf("\033[22;34m  # ./rb_deploy -ru           --> Restart Unicorn                              \033[0m\n");
     } else {
         printf("\033[22;34m  # ./rb_deploy -ru           --> Restart Puma                                 \033[0m\n");
     }
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### STOP SERVICES ###                                                        \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+void menu_restart_services()
+{
+    menu_restart_faye();
+    menu_restart_push_gcm();
+    menu_restart_mongodb();
+    menu_restart_pushr();
+    menu_restart_sidekiq();
+    menu_restart_redis();
+    menu_restart_web_service();
+}
+
+/* --------------------------------------- 
+        Stop Service Menus
+   --------------------------------------- */
+void menu_stop_faye()
+{
     if (ENABLE_FAYE_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -df           --> Stop Faye                                    \033[0m\n");
-    }
+    }    
+}
+
+void menu_stop_push_gcm()
+{
     if (ENABLE_PUSHGCM_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -dg           --> Stop Push GCM (Google Cloud Messaging)       \033[0m\n");
-    }
+    }    
+}
+
+void menu_stop_mongodb()
+{
     if (ENABLE_MONGODB_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -dm           --> Stop MongoDB                                 \033[0m\n");
     }
+}
+
+void menu_stop_pushr()
+{
     if (ENABLE_PUSHR_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -dp           --> Stop Pushr                                   \033[0m\n");
-    }
+    }    
+}
+
+void menu_stop_sidekiq()
+{
     if (ENABLE_SIDEKIQ_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -dq           --> Stop Sidekiq                                 \033[0m\n");
     }
+    
+}
+
+void menu_stop_redis()
+{
     if (ENABLE_REDIS_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -ds           --> Stop Redis                                   \033[0m\n");
     }
+}
+
+void menu_stop_web_service()
+{
     if (CONF_WEB_SERVER == 1) {
         printf("\033[22;34m  # ./rb_deploy -du           --> Stop Unicorn                                 \033[0m\n");
     } else {
         printf("\033[22;34m  # ./rb_deploy -du           --> Stop Puma                                    \033[0m\n");
     }
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### VIEW LOGS ###                                                            \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+void menu_stop_services()
+{
+    menu_stop_faye();
+    menu_stop_push_gcm();
+    menu_stop_mongodb();
+    menu_stop_pushr();
+    menu_stop_sidekiq();
+    menu_stop_redis();
+    menu_stop_web_service();
+}
+
+/* --------------------------------------- 
+        View Log Menus
+   --------------------------------------- */
+void menu_view_log_environment()
+{
     printf("\033[22;34m  # ./rb_deploy -l-env        --> View Environment's Log                       \033[0m\n");
+}
+
+void menu_view_log_push_gcm()
+{
     if (ENABLE_PUSHGCM_SERVICE == 1) {
-    printf("\033[22;34m  # ./rb_deploy -l-gcm        --> View Push GCM Log                                \033[0m\n");
+        printf("\033[22;34m  # ./rb_deploy -l-gcm        --> View Push GCM Log                                \033[0m\n");
     }
+}
+
+void menu_view_log_memcached()
+{
     printf("\033[22;34m  # ./rb_deploy -l-memcached  --> View Memcached Log                               \033[0m\n");
+}
+
+void menu_view_log_mongodb()
+{
     if (ENABLE_MONGODB_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -l-mongodb    --> View MongoDB Log                             \033[0m\n");
     }
+}
+
+void menu_view_log_pushr()
+{
     if (ENABLE_PUSHR_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -l-pushr      --> View Pushr Log                               \033[0m\n");
     }
+}
+
+void menu_view_log_redis()
+{
     if (ENABLE_REDIS_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -l-redis      --> View Redis Log                               \033[0m\n");
     }
+}
+
+void menu_view_log_sidekiq()
+{
     if (ENABLE_SIDEKIQ_SERVICE == 1) {
         printf("\033[22;34m  # ./rb_deploy -l-sidekiq    --> View Sidekiq Log                             \033[0m\n");
     }
+}
 
-    if (CONF_WEB_SERVER == 1) { 
-        printf("\033[22;34m  # ./rb_deploy -l-unicorn    --> View Unicorn Log                             \033[0m\n"); 
-    } else { 
-        printf("\033[22;34m  # ./rb_deploy -l-puma       --> View Puma Log                                \033[0m\n"); 
+void menu_view_log_web_service()
+{
+    if (CONF_WEB_SERVER == 1) {
+        printf("\033[22;34m  # ./rb_deploy -l-unicorn    --> View Unicorn Log                             \033[0m\n");
+    } else {
+        printf("\033[22;34m  # ./rb_deploy -l-puma       --> View Puma Log                                \033[0m\n");
     }
+}
+
+void menu_view_log_nginx()
+{
     printf("\033[22;34m  # ./rb_deploy -la-nginx     --> View NGINX Access Log                        \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -le-nginx     --> View NGINX Error Log                         \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
-    printf("\033[22;32m  ### SERVER ###                                                               \033[0m\n");
-    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+}
+
+void menu_view_logs()
+{
+    menu_view_log_environment();
+    menu_view_log_push_gcm();
+    menu_view_log_memcached();
+    menu_view_log_mongodb();
+    menu_view_log_pushr();
+    menu_view_log_redis();
+    menu_view_log_web_service();
+    menu_view_log_nginx();    
+}
+
+/* --------------------------------------- 
+        Utilities Server Menus
+   --------------------------------------- */
+void menu_utilities()
+{
     printf("\033[22;34m  # ./rb_deploy -key          --> Generate Secret Token                        \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -up           --> Server Up                                    \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -down         --> Server Down                                  \033[0m\n");
     printf("\033[22;34m  # ./rb_deploy -deploy / dep --> Running Deploy                               \033[0m\n");
+}
+
+/* --------------------------------------- 
+        Main Menu
+   --------------------------------------- */
+void menu()
+{
+    select_env();
+    system("clear");
+    logo();
+
+    printf("\033[22;32m===============================================================================\033[0m\n");
+    printf("\033[22;32m  ### ENVIRONMENT DEPLOY ###                                                   \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_environment();
+
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### NGINX SERVICES ###                                                       \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_nginx();
+    
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### ASSETS SERVICES ###                                                      \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_assets();
+
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### RESTART SERVICES ###                                                     \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_restart_services();
+
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### STOP SERVICES ###                                                        \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_stop_services();
+
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### VIEW LOGS ###                                                            \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_view_logs();
+
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    printf("\033[22;32m  ### SERVER ###                                                               \033[0m\n");
+    printf("\033[22;32m-------------------------------------------------------------------------------\033[0m\n");
+    menu_utilities();
+
     printf("\033[22;32m===============================================================================\033[0m\n\n");
 }
 
@@ -552,7 +731,7 @@ void run_fastcmd(char STR_COMMAND[1024])
 {
     get_command(STR_COMMAND);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    // ret = system(cmdRun);
+    //ret = system(cmdRun);
 }
 
 void run_cmd(char STR_SERVICE[512],
@@ -583,7 +762,7 @@ void run_single(char STR_SERVICE[512],
     message_service(STR_DESCRIPTION);
     get_command(STR_COMMAND);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    // system(cmdRun);
+    //system(cmdRun);
     message_ok(STR_SERVICE);
 }
 
@@ -1437,7 +1616,7 @@ void run_migration_rollback()
 }
 
 /* --------------------------------------- 
-        Preinstall Script
+        Pre-Install Script
    --------------------------------------- */
 void run_preinstall()
 {
@@ -1454,6 +1633,28 @@ void run_preinstall()
     // Copy preinstall script to 'current' folder
     // Running Preinstallation in the newest 'release' folder
     sprintf(STR_COMMAND, "cd %s; cp %s/%s %s/%s; sudo /bin/sh %s/%s", APP_ROOT, APP_ROOT, PREINSTALL, CURRENT_FOLDER, PREINSTALL, CURRENT_FOLDER, PREINSTALL);
+    run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
+    sleep(1);
+}
+
+/* --------------------------------------- 
+        After-Install Script
+   --------------------------------------- */
+void run_afterinstall()
+{
+    select_env();
+    char STR_DESCRIPTION[512] = "After Installation";
+    char STR_SERVICE[512]     = "Running After Installation Configuration...";
+    char STR_COMMAND[1024];
+    // Goto Current Path
+    get_folder_release();
+    sprintf(CURRENT_FOLDER, "%s/%s", APP_ROOT, APP_CURRENT);
+    // Symlink after-install script to 'current' folder
+    //sprintf(STR_COMMAND, "cd %s; ln -s %s/%s %s; sudo /bin/sh %s", CURRENT_FOLDER, APP_ROOT, PREINSTALL, AFTERINSTALL, AFTERINSTALL);
+
+    // Copy after-install script to 'current' folder
+    // Running After Install in the newest 'release' folder
+    sprintf(STR_COMMAND, "cd %s; cp %s/%s %s/%s; sudo /bin/sh %s/%s", APP_ROOT, APP_ROOT, AFTERINSTALL, CURRENT_FOLDER, AFTERINSTALL, CURRENT_FOLDER, AFTERINSTALL);
     run_cmd(STR_SERVICE, STR_DESCRIPTION, STR_COMMAND);
     sleep(1);
 }
@@ -1575,12 +1776,20 @@ void deploy()
     if (IS_ERROR_DEPLOY == 0)
     {
         initialize_current();
+        /* --------------------------------------- 
+                Before Server Up
+           --------------------------------------- */
         run_preinstall();
 
         /* --------------------------------------- 
                 Server Up
            --------------------------------------- */
         server_up_process();
+
+        /* --------------------------------------- 
+                After Server Up
+           --------------------------------------- */
+        run_afterinstall();
     } else {
         deploy_rollback();
         remove_release_clone();
