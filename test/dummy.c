@@ -84,28 +84,28 @@ char *LIST_SHARED_FILES[] = {
    ======================================= */
 // DEVELOPMENT CONFIGURATION //
 // Development Environment
-char DEV_APP_ROOT[512]        = "/home/zeroc0d3/zeroc0d3-deploy";                                        // Development Root Path
-char DEV_CONFIG_FAYE[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/faye.ru";                        // Development Faye Config
-char DEV_CONFIG_PUSHR[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/config/pushr-staging.yaml";      // Development Pushr Config
-char DEV_CONFIG_SIDEKIQ[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/sidekiq.yml";             // Development Sidekiq Config
-char DEV_CONFIG_UNICORN[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/config/unicorn/staging.rb";      // Development Unicorn Config
-char DEV_CONFIG_PUMA[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/config/puma/staging.rb";         // Development Puma Config
-char DEV_CONFIG_RU[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/config/config.ru";               // Development config.ru
+char DEV_APP_ROOT[512]        = "/home/deploy/zeroc0d3lab.dev";                                        // Development Root Path
+char DEV_CONFIG_FAYE[512]     = "/home/deploy/zeroc0d3lab.dev/current/faye.ru";                        // Development Faye Config
+char DEV_CONFIG_PUSHR[512]    = "/home/deploy/zeroc0d3lab.dev/current/config/pushr-staging.yaml";      // Development Pushr Config
+char DEV_CONFIG_SIDEKIQ[512]  = "/home/deploy/zeroc0d3lab.dev/current/config/sidekiq.yml";             // Development Sidekiq Config
+char DEV_CONFIG_UNICORN[512]  = "/home/deploy/zeroc0d3lab.dev/current/config/unicorn/staging.rb";      // Development Unicorn Config
+char DEV_CONFIG_PUMA[512]     = "/home/deploy/zeroc0d3lab.dev/current/config/puma/staging.rb";         // Development Puma Config
+char DEV_CONFIG_RU[512]       = "/home/deploy/zeroc0d3lab.dev/current/config/config.ru";               // Development config.ru
 
-char DEV_PID_FAYE[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/faye.pid";              // Development Path PID Faye
-char DEV_PID_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/pushr.pid";             // Development Path PID Pushr
-char DEV_PID_PUSH_GCM[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/push_gcm.pid";          // Development Path PID GCM (Google Cloud Messaging)
-char DEV_PID_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
-char DEV_PID_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
-char DEV_PID_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/puma.pid";              // Development Path PID Puma
-char DEV_PID_STATE_PUMA[512]  = "/home/zeroc0d3/zeroc0d3-deploy/current/tmp/pids/puma.state";            // Development Path PID State Puma
+char DEV_PID_FAYE[512]        = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/faye.pid";              // Development Path PID Faye
+char DEV_PID_PUSHR[512]       = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/pushr.pid";             // Development Path PID Pushr
+char DEV_PID_PUSH_GCM[512]    = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/push_gcm.pid";          // Development Path PID GCM (Google Cloud Messaging)
+char DEV_PID_SIDEKIQ[512]     = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/sidekiq.pid";           // Development Path PID Sidekiq
+char DEV_PID_UNICORN[512]     = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/unicorn.pid";           // Development Path PID Unicorn
+char DEV_PID_PUMA[512]        = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/puma.pid";              // Development Path PID Puma
+char DEV_PID_STATE_PUMA[512]  = "/home/deploy/zeroc0d3lab.dev/current/tmp/pids/puma.state";            // Development Path PID State Puma
 
-char DEV_LOG_ENV[512]         = "/home/zeroc0d3/zeroc0d3-deploy/current/log/staging.log";                // Development Path Log Environment
-char DEV_LOG_PUSHR[512]       = "/home/zeroc0d3/zeroc0d3-deploy/current/log/pushr.log";                  // Development Path Log Pushr
-char DEV_LOG_SIDEKIQ[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/sidekiq.log";                // Development Path Log Sidekiq
-char DEV_LOG_UNICORN[512]     = "/home/zeroc0d3/zeroc0d3-deploy/current/log/unicorn.log";                // Development Path Log Unicorn
-char DEV_LOG_PUMA[512]        = "/home/zeroc0d3/zeroc0d3-deploy/current/log/puma.log";                   // Development Path Log Puma
-char DEV_LOG_PUSH_GCM[512]    = "/home/zeroc0d3/zeroc0d3-deploy/current/log/push_gcm.log";               // Development Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
+char DEV_LOG_ENV[512]         = "/home/deploy/zeroc0d3lab.dev/current/log/staging.log";                // Development Path Log Environment
+char DEV_LOG_PUSHR[512]       = "/home/deploy/zeroc0d3lab.dev/current/log/pushr.log";                  // Development Path Log Pushr
+char DEV_LOG_SIDEKIQ[512]     = "/home/deploy/zeroc0d3lab.dev/current/log/sidekiq.log";                // Development Path Log Sidekiq
+char DEV_LOG_UNICORN[512]     = "/home/deploy/zeroc0d3lab.dev/current/log/unicorn.log";                // Development Path Log Unicorn
+char DEV_LOG_PUMA[512]        = "/home/deploy/zeroc0d3lab.dev/current/log/puma.log";                   // Development Path Log Puma
+char DEV_LOG_PUSH_GCM[512]    = "/home/deploy/zeroc0d3lab.dev/current/log/push_gcm.log";               // Development Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
 
 char DEV_PATH_BUNDLE[512]     = "/home/deploy/.rbenv/shims/bundle";                   // Development Path of Bundle Binary
 char DEV_PATH_GEM[512]        = "/home/deploy/.rbenv/shims/gem";                      // Development Path of Gem Binary
@@ -122,28 +122,28 @@ char DEV_PATH_PUMA[512]       = "/home/deploy/.rbenv/shims/puma";               
 
 // PRODUCTION CONFIGURATION //
 // Production Environment
-char PROD_APP_ROOT[512]       = "/home/deploy/rb_deploy";                                       // Production Root Path
-char PROD_CONFIG_FAYE[512]    = "/home/deploy/rb_deploy/current/faye.ru";                       // Production Faye Config
-char PROD_CONFIG_PUSHR[512]   = "/home/deploy/rb_deploy/current/config/pushr-production.yaml";  // Production Pushr Config
-char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/rb_deploy/current/config/sidekiq.yml";            // Production Sidekiq Config
-char PROD_CONFIG_UNICORN[512] = "/home/deploy/rb_deploy/current/config/unicorn/production.rb";  // Production Unicorn Config
-char PROD_CONFIG_PUMA[512]    = "/home/deploy/rb_deploy/current/config/puma/production.rb";     // Production Puma Config
-char PROD_CONFIG_RU[512]      = "/home/deploy/rb_deploy/current/config/config.ru";              // Production config.ru
+char PROD_APP_ROOT[512]       = "/home/deploy/zeroc0d3lab";                                       // Production Root Path
+char PROD_CONFIG_FAYE[512]    = "/home/deploy/zeroc0d3lab/current/faye.ru";                       // Production Faye Config
+char PROD_CONFIG_PUSHR[512]   = "/home/deploy/zeroc0d3lab/current/config/pushr-production.yaml";  // Production Pushr Config
+char PROD_CONFIG_SIDEKIQ[512] = "/home/deploy/zeroc0d3lab/current/config/sidekiq.yml";            // Production Sidekiq Config
+char PROD_CONFIG_UNICORN[512] = "/home/deploy/zeroc0d3lab/current/config/unicorn/production.rb";  // Production Unicorn Config
+char PROD_CONFIG_PUMA[512]    = "/home/deploy/zeroc0d3lab/current/config/puma/production.rb";     // Production Puma Config
+char PROD_CONFIG_RU[512]      = "/home/deploy/zeroc0d3lab/current/config/config.ru";              // Production config.ru
 
-char PROD_PID_FAYE[512]       = "/home/deploy/rb_deploy/current/tmp/pids/faye.pid";             // Production Path PID Faye
-char PROD_PID_PUSHR[512]      = "/home/deploy/rb_deploy/current/tmp/pids/pushr.pid";            // Production Path PID Pushr
-char PROD_PID_PUSH_GCM[512]   = "/home/deploy/rb_deploy/current/tmp/pids/push_gcm.pid";         // Production Path PID GCM (Google Cloud Messaging)
-char PROD_PID_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
-char PROD_PID_UNICORN[512]    = "/home/deploy/rb_deploy/current/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
-char PROD_PID_PUMA[512]       = "/home/deploy/rb_deploy/current/tmp/pids/puma.pid";             // Production Path PID Puma
-char PROD_PID_STATE_PUMA[512] = "/home/deploy/rb_deploy/current/tmp/pids/puma.state";           // Production Path PID State Puma
+char PROD_PID_FAYE[512]       = "/home/deploy/zeroc0d3lab/current/tmp/pids/faye.pid";             // Production Path PID Faye
+char PROD_PID_PUSHR[512]      = "/home/deploy/zeroc0d3lab/current/tmp/pids/pushr.pid";            // Production Path PID Pushr
+char PROD_PID_PUSH_GCM[512]   = "/home/deploy/zeroc0d3lab/current/tmp/pids/push_gcm.pid";         // Production Path PID GCM (Google Cloud Messaging)
+char PROD_PID_SIDEKIQ[512]    = "/home/deploy/zeroc0d3lab/current/tmp/pids/sidekiq.pid";          // Production Path PID Sidekiq
+char PROD_PID_UNICORN[512]    = "/home/deploy/zeroc0d3lab/current/tmp/pids/unicorn.pid";          // Production Path PID Unicorn
+char PROD_PID_PUMA[512]       = "/home/deploy/zeroc0d3lab/current/tmp/pids/puma.pid";             // Production Path PID Puma
+char PROD_PID_STATE_PUMA[512] = "/home/deploy/zeroc0d3lab/current/tmp/pids/puma.state";           // Production Path PID State Puma
 
-char PROD_LOG_ENV[512]        = "/home/deploy/rb_deploy/current/log/production.log";            // Production Path Log Environment
-char PROD_LOG_PUSHR[512]      = "/home/deploy/rb_deploy/current/log/pushr.log";                 // Production Path Log Pushr
-char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/rb_deploy/current/log/sidekiq.log";               // Production Path Log Sidekiq
-char PROD_LOG_UNICORN[512]    = "/home/deploy/rb_deploy/current/log/unicorn.log";               // Production Path Log Unicorn
-char PROD_LOG_PUMA[512]       = "/home/deploy/rb_deploy/current/log/puma.log";                  // Production Path Log Unicorn
-char PROD_LOG_PUSH_GCM[512]   = "/home/deploy/rb_deploy/current/log/push_gcm.log";              // Production Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
+char PROD_LOG_ENV[512]        = "/home/deploy/zeroc0d3lab/current/log/production.log";            // Production Path Log Environment
+char PROD_LOG_PUSHR[512]      = "/home/deploy/zeroc0d3lab/current/log/pushr.log";                 // Production Path Log Pushr
+char PROD_LOG_SIDEKIQ[512]    = "/home/deploy/zeroc0d3lab/current/log/sidekiq.log";               // Production Path Log Sidekiq
+char PROD_LOG_UNICORN[512]    = "/home/deploy/zeroc0d3lab/current/log/unicorn.log";               // Production Path Log Unicorn
+char PROD_LOG_PUMA[512]       = "/home/deploy/zeroc0d3lab/current/log/puma.log";                  // Production Path Log Unicorn
+char PROD_LOG_PUSH_GCM[512]   = "/home/deploy/zeroc0d3lab/current/log/push_gcm.log";              // Production Path Log Push GCM (Google Cloud Messaging Notification for Mobile)
 
 char PROD_PATH_BUNDLE[512]    = "/home/deploy/.rbenv/shims/bundle";           // Production Path of Bundle Binary
 char PROD_PATH_GEM[512]       = "/home/deploy/.rbenv/shims/gem";              // Production Path of Gem Binary
@@ -161,7 +161,7 @@ char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.5.1";                  // Version 
+char VERSION[16] = "1.5.2";                  // Version 
 char APP_ROOT[512];                          // Root Path
 char APP_CURRENT[64]   = "current";          // Current Folder
 char APP_RELEASE[64]   = "release";          // Release Folder
