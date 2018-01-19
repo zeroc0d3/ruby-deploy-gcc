@@ -7,11 +7,11 @@ PWD_PUMA=`which puma`
 
 if [ "$ENV" = "production" ]
 then
-  PWD_ROOT='/home/deploy/rb_deploy/current'
-  CFG_PUMA='/home/deploy/rb_deploy/current/config/puma/production.rb'
+  PWD_ROOT='/home/deploy/zeroc0d3lab/current'
+  CFG_PUMA='/home/deploy/zeroc0d3lab/current/config/puma/production.rb'
 else
-  PWD_ROOT='/home/zeroc0d3/zeroc0d3-deploy/current'
-  CFG_PUMA='/home/zeroc0d3/zeroc0d3-deploy/current/config/puma/staging.rb'
+  PWD_ROOT='/home/deploy/zeroc0d3lab.dev/current'
+  CFG_PUMA='/home/deploy/zeroc0d3lab.dev/current/config/puma/staging.rb'
 fi
 
 cd $PWD_ROOT

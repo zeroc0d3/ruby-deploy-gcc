@@ -1,7 +1,7 @@
 # config/puma/production.rb
 require "active_record"
   
-root = "/home/deploy/rb_deploy/current"
+root = "/home/deploy/zeroc0d3lab/current"
 
 # Default to production
 rails_env     = ENV['RAILS_ENV'] || "production"

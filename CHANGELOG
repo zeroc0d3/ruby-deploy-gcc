@@ -1,3 +1,8 @@
+## version 1.5.2
+====================
+* Change environment path for staging/development to /home/deploy/zeroc0delab.dev
+* Change environment path for production to /home/deploy/zeroc0delab
+
 ## version 1.5.1
 ====================
 * Fixing running environment services

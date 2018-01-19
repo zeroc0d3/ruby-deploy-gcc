@@ -1,6 +1,6 @@
 # config/unicorn/production.rb
 
-root = "/home/deploy/rb_deploy/current"
+root = "/home/deploy/zeroc0d3lab/current"
 working_directory root
 
 Unicorn::HttpServer::START_CTX[0] = "#{ root }/bin/unicorn"

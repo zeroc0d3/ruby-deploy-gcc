@@ -1,7 +1,7 @@
 # config/puma/staging.rb
 require "active_record"
   
-root = "/home/zeroc0d3/zeroc0d3-deploy/current"
+root = "/home/deploy/zeroc0d3lab.dev/current"
 
 # Default to staging
 rails_env     = ENV['RAILS_ENV'] || "staging"

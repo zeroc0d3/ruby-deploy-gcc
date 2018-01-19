@@ -5,7 +5,7 @@ FAYE = {
   token:  ''
 }
 
-home_path = '/home/deploy/rb_deploy/current'
+home_path = '/home/deploy/zeroc0d3lab/current'
 
 if defined? Rails
   if Rails.env == 'development'

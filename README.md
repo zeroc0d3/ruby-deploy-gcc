@@ -15,7 +15,7 @@ Alternative Ruby & Rails Deployment Tools Build With GNU C (GCC)
   ### ENVIRONMENT DEPLOY ###
 -------------------------------------------------------------------------------
   # ENVIRONMENT   : staging
-  # PATH ROOT     : /home/zeroc0d3/zeroc0d3-deploy
+  # PATH ROOT     : /home/deploy/zeroc0d3lab.dev
   # RAILS VERSION : 5
   # WEB SERVER    : $WEB_SERVER
 -------------------------------------------------------------------------------

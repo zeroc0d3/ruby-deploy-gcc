@@ -3,13 +3,13 @@ upstream faye_server {
 }
 
 upstream production {
-  server unix:/home/deploy/rb_deploy/current/tmp/sockets/unicorn-production.socket fail_timeout=0;
+  server unix:/home/deploy/zeroc0d3lab/current/tmp/sockets/unicorn-production.socket fail_timeout=0;
 }
 
 server {
   listen 80;
   server_name zeroc0d3lab.com;
-  root /home/deploy/rb_deploy/current/public;
+  root /home/deploy/zeroc0d3lab/current/public;
 
   client_max_body_size 300M;
   keepalive_timeout 120;
@@ -20,7 +20,7 @@ server {
   try_files /system/maintenance.html $uri/index.html $uri @unicorn;
 
   location ~ ^/(assets)/ {
-    root /home/deploy/rb_deploy/current/public;
+    root /home/deploy/zeroc0d3lab/current/public;
     gzip_static on;
     expires 1y;
     add_header Cache-Control public;
@@ -61,7 +61,7 @@ server{
   ssl_certificate_key /etc/ssl/zeroc0d3lab.key;
 
   server_name zeroc0d3lab.com;
-  root /home/deploy/rb_deploy/current/public;
+  root /home/deploy/zeroc0d3lab/current/public;
 
   client_max_body_size 300M;
   keepalive_timeout 120;
@@ -71,7 +71,7 @@ server{
   try_files /system/maintenance.html $uri/index.html $uri @unicorn;
 
   location ~ ^/(assets)/ {
-    root /home/deploy/rb_deploy/public;
+    root /home/deploy/zeroc0d3lab/public;
     gzip_static on;
     expires 1y;
     add_header Cache-Control public;

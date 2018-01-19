@@ -11,9 +11,9 @@ BUNDLE=`which bundle`
 
 if [ "$ENV" = "production" ]
 then
-  PWD='/home/deploy/rb_deploy/current'
+  PWD='/home/deploy/zeroc0d3lab/current'
 else
-  PWD='/home/zeroc0d3/zeroc0d3-deploy/current'
+  PWD='/home/deploy/zeroc0d3lab.dev/current'
 fi
 
 cd $PWD
