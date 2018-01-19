@@ -161,7 +161,7 @@ char PROD_PATH_PUMA[512]      = "/home/deploy/.rbenv/shims/puma";             //
 /* ======================================= 
         SYSTEM CONFIGURATION 
    ======================================= */
-char VERSION[16] = "1.5";                    // Version 
+char VERSION[16] = "1.5.1";                  // Version 
 char APP_ROOT[512];                          // Root Path
 char APP_CURRENT[64]   = "current";          // Current Folder
 char APP_RELEASE[64]   = "release";          // Release Folder
@@ -731,7 +731,7 @@ void run_fastcmd(char STR_COMMAND[1024])
 {
     get_command(STR_COMMAND);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    //ret = system(cmdRun);
+    // ret = system(cmdRun);
 }
 
 void run_cmd(char STR_SERVICE[512],
@@ -762,7 +762,7 @@ void run_single(char STR_SERVICE[512],
     message_service(STR_DESCRIPTION);
     get_command(STR_COMMAND);
     sprintf(cmdRun, "%s", STR_COMMAND);
-    //system(cmdRun);
+    // system(cmdRun);
     message_ok(STR_SERVICE);
 }
 
@@ -852,6 +852,7 @@ void kill_redis()
 
 void run_redis()
 {
+    select_env();
     char STR_DESCRIPTION[512] = "Start Redis Service (Daemonize)";
     char STR_SERVICE[512]     = "Redis Start...";
     char STR_COMMAND[1024]    = "redis-server --daemonize yes";
@@ -1095,6 +1096,7 @@ void kill_push_gcm()
 
 void run_push_gcm()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "Run Push GCM Service";
     char STR_SERVICE[256]     = "Push GCM Running...";
     char STR_COMMAND[1024];
@@ -1139,6 +1141,7 @@ void kill_pushr()
 
 void run_pushr()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "Run Pushr Service";
     char STR_SERVICE[256]     = "Pushr Running...";
     char STR_COMMAND[1024];
@@ -1183,6 +1186,7 @@ void kill_sidekiq()
 
 void run_sidekiq()
 {
+    select_env();
     char STR_DESCRIPTION[256] = "Run Sidekiq Service";
     char STR_SERVICE[256]     = "Sidekiq Running...";
     char STR_COMMAND[1024];
@@ -1452,6 +1456,7 @@ void install_package()
 
 void remove_release_folders(char RELEASE_SHARED_FOLDERS[512])
 {
+    select_env();
     char STR_COMMAND[1024];
     // Goto App Path Release
     get_folder_release();
@@ -1462,6 +1467,7 @@ void remove_release_folders(char RELEASE_SHARED_FOLDERS[512])
 
 void remove_release_files(char RELEASE_SHARED_FILES[512])
 {
+    select_env();
     char STR_COMMAND[1024];
     // Goto App Path Release
     get_folder_release();
